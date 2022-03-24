@@ -4,9 +4,9 @@ with open("requirements.txt") as req_file:
     requirements = req_file.read()
 
 setup(
-    name="clld-morpho-plugin",
+    name="clld-morphology-plugin",
     version="0.0.1",
-    description="clld-morpho-plugin",
+    description="clld-morphology-plugin",
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.6",
@@ -18,7 +18,7 @@ setup(
     ],
     author="Florian Matter",
     author_email="florianmatter@gmail.com",
-    url="https://github.com/fmatter/clld-morpho-plugin",
+    url="https://github.com/fmatter/clld-morphology-plugin",
     keywords="web pyramid pylons",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
