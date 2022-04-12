@@ -1,23 +1,9 @@
+from clld.db.models.common import Language
+from clld.web.datatables.base import Col
+from clld.web.datatables.base import DataTable
+from clld.web.datatables.base import LinkCol
 from sqlalchemy.orm import joinedload
-from sqlalchemy import and_
-from clld.web import datatables
-from clld.web.datatables.base import (
-    DataTable,
-    LinkCol,
-    Col,
-    LinkToMapCol,
-    IdCol,
-    RefsCol,
-)
-from clld_morpho_plugin import models
-from clld.db.models.common import (
-    Contribution,
-    Language,
-    Parameter,
-    Sentence_files,
-    Sentence,
-)
-from clld.web.datatables.sentence import TsvCol, TypeCol, DetailsRowLinkCol
+from clld_morphology_plugin import models
 
 
 class DescriptionLinkCol(LinkCol):
@@ -73,9 +59,7 @@ class Morphemes(DataTable):
 
 class Meanings(DataTable):
     def col_defs(self):
-        return [
-            LinkCol(self, "name"),
-        ]
+        return [LinkCol(self, "name")]
 
 
 def includeme(config):

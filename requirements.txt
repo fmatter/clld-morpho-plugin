@@ -1,3 +1,0 @@
-clld>=3.3.3
-sqlalchemy
-zope.interface

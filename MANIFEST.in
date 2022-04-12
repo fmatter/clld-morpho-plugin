@@ -1,1 +1,3 @@
-include requirements.txt
+include CITATION.cff
+include LICENSE
+include README.md

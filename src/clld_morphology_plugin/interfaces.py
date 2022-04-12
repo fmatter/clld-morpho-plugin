@@ -3,21 +3,23 @@ from zope.interface import Interface
 
 class IMorph(Interface):
     """
-    marker interface
+    morph interface
     """
 
 
 class IMorphset(Interface):
     """
-    marker interface
+    morpheme interface
     """
 
 
 class IMeaning(Interface):
-
-    """marker."""
+    """
+    meaning interface
+    """
 
 
 class IWordform(Interface):
-
-    """marker."""
+    """
+    form interface
+    """
