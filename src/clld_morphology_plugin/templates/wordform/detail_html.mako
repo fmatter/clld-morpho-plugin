@@ -23,6 +23,12 @@
         </tr>
         % endif
         <tr>
+            <td> Meaning:</td>
+            <td>
+                ‘${ctx.meaning}’
+            </td>
+        </tr>
+        <tr>
             <td>Language:</td>
             <td>${h.link(request, ctx.language)}</td>
         </tr>

@@ -66,4 +66,4 @@ class FormSlice(Base):
     form_pk = Column(Integer, ForeignKey("wordform.pk"))
     morph_pk = Column(Integer, ForeignKey("morph.pk"))
     form = relationship(Wordform, backref="morphs")
-    morph = relationship(Morph, backref="complex_forms")
+    morph = relationship(Morph, backref="forms")

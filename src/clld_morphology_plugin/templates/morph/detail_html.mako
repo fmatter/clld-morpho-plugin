@@ -63,6 +63,17 @@ ${h.link(request, contributor)}
     </tbody>
 </table>
 
+% if ctx.forms:
+<h3>${_('Word forms')}</h3>
+<ol>
+% for s in ctx.forms:
+<li>
+    ${h.link(request, s.form)}
+</li>
+% endfor
+</ol>    
+% endif
+
 % if sentence_assocs in dir(ctx):
 <h3>${_('Sentences')}</h3>
 <ol>
