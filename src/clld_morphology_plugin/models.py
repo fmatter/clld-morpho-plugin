@@ -60,3 +60,10 @@ class Wordform(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
     meaning = Column(String)
     # meaning = relationship(Meaning, innerjoin=True, backref="wordforms")
     # meaning_pk = Column(Integer, ForeignKey("meaning.pk"))
+
+
+class FormSlice(Base):
+    form_pk = Column(Integer, ForeignKey("wordform.pk"))
+    morph_pk = Column(Integer, ForeignKey("morph.pk"))
+    form = relationship(Wordform, backref="morphs")
+    morph = relationship(Morph, backref="complex_forms")
