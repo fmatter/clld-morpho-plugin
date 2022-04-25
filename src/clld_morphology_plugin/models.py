@@ -3,7 +3,8 @@ from clld.db.meta import PolymorphicBaseMixin
 from clld.db.models.common import Contribution
 from clld.db.models.common import HasSourceMixin
 from clld.db.models.common import IdNameDescriptionMixin
-from clld.db.models.common import Language, Sentence
+from clld.db.models.common import Language
+from clld.db.models.common import Sentence
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
