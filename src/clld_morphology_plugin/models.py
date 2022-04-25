@@ -58,6 +58,7 @@ class Wordform(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
     contribution = relationship(Contribution, backref="wordforms")
 
     meaning = Column(String)
+    segmented = Column(String)
     # meaning = relationship(Meaning, innerjoin=True, backref="wordforms")
     # meaning_pk = Column(Integer, ForeignKey("meaning.pk"))
 

@@ -18,7 +18,7 @@
         <tr>
             <td>Structure:</td>
             <td>
-                    ${h.text2html("-".join([h.link(request, form.morph, label=string) for string, form in zip(ctx.name.split("-"), ctx.morphs)]))}
+                    ${h.text2html("-".join([h.link(request, slice.morph, label=string) for string, slice in zip(ctx.segmented.split("-"), ctx.morphs)]))}
             </td>
         </tr>
         % endif
