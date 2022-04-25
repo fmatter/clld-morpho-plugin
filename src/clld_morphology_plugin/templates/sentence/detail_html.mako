@@ -22,4 +22,5 @@
     <dt>${_('Language')}:</dt>
     <dd>${h.link(request, ctx.language)}</dd>
 </dl>
-${mutil.rendered_sentence(ctx)|n}
+
+${mutil.rendered_sentence(request, ctx)|n}

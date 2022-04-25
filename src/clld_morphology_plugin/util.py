@@ -1,4 +1,5 @@
 from clld.web.util.htmllib import HTML, literal
+from clld.web.util.helpers import link, text2html
 from clld.db.meta import DBSession
 from markupsafe import Markup
 from clld.db.models import common as models
@@ -7,7 +8,7 @@ import re
 GLOSS_ABBR_PATTERN = re.compile(
     '(?P<personprefix>1|2|3)?(?P<abbr>[A-Z]+)(?P<personsuffix>1|2|3)?(?=([^a-z]|$))')
 
-def rendered_sentence(sentence, abbrs=None, fmt='long'):
+def rendered_sentence(request, sentence, abbrs=None, fmt='long'):
     """Format a sentence as HTML."""
     if sentence.xhtml:
         return HTML.div(
@@ -62,18 +63,27 @@ def rendered_sentence(sentence, abbrs=None, fmt='long'):
     if sentence.analyzed and sentence.gloss:
         analyzed = sentence.analyzed
         glossed = sentence.gloss
-        for morpheme, gloss in zip(analyzed.split('\t'), glossed.split('\t')):
-            units.append(HTML.div(
-                HTML.div(morpheme, class_='morpheme'),
-                HTML.div(*gloss_with_tooltip(gloss), **{'class': 'gloss'}),
-                class_='gloss-unit'))
-
+        # HTML.div(*[HTML.div(link(request, form.form), class_="morpheme") for form in sentence.forms], class_='object-language'),
+        slices = {sl.index: sl for sl in sentence.forms}
+        for i, (word, gloss) in enumerate(zip(analyzed.split('\t'), glossed.split('\t'))):
+            if i not in slices:
+                units.append(HTML.div(
+                    HTML.div(word),
+                    HTML.div(word, class_='morpheme'),
+                    HTML.div(*gloss_with_tooltip(gloss), **{'class': 'gloss'}),
+                    class_='gloss-unit'))
+            else:
+                units.append(HTML.div(
+                    HTML.div(rendered_form(request, slices[i].form, structure=False)),
+                    HTML.div(rendered_form(request, slices[i].form), class_='morpheme'),
+                    HTML.div(*gloss_with_tooltip(gloss), **{'class': 'gloss'}),
+                    class_='gloss-unit'))
     return HTML.div(
         HTML.div(
             HTML.div(
                 HTML.div(sentence.original_script, class_='original-script')
                 if sentence.original_script else '',
-                HTML.div(literal(sentence.markup_text or sentence.name),
+                HTML.div(sentence.name,
                          class_='object-language'),
                 HTML.div(*units, **{'class': 'gloss-box'}) if units else '',
                 HTML.div(sentence.description, class_='translation')
@@ -84,3 +94,12 @@ def rendered_sentence(sentence, abbrs=None, fmt='long'):
         ),
         class_="sentence-wrapper",
     )
+
+def rendered_form(request, ctx, structure=True):
+    if structure:
+        if ctx.morphs != []:
+            return literal("-".join([link(request, form.morph, label=form.morph.name.strip("-")) for form in ctx.morphs]))
+        else:
+            return literal("&nbsp;")
+    else:
+        return link(request, ctx)
