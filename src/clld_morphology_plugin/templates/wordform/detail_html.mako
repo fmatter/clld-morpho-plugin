@@ -1,5 +1,6 @@
 <%inherit file="../${context.get('request').registry.settings.get('clld.app_template', 'app.mako')}"/>
 <%namespace name="util" file="../util.mako"/>
+<%import clld_morphology_plugin.util as mutil%>
 <%! active_menu_item = "units" %>
 
 
@@ -35,3 +36,15 @@
     </tbody>
 </table>
 
+% if ctx.sentences:
+<h3>${_('Sentences')}</h3>
+<ol>
+    % for a in ctx.sentences:
+    
+    <li>
+        ${mutil.rendered_sentence(request, a.sentence)}
+    </li>
+
+    % endfor
+</ol>
+% endif

@@ -63,21 +63,23 @@ def rendered_sentence(request, sentence, abbrs=None, fmt='long'):
     if sentence.analyzed and sentence.gloss:
         analyzed = sentence.analyzed
         glossed = sentence.gloss
-        # HTML.div(*[HTML.div(link(request, form.form), class_="morpheme") for form in sentence.forms], class_='object-language'),
         slices = {sl.index: sl for sl in sentence.forms}
-        for i, (word, gloss) in enumerate(zip(analyzed.split('\t'), glossed.split('\t'))):
-            if i not in slices:
-                units.append(HTML.div(
-                    HTML.div(word),
-                    HTML.div(word, class_='morpheme'),
-                    HTML.div(*gloss_with_tooltip(gloss), **{'class': 'gloss'}),
-                    class_='gloss-unit'))
-            else:
-                units.append(HTML.div(
-                    HTML.div(rendered_form(request, slices[i].form, structure=False)),
-                    HTML.div(rendered_form(request, slices[i].form), class_='morpheme'),
-                    HTML.div(*gloss_with_tooltip(gloss), **{'class': 'gloss'}),
-                    class_='gloss-unit'))
+        for pwc, (pword, pgloss) in enumerate(zip(analyzed.split('\t'), glossed.split('\t'))):
+            for gwc, (word, gloss) in enumerate(zip(pword.split("="), pgloss.split("="))):
+                i = pwc+gwc
+                print(word, gloss)
+                if i not in slices:
+                    units.append(HTML.div(
+                        HTML.div(word),
+                        HTML.div(word, class_='morpheme'),
+                        HTML.div(*gloss_with_tooltip(gloss), **{'class': 'gloss'}),
+                        class_='gloss-unit'))
+                else:
+                    units.append(HTML.div(
+                        HTML.div(rendered_form(request, slices[i].form, structure=False)),
+                        HTML.div(rendered_form(request, slices[i].form), class_='morpheme'),
+                        HTML.div(*gloss_with_tooltip(gloss), **{'class': 'gloss'}),
+                        class_='gloss-unit'))
     return HTML.div(
         HTML.div(
             HTML.div(
