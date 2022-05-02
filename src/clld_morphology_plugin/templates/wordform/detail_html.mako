@@ -39,12 +39,8 @@
 % if ctx.sentences:
 <h3>${_('Sentences')}</h3>
 <ol>
-    % for a in ctx.sentences:
-    
-    <li>
-        ${mutil.rendered_sentence(request, a.sentence)}
-    </li>
-
-    % endfor
+% for a in ctx.sentences:
+    ${mutil.rendered_sentence(request, a.sentence)}
+% endfor
 </ol>
 % endif

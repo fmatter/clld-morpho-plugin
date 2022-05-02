@@ -22,5 +22,9 @@
     <dt>${_('Language')}:</dt>
     <dd>${h.link(request, ctx.language)}</dd>
 </dl>
+<dl>
+    <dt>${_('Text')}:</dt>
+    <dt>${h.link(request, ctx.text_assocs[0].text)}
+</dl>
 
-${mutil.rendered_sentence(request, ctx)|n}
+${mutil.rendered_sentence(request, ctx, in_context=False)|n}

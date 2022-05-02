@@ -13,7 +13,7 @@ GLOSS_ABBR_PATTERN = re.compile(
 )
 
 
-def rendered_sentence(request, sentence, abbrs=None):
+def rendered_sentence(request, sentence, abbrs=None, label=None, in_context=True, name=None, text_link=True):
     """Format a sentence as HTML."""
     if sentence.xhtml:
         return HTML.div(
@@ -85,7 +85,6 @@ def rendered_sentence(request, sentence, abbrs=None):
                 zip(pword.split("="), pgloss.split("="))
             ):
                 i = pwc + gwc
-                print(word, gloss)
                 if i not in slices:
                     units.append(
                         HTML.div(
@@ -109,24 +108,39 @@ def rendered_sentence(request, sentence, abbrs=None):
                             class_="gloss-unit",
                         )
                     )
-    return HTML.div(
-        HTML.div(
+    if in_context:
+        if label:
+            label_text = HTML.div("("+link(request, sentence, label=label, name = sentence.id)+")")
+        else:
+            label_text = HTML.div("("+link(request, sentence, label=sentence.id, name = sentence.id)+")")
+    else:
+        label_text = ""
+    if text_link:
+        text_ref = link(request,sentence.text_assocs[0].text, label="🔗", url_kw={"_anchor":sentence.id})
+    else:
+        text_ref = ""
+    sentence_content = HTML.div(
             HTML.div(
-                HTML.div(sentence.original_script, class_="original-script")
-                if sentence.original_script
-                else "",
-                HTML.div(sentence.name, class_="object-language"),
-                HTML.div(*units, **{"class": "gloss-box"}) if units else "",
-                HTML.div(sentence.description, class_="translation")
-                if sentence.description
-                else "",
-                class_="body",
+                HTML.a(id=sentence.id),
+                HTML.div(
+                    HTML.div(sentence.original_script, class_="original-script")
+                    if sentence.original_script
+                    else "",
+                    HTML.div(sentence.name, " ", text_ref,class_="object-language"),
+                    HTML.div(*units, **{"class": "gloss-box"}) if units else "",
+                    HTML.div(sentence.description, class_="translation")
+                    if sentence.description
+                    else "",
+                    class_="body",
+                ),
+                class_="sentence",
             ),
-            class_="sentence",
-        ),
-        class_="sentence-wrapper",
-    )
-
+            class_="sentence-wrapper",
+        )
+    if in_context:
+        return HTML.li(sentence_content, class_="example-number")
+    else:
+        return sentence_content
 
 def rendered_form(request, ctx, structure=True):
     if structure:
