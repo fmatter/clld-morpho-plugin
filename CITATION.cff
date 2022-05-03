@@ -1,7 +1,7 @@
 # YAML 1.2
 ---
 cff-version: "1.1.0"
-title: "clld_morphology_plugin"
+title: "clld-morphology-plugin"
 authors:
   -
     family-names: Matter
