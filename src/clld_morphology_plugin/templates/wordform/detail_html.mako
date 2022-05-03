@@ -35,12 +35,3 @@
         </tr>
     </tbody>
 </table>
-
-% if ctx.sentences:
-<h3>${_('Sentences')}</h3>
-<ol>
-% for a in ctx.sentences:
-    ${mutil.rendered_sentence(request, a.sentence)}
-% endfor
-</ol>
-% endif

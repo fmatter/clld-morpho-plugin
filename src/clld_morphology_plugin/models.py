@@ -4,7 +4,6 @@ from clld.db.models.common import Contribution
 from clld.db.models.common import HasSourceMixin
 from clld.db.models.common import IdNameDescriptionMixin
 from clld.db.models.common import Language
-from clld.db.models.common import Sentence
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
@@ -69,12 +68,4 @@ class FormSlice(Base):
     morph_pk = Column(Integer, ForeignKey("morph.pk"))
     form = relationship(Wordform, backref="morphs")
     morph = relationship(Morph, backref="forms")
-    index = Column(Integer)
-
-
-class SentenceSlice(Base):
-    form_pk = Column(Integer, ForeignKey("wordform.pk"))
-    sentence_pk = Column(Integer, ForeignKey("sentence.pk"))
-    form = relationship(Wordform, backref="sentences")
-    sentence = relationship(Sentence, backref="forms")
     index = Column(Integer)

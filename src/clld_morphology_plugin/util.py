@@ -1,11 +1,7 @@
 import re
-from clld.db.meta import DBSession
-from clld.db.models import common as models
 from clld.web.util.helpers import link
 from clld.web.util.htmllib import HTML
 from clld.web.util.htmllib import literal
-from markupsafe import Markup
-from sqlalchemy import or_
 
 
 GLOSS_ABBR_PATTERN = re.compile(
@@ -13,68 +9,7 @@ GLOSS_ABBR_PATTERN = re.compile(
 )
 
 
-def rendered_sentence(request, sentence, abbrs=None, label=None, in_context=True, name=None, text_link=True):
-    """Format a sentence as HTML."""
-    if sentence.xhtml:
-        return HTML.div(
-            HTML.div(Markup(sentence.xhtml), class_="body"), class_="sentence"
-        )
-
-    if abbrs is None:
-        q = DBSession.query(models.GlossAbbreviation).filter(
-            or_(
-                models.GlossAbbreviation.language_pk == sentence.language_pk,
-                models.GlossAbbreviation.language_pk is None,
-            )
-        )
-        abbrs = dict((g.id, g.name) for g in q)
-
-    def gloss_with_tooltip(gloss):
-        person_map = {
-            "1": "first person",
-            "2": "second person",
-            "3": "third person",
-        }
-
-        res = []
-        end = 0
-        for match in GLOSS_ABBR_PATTERN.finditer(gloss):
-            if match.start() > end:
-                res.append(gloss[end : match.start()])
-
-            abbr = match.group("abbr")
-            if abbr in abbrs:
-                explanation = abbrs[abbr]
-                if match.group("personprefix"):
-                    explanation = (
-                        f"{person_map[match.group('personprefix')]} {explanation}"
-                    )
-
-                if match.group("personsuffix"):
-                    explanation = (
-                        f"{explanation} {person_map[match.group('personsuffix')]}"
-                    )
-
-                res.append(
-                    HTML.span(
-                        HTML.span(
-                            gloss[match.start() : match.end()].lower(), class_="sc"
-                        ),
-                        **{"data-hint": explanation, "class": "hint--bottom"},
-                    )
-                )
-            else:
-                res.append(
-                    (match.group("personprefix") or "")
-                    + abbr  # noqa: W504
-                    + (match.group("personsuffix") or "")  # noqa: W504
-                )
-
-            end = match.end()
-
-        res.append(gloss[end:])
-        return filter(None, res)
-
+def rendered_gloss_units(request, sentence):
     units = []
     if sentence.analyzed and sentence.gloss:
         slices = {sl.index: sl for sl in sentence.forms}
@@ -90,7 +25,7 @@ def rendered_sentence(request, sentence, abbrs=None, label=None, in_context=True
                         HTML.div(
                             HTML.div(word),
                             HTML.div(word, class_="morpheme"),
-                            HTML.div(*gloss_with_tooltip(gloss), **{"class": "gloss"}),
+                            HTML.div(gloss, **{"class": "gloss"}),
                             class_="gloss-unit",
                         )
                     )
@@ -104,43 +39,12 @@ def rendered_sentence(request, sentence, abbrs=None, label=None, in_context=True
                                 rendered_form(request, slices[i].form),
                                 class_="morpheme",
                             ),
-                            HTML.div(*gloss_with_tooltip(gloss), **{"class": "gloss"}),
+                            HTML.div(gloss, **{"class": "gloss"}),
                             class_="gloss-unit",
                         )
                     )
-    if in_context:
-        if label:
-            label_text = HTML.div("("+link(request, sentence, label=label, name = sentence.id)+")")
-        else:
-            label_text = HTML.div("("+link(request, sentence, label=sentence.id, name = sentence.id)+")")
-    else:
-        label_text = ""
-    if text_link:
-        text_ref = link(request,sentence.text_assocs[0].text, label="🔗", url_kw={"_anchor":sentence.id})
-    else:
-        text_ref = ""
-    sentence_content = HTML.div(
-            HTML.div(
-                HTML.a(id=sentence.id),
-                HTML.div(
-                    HTML.div(sentence.original_script, class_="original-script")
-                    if sentence.original_script
-                    else "",
-                    HTML.div(sentence.name, " ", text_ref,class_="object-language"),
-                    HTML.div(*units, **{"class": "gloss-box"}) if units else "",
-                    HTML.div(sentence.description, class_="translation")
-                    if sentence.description
-                    else "",
-                    class_="body",
-                ),
-                class_="sentence",
-            ),
-            class_="sentence-wrapper",
-        )
-    if in_context:
-        return HTML.li(sentence_content, class_="example-number")
-    else:
-        return sentence_content
+    return units
+
 
 def rendered_form(request, ctx, structure=True):
     if structure:
