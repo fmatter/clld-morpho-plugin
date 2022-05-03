@@ -1,6 +1,9 @@
-# clld_morphology_plugin
+# clld-morphology-plugin
 
-A plugin for modelling morphology in CLLD apps. So far based on word forms, morphemes, and morphs.
+A plugin for modelling morphology in CLLD apps. Models:
+* word forms (consist of morphs)
+* morphs (are parts of word forms, belong to morphemes)
+* morphemes (have different [allo]morphs)
 
 ![License](https://img.shields.io/github/license/fmatter/clld-morphology-plugin)
 [![Documentation Status](https://readthedocs.org/projects/clld-morphology-plugin/badge/?version=latest)](https://clld-morphology-plugin.readthedocs.io/en/latest/?badge=latest)
