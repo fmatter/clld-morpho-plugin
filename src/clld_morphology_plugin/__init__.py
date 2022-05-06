@@ -1,5 +1,6 @@
 from clld_morphology_plugin import interfaces
 from clld_morphology_plugin import models
+from clld_morphology_plugin import datatables
 
 
 __author__ = "Florian Matter"
@@ -25,3 +26,7 @@ def includeme(config):
     config.register_resource(
         "wordform", models.Wordform, interfaces.IWordform, with_index=True
     )
+
+    config.register_datatable("meanings", datatables.Meanings)
+    config.register_datatable("morphs", datatables.Morphs)
+    config.register_datatable("morphemes", datatables.Morphemes)

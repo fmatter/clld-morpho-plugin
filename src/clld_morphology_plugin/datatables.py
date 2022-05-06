@@ -39,7 +39,6 @@ class Morphemes(DataTable):
     __constraints__ = [Language]
 
     def base_query(self, query):
-        print(query)
         query = query.join(Language).options(joinedload(models.Morpheme.language))
 
         if self.language:
@@ -61,8 +60,3 @@ class Meanings(DataTable):
     def col_defs(self):
         return [LinkCol(self, "name")]
 
-
-def includeme(config):
-    config.register_datatable("meanings", Meanings)
-    config.register_datatable("morphs", Morphs)
-    config.register_datatable("morphemes", Morphemes)
