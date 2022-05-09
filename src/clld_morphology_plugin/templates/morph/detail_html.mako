@@ -1,5 +1,12 @@
 <%inherit file="../${context.get('request').registry.settings.get('clld.app_template', 'app.mako')}"/>
 <%namespace name="util" file="../util.mako"/>
+<link rel="stylesheet" href="${req.static_url('clld_morphology_plugin:static/clld-morphology.css')}"/>
+
+% try:
+    <%from clld_corpus_plugin.util import rendered_sentence%>
+% except:
+    <% rendered_sentence = h.rendered_sentence %>
+% endtry 
 <%! active_menu_item = "morphs" %>
 
 
@@ -71,8 +78,27 @@ ${h.link(request, contributor)}
     ${h.link(request, s.form)}
 </li>
 % endfor
-</ol>    
+</ol>
+% if "sentence_assocs" in dir(ctx.forms[0].form):
+<h3>${_('Sentences')}</h3>
+<ol>
+    % for form_slice in ctx.forms:
+        % for s in form_slice.form.sentence_assocs:
+            ${rendered_sentence(request, s.sentence, sentence_link=True)}
+        % endfor
+    % endfor
+</ol>
 % endif
+% endif
+
+
+
+<script>
+var highlight_targets = document.getElementsByName("${ctx.id}");
+for (index = 0; index < highlight_targets.length; index++) {
+    highlight_targets[index].classList.add("morpho-highlight");
+}
+</script>
 
 % if sentence_assocs in dir(ctx):
 <h3>${_('Sentences')}</h3>

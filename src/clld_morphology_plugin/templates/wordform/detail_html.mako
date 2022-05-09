@@ -1,6 +1,10 @@
 <%inherit file="../${context.get('request').registry.settings.get('clld.app_template', 'app.mako')}"/>
 <%namespace name="util" file="../util.mako"/>
-<%import clld_morphology_plugin.util as mutil%>
+% try:
+    <%from clld_corpus_plugin.util import rendered_sentence%>
+% except:
+    <% rendered_sentence = h.rendered_sentence %>
+% endtry
 <%! active_menu_item = "units" %>
 
 
@@ -35,3 +39,16 @@
         </tr>
     </tbody>
 </table>
+
+% if sentence_assocs in dir(ctx):
+<h3>${_('Sentences')}</h3>
+<ol>
+    % for a in ctx.sentence_assocs:
+    
+    <li>
+        ${rendered_sentence(a.example)}
+    </li>
+
+    % endfor
+</ol>
+% endif

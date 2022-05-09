@@ -16,14 +16,24 @@ def rendered_gloss_units(request, sentence):
         for pwc, (pword, pgloss) in enumerate(
             zip(sentence.analyzed.split("\t"), sentence.gloss.split("\t"))
         ):
-            for gwc, (word, gloss) in enumerate(
-                zip(pword.split("="), pgloss.split("="))
-            ):
-                i = pwc + gwc
+            gwc = 0
+            prefix = ""
+            shift = 0
+            g_words = re.split("(=)",pword)
+            g_glosses = re.split("(=)",pgloss)
+            while gwc < len(g_words):
+                word = g_words[gwc]
+                gloss = g_glosses[gwc]
+                i = pwc + gwc + shift
+                gwc += 1
+                if word == "=":
+                    prefix = "="
+                    shift -= 1
+                    continue
                 if i not in slices:
                     units.append(
                         HTML.div(
-                            HTML.div(word),
+                            HTML.div(prefix+word),
                             HTML.div(word, class_="morpheme"),
                             HTML.div(gloss, **{"class": "gloss"}),
                             class_="gloss-unit",
@@ -33,7 +43,7 @@ def rendered_gloss_units(request, sentence):
                     units.append(
                         HTML.div(
                             HTML.div(
-                                rendered_form(request, slices[i].form, structure=False)
+                                prefix+rendered_form(request, slices[i].form, structure=False), name=slices[i].form.id
                             ),
                             HTML.div(
                                 rendered_form(request, slices[i].form),
@@ -52,7 +62,7 @@ def rendered_form(request, ctx, structure=True):
             return literal(
                 "-".join(
                     [
-                        link(request, form.morph, label=form.morph.name.strip("-"))
+                        link(request, form.morph, label=form.morph.name.strip("-"), name=form.morph.id)
                         for form in ctx.morphs
                     ]
                 )
