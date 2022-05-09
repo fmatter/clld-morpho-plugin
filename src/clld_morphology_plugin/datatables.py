@@ -59,4 +59,3 @@ class Morphemes(DataTable):
 class Meanings(DataTable):
     def col_defs(self):
         return [LinkCol(self, "name")]
-
