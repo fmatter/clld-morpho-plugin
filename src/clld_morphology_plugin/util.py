@@ -12,47 +12,52 @@ GLOSS_ABBR_PATTERN = re.compile(
 def rendered_gloss_units(request, sentence):
     units = []
     if sentence.analyzed and sentence.gloss:
+        # g-words associated with this sentence
         slices = {sl.index: sl for sl in sentence.forms}
+        g_shift = 0 # to keep up to date with how many g-words there are in total
         for pwc, (pword, pgloss) in enumerate(
             zip(sentence.analyzed.split("\t"), sentence.gloss.split("\t"))
         ):
-            gwc = 0
-            prefix = ""
-            shift = 0
-            g_words = re.split("(=)",pword)
-            g_glosses = re.split("(=)",pgloss)
-            while gwc < len(g_words):
-                word = g_words[gwc]
-                gloss = g_glosses[gwc]
-                i = pwc + gwc + shift
-                gwc += 1
-                if word == "=":
-                    prefix = "="
-                    shift -= 1
-                    continue
+            g_words = []
+            morphs = []
+            glosses = []
+            for gwc, (word, gloss) in enumerate(
+                zip(pword.split("="), pgloss.split("="))
+            ):
+                i = pwc + gwc + g_shift
+                if gwc > 0:
+                    g_shift += 1
+                    for glosslist in [g_words, morphs, glosses]:
+                        glosslist.append("=")
                 if i not in slices:
-                    units.append(
-                        HTML.div(
-                            HTML.div(prefix+word),
-                            HTML.div(word, class_="morpheme"),
-                            HTML.div(gloss, **{"class": "gloss"}),
-                            class_="gloss-unit",
-                        )
-                    )
+                    g_words.append(HTML.span(word))
+                    morphs.append(HTML.span(word, class_="morpheme"))
+                    glosses.append(HTML.span(gloss))
                 else:
-                    units.append(
-                        HTML.div(
-                            HTML.div(
-                                prefix+rendered_form(request, slices[i].form, structure=False), name=slices[i].form.id
-                            ),
-                            HTML.div(
-                                rendered_form(request, slices[i].form),
-                                class_="morpheme",
-                            ),
-                            HTML.div(gloss, **{"class": "gloss"}),
-                            class_="gloss-unit",
+                    g_words.append(
+                        HTML.span(
+                            rendered_form(request, slices[i].form, structure=False),
+                            name=slices[i].form.id,
                         )
                     )
+                    morphs.append(
+                        HTML.span(
+                            rendered_form(request, slices[i].form),
+                            class_="morpheme",
+                        )
+                    )
+                    glosses.append(HTML.span(gloss, **{"class": "gloss"}))
+            units.append(
+                HTML.div(
+                    HTML.div(*g_words),
+                    HTML.div(
+                        *morphs,
+                        class_="morpheme",
+                    ),
+                    HTML.div(*glosses, **{"class": "gloss"}),
+                    class_="gloss-unit",
+                )
+            )
     return units
 
 
@@ -62,7 +67,12 @@ def rendered_form(request, ctx, structure=True):
             return literal(
                 "-".join(
                     [
-                        link(request, form.morph, label=form.morph.name.strip("-"), name=form.morph.id)
+                        link(
+                            request,
+                            form.morph,
+                            label=form.morph.name.strip("-"),
+                            name=form.morph.id,
+                        )
                         for form in ctx.morphs
                     ]
                 )
