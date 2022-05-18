@@ -1,16 +1,25 @@
 <%inherit file="../${context.get('request').registry.settings.get('clld.app_template', 'app.mako')}"/>
 <%namespace name="util" file="../util.mako"/>
+<link rel="stylesheet" href="${req.static_url('clld_morphology_plugin:static/clld-morphology.css')}"/>
+<%import clld_morphology_plugin.util as mutil%>
 <%! active_menu_item = "meanings" %>
 
-<h2>${_('Meaning')} ${ctx.id}</h2>
+<h2>${_('Meaning')} ‘${ctx.name}’</h2>
 
-<%util:table items="${ctx.forms}" args="item" options="${dict(bInfo=True)}">
-    <%def name="head()">
-        <th>Form</th>
-        <th>Language</th>
-        <th>Contribution</th>
-    </%def>
-    <td>${h.link(request, item.form)}</td>
-    <td>${h.link(request, item.form.language)}</td>
-    <td>${h.link(request, item.form.contribution)}</td>
-</%util:table>
+%if ctx.forms:
+    <h3>${_('Forms')}</h3>
+    <ol>
+        % for form in ctx.forms:
+            <li>${h.link(request, form.form)}</li>
+    % endfor
+    </ol>
+%endif
+
+% if ctx.morphemes:
+    <h3>${_('Morphemes')}</h3>
+    <ol>
+        % for m in ctx.morphemes:
+            <li>${h.link(request, m.morpheme)}</li>
+        % endfor
+    </ol>
+%endif

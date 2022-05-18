@@ -31,7 +31,6 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
 
     contribution_pk = Column(Integer, ForeignKey("contribution.pk"))
     contribution = relationship(Contribution, backref="morphemes")
-    meaning = Column(String)
 
 
 @implementer(IMorph)
@@ -47,6 +46,13 @@ class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
     morpheme = relationship(Morpheme, innerjoin=True, backref="allomorphs")
 
 
+class MorphemeMeaning(Base):
+    id = Column(String, unique=True)
+    morpheme_pk = Column(Integer, ForeignKey("morpheme.pk"), nullable=False)
+    meaning_pk = Column(Integer, ForeignKey("meaning.pk"), nullable=False)
+    morpheme = relationship(Morpheme, innerjoin=True, backref="meanings")
+    meaning = relationship(Meaning, innerjoin=True, backref="morphemes")
+
 @implementer(IWordform)
 class Wordform(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
     __table_args__ = (UniqueConstraint("language_pk", "id"),)
@@ -57,15 +63,24 @@ class Wordform(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
     contribution_pk = Column(Integer, ForeignKey("contribution.pk"))
     contribution = relationship(Contribution, backref="wordforms")
 
-    meaning = Column(String)
     segmented = Column(String)
     # meaning = relationship(Meaning, innerjoin=True, backref="wordforms")
     # meaning_pk = Column(Integer, ForeignKey("meaning.pk"))
 
+class FormMeaning(Base):
+    id = Column(String, unique=True)
+    form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
+    meaning_pk = Column(Integer, ForeignKey("meaning.pk"), nullable=False)
+    form = relationship(Wordform, innerjoin=True, backref="meanings")
+    meaning = relationship(Meaning, innerjoin=True, backref="forms")
 
 class FormSlice(Base):
     form_pk = Column(Integer, ForeignKey("wordform.pk"))
     morph_pk = Column(Integer, ForeignKey("morph.pk"))
+    morpheme_meaning_pk = Column(Integer, ForeignKey("morphememeaning.pk"))
+    form_meaning_pk = Column(Integer, ForeignKey("formmeaning.pk"))
     form = relationship(Wordform, backref="morphs")
     morph = relationship(Morph, backref="forms")
     index = Column(Integer)
+    form_meaning = relationship(FormMeaning)
+    morpheme_meaning = relationship(MorphemeMeaning, backref="morph_tokens")

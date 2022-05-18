@@ -13,6 +13,25 @@ class DescriptionLinkCol(LinkCol):
     def get_attrs(self, item):
         return {"label": item.description}
 
+class Wordforms(DataTable):
+
+    __constraints__ = [Language]
+
+    def base_query(self, query):
+        query = query.join(Language).options(joinedload(models.Wordform.language))
+
+        if self.language:
+            return query.filter(models.Wordform.language == self.language)
+        return query
+
+    def col_defs(self):
+        return [
+            LinkCol(self, "name"),
+            Col(self, "description"),
+            LinkCol(
+                self, "language", model_col=Language.name, get_obj=lambda i: i.language
+            ),
+        ]
 
 class Morphs(DataTable):
 
@@ -28,7 +47,7 @@ class Morphs(DataTable):
     def col_defs(self):
         return [
             LinkCol(self, "name"),
-            DescriptionLinkCol(self, "description"),
+            Col(self, "description"),
             LinkCol(
                 self, "language", model_col=Language.name, get_obj=lambda i: i.language
             ),
@@ -48,8 +67,7 @@ class Morphemes(DataTable):
     def col_defs(self):
         return [
             LinkCol(self, "name"),
-            Col(self, "meaning"),
-            DescriptionLinkCol(self, "description"),
+            Col(self, "description"),
             LinkCol(
                 self, "language", model_col=Language.name, get_obj=lambda i: i.language
             ),

@@ -1,5 +1,13 @@
 <%inherit file="../${context.get('request').registry.settings.get('clld.app_template', 'app.mako')}"/>
 <%namespace name="util" file="../util.mako"/>
+<%namespace name="mutil" file="../morphology_util.mako"/>
+<link rel="stylesheet" href="${req.static_url('clld_morphology_plugin:static/clld-morphology.css')}"/>
+% try:
+    <%from clld_corpus_plugin.util import rendered_sentence%>
+% except:
+    <% rendered_sentence = h.rendered_sentence %>
+% endtry 
+
 <%! active_menu_item = "morphemes" %>
 
 
@@ -32,32 +40,15 @@
             </td>
         </tr>
         <tr>
-            <td> Meaning:</td>
+           <td> Meanings:</td>
             <td>
-                ${ctx.meaning}
-            </td>
-        </tr>
-        % if cognates in dir(ctx):
-        <tr>
-            <td>Cognate set(s):</td>
-            <td>
-              <%
-                cogsets = []
-              %>
-                    % for c in ctx.cognates:
-                        % if c.cognateset not in cogsets:
-                            <%
-                                cogsets.append(c.cognateset)
-                            %>
-                        % endif
+                <ol>
+                    % for meaning in ctx.meanings:
+                        <li> ${h.link(request, meaning.meaning)} </li>
                     % endfor
-                    ${h.text2html("*"+"+".join([h.link(request, c) for c in cogsets]))}
+                </ol>
             </td>
-            % for c in ctx.cognates:
-                ${type(c.cognateset)}
-            % endfor
         </tr>
-        % endif
         % if contribution in dir(ctx):
         <tr>
             <td> Contribution:</td>
@@ -72,15 +63,38 @@ ${h.link(request, contributor)}
     </tbody>
 </table>
 
-% if sentence_assocs in dir(ctx):
-<h3>${_('Sentences')}</h3>
-<ol>
-    % for a in ctx.sentence_assocs:
-    
-    <li>
-        ${h.rendered_sentence(a.example)}
-    </li>
 
+% if len(ctx.meanings[0].morph_tokens) > 0:
+    <% meaning_sentences = {} %>
+    <h3>${_('Word forms')}</h3>
+    % for meaning in ctx.meanings:
+        <%meaning_sentences[meaning] = []%>
+        % if meaning.morph_tokens:
+            <h4> As ${h.link(request, meaning.meaning)}:</h4>
+            <ol>
+                % for s in meaning.morph_tokens:
+                    <li>${h.link(request, s.form)}</li>
+                    <%meaning_sentences[meaning].extend(s.form.sentence_assocs)%>
+                % endfor
+            </ol>
+        % endif
     % endfor
-</ol>
+    <h3>${_('Sentences')}</h3>
+    % for morpheme_meaning, sentences in meaning_sentences.items():
+        <div id=${morpheme_meaning.id}>
+            <h4> As ${h.link(request, morpheme_meaning.meaning)}:</h4>
+            <ol class="example">
+                % for sentence in sentences:
+                        ${rendered_sentence(request, sentence.sentence, sentence_link=True)}
+                % endfor
+            </ol>
+        </div>
+        <script>
+            var highlight_div = document.getElementById("${morpheme_meaning.id}");
+            var highlight_targets = highlight_div.querySelectorAll("*[name='${morpheme_meaning.id}']")
+            for (index = 0; index < highlight_targets.length; index++) {
+                highlight_targets[index].classList.add("morpho-highlight");
+            }
+        </script>
+    % endfor
 % endif

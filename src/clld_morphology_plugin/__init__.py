@@ -33,4 +33,5 @@ def includeme(config):
 
     config.register_datatable("meanings", datatables.Meanings)
     config.register_datatable("morphs", datatables.Morphs)
+    config.register_datatable("wordforms", datatables.Wordforms)
     config.register_datatable("morphemes", datatables.Morphemes)

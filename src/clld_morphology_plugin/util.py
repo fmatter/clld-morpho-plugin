@@ -36,13 +36,13 @@ def rendered_gloss_units(request, sentence):
                 else:
                     g_words.append(
                         HTML.span(
-                            rendered_form(request, slices[i].form, structure=False),
+                            rendered_form(request, slices[i], structure=False),
                             name=slices[i].form.id,
                         )
                     )
                     morphs.append(
                         HTML.span(
-                            rendered_form(request, slices[i].form),
+                            rendered_form(request, slices[i]),
                             class_="morpheme",
                         )
                     )
@@ -61,21 +61,22 @@ def rendered_gloss_units(request, sentence):
     return units
 
 
-def rendered_form(request, ctx, structure=True):
+def rendered_form(request, example_slice, structure=True):
+    form = example_slice.form
     if structure:
-        if ctx.morphs != []:
+        if form.morphs != []:
             return literal(
                 "-".join(
                     [
                         link(
                             request,
-                            form.morph,
-                            label=form.morph.name.strip("-"),
-                            name=form.morph.id,
+                            form_slice.morph,
+                            label=form_slice.morph.name.strip("-"),
+                            name=form_slice.morpheme_meaning.id,
                         )
-                        for form in ctx.morphs
+                        for form_slice in form.morphs if form_slice.form_meaning.meaning == example_slice.form_meaning.meaning
                     ]
                 )
             )
         return literal("&nbsp;")
-    return link(request, ctx)
+    return link(request, form)
