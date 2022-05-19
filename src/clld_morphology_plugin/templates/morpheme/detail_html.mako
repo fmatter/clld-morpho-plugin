@@ -64,37 +64,52 @@ ${h.link(request, contributor)}
 </table>
 
 
-% if len(ctx.meanings[0].morph_tokens) > 0:
+% if len(ctx.allomorphs[0].forms) > 0:
+    <% meaning_forms = {} %>
     <% meaning_sentences = {} %>
     <h3>${_('Word forms')}</h3>
-    % for meaning in ctx.meanings:
-        <%meaning_sentences[meaning] = []%>
-        % if meaning.morph_tokens:
-            <h4> As ${h.link(request, meaning.meaning)}:</h4>
-            <ol>
-                % for s in meaning.morph_tokens:
-                    <li>${h.link(request, s.form)}</li>
-                    <%meaning_sentences[meaning].extend(s.form.sentence_assocs)%>
-                % endfor
-            </ol>
-        % endif
+    <ol>
+        % for morph in ctx.allomorphs:
+            % for form_slice in morph.forms:
+                % if not form_slice.morpheme_meaning:
+                    <li>${h.link(request, form_slice.form)}</li>
+                % else:
+                    <% meaning_forms.setdefault(form_slice.morpheme_meaning,    [])%>
+                    <% meaning_forms[form_slice.morpheme_meaning].append(   form_slice.form) %>
+                    % if getattr(form_slice.form_meaning, "form_tokens", None):
+                        <% meaning_sentences.setdefault(    form_slice.morpheme_meaning, [])%>
+                        <%meaning_sentences[form_slice.morpheme_meaning].extend(    form_slice.form_meaning.form_tokens)%>
+                    % endif
+                % endif
+            % endfor
+        % endfor
+    </ol>
+    % for meaning, forms in meaning_forms.items():
+        <h5> As ‘${h.link(request, meaning.meaning)}’:</h5>
+        <ol>
+            % for form in forms:
+                <li>${h.link(request, form)}</li>
+            % endfor
+        </ol>
     % endfor
-    <h3>${_('Sentences')}</h3>
-    % for morpheme_meaning, sentences in meaning_sentences.items():
-        <div id=${morpheme_meaning.id}>
-            <h4> As ${h.link(request, morpheme_meaning.meaning)}:</h4>
-            <ol class="example">
-                % for sentence in sentences:
-                        ${rendered_sentence(request, sentence.sentence, sentence_link=True)}
-                % endfor
-            </ol>
-        </div>
-        <script>
-            var highlight_div = document.getElementById("${morpheme_meaning.id}");
-            var highlight_targets = highlight_div.querySelectorAll("*[name='${morpheme_meaning.id}']")
-            for (index = 0; index < highlight_targets.length; index++) {
-                highlight_targets[index].classList.add("morpho-highlight");
-            }
-        </script>
-    % endfor
+    % if len(meaning_sentences) > 0:
+        <h3>${_('Sentences')}</h3>
+        % for morpheme_meaning, sentences in meaning_sentences.items():
+            <div id=${morpheme_meaning.id}>
+                <h4> As ‘${h.link(request, morpheme_meaning.meaning)}’:</h4>
+                <ol class="example">
+                    % for sentence in sentences:
+                            ${rendered_sentence(request, sentence.sentence, sentence_link=True)}
+                    % endfor
+                </ol>
+            </div>
+            <script>
+                var highlight_div = document.getElementById("${morpheme_meaning.id}");
+                var highlight_targets = highlight_div.querySelectorAll("*[name='${morpheme_meaning.id}']")
+                for (index = 0; index < highlight_targets.length; index++) {
+                    highlight_targets[index].classList.add("morpho-highlight");
+                }
+            </script>
+        % endfor
+    % endif
 % endif
