@@ -45,15 +45,17 @@
     </tbody>
 </table>
 
-<h3>${_('Sentences')}</h3>
-% for form_meaning in ctx.meanings:
-    <h4>‘${h.link(request, form_meaning.meaning)}’:</h4>
-    <ol class="example">
-        % for form_token in form_meaning.form_tokens:
-            ${rendered_sentence(request, form_token.sentence,     sentence_link=True)}
-        % endfor
-    </ol>
-% endfor
+% if getattr(ctx.meanings[0], "form_tokens", None):
+    <h3>${_('Sentences')}</h3>
+    % for form_meaning in ctx.meanings:
+        <h4>‘${h.link(request, form_meaning.meaning)}’:</h4>
+        <ol class="example">
+            % for form_token in form_meaning.form_tokens:
+                ${rendered_sentence(request, form_token.sentence,       sentence_link=True)}
+            % endfor
+        </ol>
+    % endfor
+% endif
 
 <script>
 var highlight_targets = document.getElementsByName("${ctx.id}");
