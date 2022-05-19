@@ -72,7 +72,7 @@ def rendered_form(request, example_slice, structure=True):
                             request,
                             form_slice.morph,
                             label=form_slice.morph.name.strip("-"),
-                            name=form_slice.morpheme_meaning.id,
+                            name=form_slice.morph.id+"-"+form_slice.morpheme_meaning.id,
                         )
                         for form_slice in form.morphs if form_slice.form_meaning.meaning == example_slice.form_meaning.meaning
                     ]

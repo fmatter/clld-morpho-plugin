@@ -105,7 +105,7 @@ ${h.link(request, contributor)}
             </div>
             <script>
                 var highlight_div = document.getElementById("${morpheme_meaning.id}");
-                var highlight_targets = highlight_div.querySelectorAll("*[name='${morpheme_meaning.id}']")
+                var highlight_targets = highlight_div.querySelectorAll("*[name*='${morpheme_meaning.id}']")
                 for (index = 0; index < highlight_targets.length; index++) {
                     highlight_targets[index].classList.add("morpho-highlight");
                 }

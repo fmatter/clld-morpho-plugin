@@ -107,13 +107,13 @@ ${h.link(request, contributor)}
             <h4> As ‘${h.link(request, morpheme_meaning.meaning)}’:</h4>
                 <ol class="example">
                     % for sentence in sentences:
-                        ${rendered_sentence(request, sentence.sentence,     sentence_link=True)}
+                        ${rendered_sentence(request, sentence.sentence, sentence_link=True)}
                     % endfor
                 </ol>
         </div>
         <script>
         var highlight_div = document.getElementById("${morpheme_meaning.id}");
-        var highlight_targets =     highlight_div.querySelectorAll("*[name='${morpheme_meaning.id}']")
+        var highlight_targets =     highlight_div.querySelectorAll("*[name='${ctx.id}-${morpheme_meaning.id}']")
         for (index = 0; index < highlight_targets.length; index++) {
             highlight_targets[index].classList.add("morpho-highlight");
         }
