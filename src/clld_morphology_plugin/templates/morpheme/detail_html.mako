@@ -44,7 +44,7 @@
             <td>
                 <ol>
                     % for meaning in ctx.meanings:
-                        <li> ${h.link(request, meaning.meaning)} </li>
+                        <li> ‘${h.link(request, meaning.meaning)}’ </li>
                     % endfor
                 </ol>
             </td>

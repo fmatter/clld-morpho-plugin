@@ -34,7 +34,7 @@
             <td>
                 <ol>
                     % for meaning in ctx.morpheme.meanings:
-                        <li> ${h.link(request, meaning.meaning)} </li>
+                        <li> ‘${h.link(request, meaning.meaning)}’ </li>
                     % endfor
                 </ol>
             </td>
