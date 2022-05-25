@@ -12,6 +12,7 @@
 <%doc><h2>${_('Form')} ${ctx.name} (${h.link(request, ctx.language)})</h2>
 </%doc>
 
+
 <h3>${_('Form')} <i>${ctx.name}</i></h3>
 
 <table class="table table-nonfluid">
@@ -38,12 +39,25 @@
                 </ol>
             </td>
         </tr>
+        % if getattr(ctx, "segments", None):
+            <tr>
+                <td>Segments:</td>
+                <td>
+                % for segment in ctx.segments:
+                ${h.link(request, segment.phoneme)}
+                    % endfor</td>
+            </tr>
+        % endif
         <tr>
             <td>Language:</td>
             <td>${h.link(request, ctx.language)}</td>
         </tr>
     </tbody>
 </table>
+
+% if ctx.audio:
+    <audio controls="controls"><source src="/audio/${ctx.audio}" type="audio/x-wav"></source></audio>
+% endif 
 
 % if getattr(ctx.meanings[0], "form_tokens", None):
     <h3>${_('Sentences')}</h3>
