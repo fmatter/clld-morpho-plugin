@@ -7,10 +7,10 @@ authors:
     family-names: Matter
     given-names: Florian
     orcid: "https://orcid.org/0000-0002-2545-5154"
-version: "0.0.2.dev"
+version: "0.0.2"
+date-released: "2022-05-27"
 repository-code: "https://github.com/fmatter/clld-morphology-plugin"
 keywords:
   - A plugin for modelling morphology in CLLD apps. So far based on word forms, morphemes, and morphs.
-  - 1
 message: "If you use this software, please cite it using these metadata."
 license: Apache-2.0
