@@ -12,9 +12,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [0.0.2] - 2022-05-27
+
+### Added
+* polysemy
+* highlighting
+* corresponding CLDF table metadata
+* wordform audio
+
+### Removed
+
+### Changed
+* example rendering, now with g-words
+
 ## [0.0.1] - 2022-05-02
 
 * Initial release
 
-[Unreleased]: https://github.com/fmatter/clld-morphology-plugin/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/fmatter/clld-morphology-plugin/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/fmatter/clld-morphology-plugin/releases/tag/v0.0.2
 [0.0.1]: https://github.com/fmatter/clld-morphology-plugin/releases/tag/v0.0.1
