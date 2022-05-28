@@ -104,7 +104,10 @@ ${h.link(request, contributor)}
         <h3>${_('Sentences')}</h3>
         % for morpheme_meaning, sentences in meaning_sentences.items():
         <div id=${morpheme_meaning.id}>
-            <h4> As ‘${h.link(request, morpheme_meaning.meaning)}’:</h4>
+            <h4> As ‘${h.link(request, morpheme_meaning.meaning)}’:</h4> <button type="button" class="btn btn-primary" onclick="copyIDs('${morpheme_meaning.id}-ids')">Copy IDs</button>
+
+            <code class="id_list" id=${morpheme_meaning.id}-ids>${" ".join([x.sentence.id for x in sentences])}</code>
+
                 <ol class="example">
                     % for sentence in sentences:
                         ${rendered_sentence(request, sentence.sentence, sentence_link=True)}
@@ -122,3 +125,4 @@ ${h.link(request, contributor)}
     % endif
 % endif
 
+<script src="${req.static_url('clld_morphology_plugin:static/clld-morphology.js')}"><script>
