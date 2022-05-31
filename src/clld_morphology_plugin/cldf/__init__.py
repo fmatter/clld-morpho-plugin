@@ -9,3 +9,4 @@ cldf_path = files("clld_morphology_plugin") / "cldf"
 FormSlices = jsonlib.load(cldf_path / f"FormSlices-metadata.json")
 MorphsetTable = jsonlib.load(cldf_path / f"MorphsetTable-metadata.json")
 MorphTable = jsonlib.load(cldf_path / f"MorphTable-metadata.json")
+POSTable = jsonlib.load(cldf_path / f"POSTable-metadata.json")

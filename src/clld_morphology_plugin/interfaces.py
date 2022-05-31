@@ -23,3 +23,7 @@ class IWordform(Interface):
     """
     form interface
     """
+class IPOS(Interface):
+    """
+    part of speech interface
+    """

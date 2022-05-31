@@ -28,9 +28,13 @@ def includeme(config):
         "meaning", models.Meaning, interfaces.IMeaning, with_index=True
     )
     config.register_resource(
+        "pos", models.POS, interfaces.IPOS, with_index=True
+    )
+    config.register_resource(
         "wordform", models.Wordform, interfaces.IWordform, with_index=True
     )
 
+    config.register_datatable("pos", datatables.POSs)
     config.register_datatable("meanings", datatables.Meanings)
     config.register_datatable("morphs", datatables.Morphs)
     config.register_datatable("wordforms", datatables.Wordforms)

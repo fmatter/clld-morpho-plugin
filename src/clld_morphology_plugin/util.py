@@ -21,6 +21,7 @@ def rendered_gloss_units(request, sentence):
             g_words = []
             morphs = []
             glosses = []
+            posses = []
             for gwc, (word, gloss) in enumerate(
                 zip(pword.split("="), pgloss.split("="))
             ):
@@ -33,6 +34,7 @@ def rendered_gloss_units(request, sentence):
                     g_words.append(HTML.span(word))
                     morphs.append(HTML.span(word, class_="morpheme"))
                     glosses.append(HTML.span(gloss))
+                    posses.append(HTML.span())
                 else:
                     g_words.append(
                         HTML.span(
@@ -47,6 +49,12 @@ def rendered_gloss_units(request, sentence):
                         )
                     )
                     glosses.append(HTML.span(gloss, **{"class": "gloss"}))
+                    posses.append(
+                                  HTML.span(
+                                            link(request, slices[i].form.pos, label=slices[i].form.pos.id),
+                                            **{"class": "pos"}
+                                            )
+                                  )
             units.append(
                 HTML.div(
                     HTML.div(*g_words),
@@ -55,6 +63,7 @@ def rendered_gloss_units(request, sentence):
                         class_="morpheme",
                     ),
                     HTML.div(*glosses, **{"class": "gloss"}),
+                    HTML.div(*posses),
                     class_="gloss-unit",
                 )
             )

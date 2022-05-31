@@ -39,6 +39,14 @@
                 </ol>
             </td>
         </tr>
+        % if ctx.pos:
+        <tr>
+            <td>Part of speech:</td>
+            <td>
+                ${h.link(request, ctx.pos)}
+            </td>
+        </tr>
+        % endif
         % if getattr(ctx, "segments", None):
             <tr>
                 <td>Segments:</td>

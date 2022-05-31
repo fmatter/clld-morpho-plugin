@@ -35,10 +35,11 @@ class AudioCol(Col):
 
 class Wordforms(DataTable):
 
-    __constraints__ = [Language]
+    __constraints__ = [Language, models.POS]
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Wordform.language))
+        query = query.join(models.POS).options(joinedload(models.Wordform.pos))
 
 
         query = query\
@@ -51,17 +52,23 @@ class Wordforms(DataTable):
 
         if self.language:
             return query.filter(models.Wordform.language == self.language)
+        if self.pos:
+            return query.filter(models.Wordform.pos == self.pos)
         return query
 
     def col_defs(self):
-        return [
+        cols = [
             LinkCol(self, "name"),
             Col(self, "description"),
-            LinkCol(
-                self, "language", model_col=Language.name, get_obj=lambda i: i.language
-            ),
-            AudioCol(self, "Audio")
         ]
+        if not self.pos:
+            cols.append(LinkCol(self, "pos", model_col=models.POS.name, get_obj=lambda i: i.pos))
+        if not self.language:
+            cols.append(LinkCol(
+                self, "language", model_col=Language.name, get_obj=lambda i: i.language
+            ))
+        cols.append(AudioCol(self, "Audio"))
+        return cols
 
 class Morphs(DataTable):
 
@@ -105,5 +112,9 @@ class Morphemes(DataTable):
 
 
 class Meanings(DataTable):
+    def col_defs(self):
+        return [LinkCol(self, "name")]
+
+class POSs(DataTable):
     def col_defs(self):
         return [LinkCol(self, "name")]

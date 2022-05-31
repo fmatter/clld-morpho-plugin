@@ -12,7 +12,7 @@ from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import relationship
 from zope.interface import implementer
 from clld_morphology_plugin.interfaces import IMeaning
-from clld_morphology_plugin.interfaces import IMorph
+from clld_morphology_plugin.interfaces import IMorph, IPOS
 from clld_morphology_plugin.interfaces import IMorphset
 from clld_morphology_plugin.interfaces import IWordform
 
@@ -53,6 +53,11 @@ class MorphemeMeaning(Base):
     morpheme = relationship(Morpheme, innerjoin=True, backref="meanings")
     meaning = relationship(Meaning, innerjoin=True, backref="morphemes")
 
+
+@implementer(IPOS)
+class POS(Base, IdNameDescriptionMixin):
+    pass
+
 @implementer(IWordform)
 class Wordform(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin, HasFilesMixin):
     __table_args__ = (UniqueConstraint("language_pk", "id"),)
@@ -63,7 +68,11 @@ class Wordform(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
     contribution_pk = Column(Integer, ForeignKey("contribution.pk"))
     contribution = relationship(Contribution, backref="wordforms")
 
+    pos_pk = Column(Integer, ForeignKey("pos.pk"))
+    pos = relationship(POS, backref="wordforms")
+
     segmented = Column(String)
+
 
     @property
     def audio(self):
