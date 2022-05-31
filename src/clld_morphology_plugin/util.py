@@ -34,7 +34,7 @@ def rendered_gloss_units(request, sentence):
                     g_words.append(HTML.span(word))
                     morphs.append(HTML.span(word, class_="morpheme"))
                     glosses.append(HTML.span(gloss))
-                    posses.append(HTML.span())
+                    posses.append(HTML.span("?"))
                 else:
                     g_words.append(
                         HTML.span(
@@ -49,12 +49,15 @@ def rendered_gloss_units(request, sentence):
                         )
                     )
                     glosses.append(HTML.span(gloss, **{"class": "gloss"}))
-                    posses.append(
+                    if slices[i].form.pos:
+                        posses.append(
                                   HTML.span(
                                             link(request, slices[i].form.pos, label=slices[i].form.pos.id),
                                             **{"class": "pos"}
                                             )
                                   )
+                    else:
+                        posses.append(HTML.span("?"))
             units.append(
                 HTML.div(
                     HTML.div(*g_words),
@@ -79,7 +82,7 @@ def rendered_form(request, example_slice, structure=True):
                     [
                         link(
                             request,
-                            form_slice.morph,
+                            form_slice.morph.morpheme,
                             label=form_slice.morph.name.strip("-"),
                             name=form_slice.morph.id+"-"+form_slice.morpheme_meaning.id,
                         )

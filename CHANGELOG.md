@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Changed
+* glossed forms in examples link to morphemes instead of morphs
 
 ## [0.0.2] - 2022-05-27
 
