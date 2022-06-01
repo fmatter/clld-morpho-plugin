@@ -28,7 +28,7 @@ def rendered_gloss_units(request, sentence):
                 i = pwc + gwc + g_shift
                 if gwc > 0:
                     g_shift += 1
-                    for glosslist in [g_words, morphs, glosses]:
+                    for glosslist in [g_words, morphs, glosses, posses]:
                         glosslist.append("=")
                 if i not in slices:
                     g_words.append(HTML.span(word))

@@ -115,6 +115,6 @@ class Meanings(DataTable):
     def col_defs(self):
         return [LinkCol(self, "name")]
 
-class POSs(DataTable):
+class POS(DataTable):
     def col_defs(self):
         return [LinkCol(self, "name")]
