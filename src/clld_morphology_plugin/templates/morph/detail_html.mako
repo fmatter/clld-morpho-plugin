@@ -96,7 +96,7 @@ ${h.link(request, contributor)}
         <h5> As ‘${h.link(request, meaning.meaning)}’:</h5>
         <ol>
             % for form in forms:
-                <li>${h.link(request, form)}</li>
+                <li>${h.link(request, form)} (${form.pos.id})</li>
             % endfor
         </ol>
     % endfor
