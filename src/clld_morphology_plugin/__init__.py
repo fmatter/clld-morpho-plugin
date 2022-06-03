@@ -5,7 +5,7 @@ from clld_morphology_plugin import datatables
 
 __author__ = "Florian Matter"
 __email__ = "florianmatter@gmail.com"
-__version__ = "0.0.3"
+__version__ = "0.0.4.dev"
 
 
 def includeme(config):
