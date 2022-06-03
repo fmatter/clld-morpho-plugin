@@ -119,4 +119,4 @@ ${h.link(request, contributor)}
     % endif
 % endif
 
-<script src="${req.static_url('clld_morphology_plugin:static/clld-morphology.js')}"><script>
+<script src="${req.static_url('clld_morphology_plugin:static/clld-morphology.js')}"></script>
