@@ -78,10 +78,10 @@ VERSION = $(shell yq -p=props .bumpversion.cfg | yq eval ".current_version"  )
 
 release:
 	python3 var/release.py
-# 	git commit -am "release $(VERSION)" 
-# 	git tag -a $(VERSION) -m"$(VERSION) release"
-# 	git push; git push --tags
-# 	make pypi
+	git commit -am "release $(VERSION)" 
+	git tag -a $(VERSION) -m"$(VERSION) release"
+	git push; git push --tags
+	make pypi
 
 pypi: dist ## package and upload a release
 	twine upload dist/*
