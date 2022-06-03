@@ -7,13 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-* button for copying sentence IDs
 * parts of speech
+* button for copying sentence IDs
 
 ### Removed
 
 ### Changed
-* glossed forms in examples link to morphemes instead of morphs
+* glossed morphs in examples link directly to morphemes instead of morphs
 
 ## [0.0.2] - 2022-05-27
 
@@ -32,6 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Initial release
 
-[Unreleased]: https://github.com/fmatter/clld-morphology-plugin/compare/v0.0.2...HEAD
-[0.0.2]: https://github.com/fmatter/clld-morphology-plugin/releases/tag/v0.0.2
+[Unreleased]: https://github.com/fmatter/clld-morphology-plugin/compare/0.0.2...HEAD
+[0.0.2]: https://github.com/fmatter/clld-morphology-plugin/releases/tag/0.0.2
 [0.0.1]: https://github.com/fmatter/clld-morphology-plugin/releases/tag/v0.0.1
