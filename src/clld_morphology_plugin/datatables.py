@@ -7,6 +7,7 @@ from clld_morphology_plugin import models
 from clld.web.util.helpers import icon
 from sqlalchemy import and_
 
+
 class DescriptionLinkCol(LinkCol):
 
     """Render a link to the unit using the description as label."""
@@ -17,21 +18,22 @@ class DescriptionLinkCol(LinkCol):
 
 class AudioCol(Col):
     def __init__(self, dt, name, **kw):
-        kw['choices'] = ['yes']
-        kw['input-size'] = 'mini'
-        kw['model_col'] = models.Wordform_files.id
+        kw["choices"] = ["yes"]
+        kw["input-size"] = "mini"
+        kw["model_col"] = models.Wordform_files.id
         Col.__init__(self, dt, name, **kw)
 
     def format(self, item):
         if item.audio:
-            return icon('volume-up')
+            return icon("volume-up")
 
     def order(self):
         return models.Wordform_files.id
 
     def search(self, qs):
-        if qs == 'yes':
+        if qs == "yes":
             return models.Wordform_files.pk != 0
+
 
 class Wordforms(DataTable):
 
@@ -41,14 +43,13 @@ class Wordforms(DataTable):
         query = query.join(Language).options(joinedload(models.Wordform.language))
         query = query.join(models.POS).options(joinedload(models.Wordform.pos))
 
-
-        query = query\
-            .outerjoin(
-                models.Wordform_files,
-                and_(
-                    models.Wordform_files.object_pk == models.Wordform.pk,
-                    models.Wordform_files.mime_type.contains('audio/')))\
-            .options(joinedload(models.Wordform._files))
+        query = query.outerjoin(
+            models.Wordform_files,
+            and_(
+                models.Wordform_files.object_pk == models.Wordform.pk,
+                models.Wordform_files.mime_type.contains("audio/"),
+            ),
+        ).options(joinedload(models.Wordform._files))
 
         if self.language:
             return query.filter(models.Wordform.language == self.language)
@@ -57,18 +58,23 @@ class Wordforms(DataTable):
         return query
 
     def col_defs(self):
-        cols = [
-            LinkCol(self, "name"),
-            Col(self, "description"),
-        ]
+        cols = [LinkCol(self, "name"), Col(self, "description")]
         if not self.pos:
-            cols.append(LinkCol(self, "pos", model_col=models.POS.name, get_obj=lambda i: i.pos))
+            cols.append(
+                LinkCol(self, "pos", model_col=models.POS.name, get_obj=lambda i: i.pos)
+            )
         if not self.language:
-            cols.append(LinkCol(
-                self, "language", model_col=Language.name, get_obj=lambda i: i.language
-            ))
+            cols.append(
+                LinkCol(
+                    self,
+                    "language",
+                    model_col=Language.name,
+                    get_obj=lambda i: i.language,
+                )
+            )
         cols.append(AudioCol(self, "Audio"))
         return cols
+
 
 class Morphs(DataTable):
 
@@ -114,6 +120,7 @@ class Morphemes(DataTable):
 class Meanings(DataTable):
     def col_defs(self):
         return [LinkCol(self, "name")]
+
 
 class POS(DataTable):
     def col_defs(self):

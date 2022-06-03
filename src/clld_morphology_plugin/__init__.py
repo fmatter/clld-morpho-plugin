@@ -27,9 +27,7 @@ def includeme(config):
     config.register_resource(
         "meaning", models.Meaning, interfaces.IMeaning, with_index=True
     )
-    config.register_resource(
-        "pos", models.POS, interfaces.IPOS, with_index=True
-    )
+    config.register_resource("pos", models.POS, interfaces.IPOS, with_index=True)
     config.register_resource(
         "wordform", models.Wordform, interfaces.IWordform, with_index=True
     )

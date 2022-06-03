@@ -14,7 +14,7 @@ def rendered_gloss_units(request, sentence):
     if sentence.analyzed and sentence.gloss:
         # g-words associated with this sentence
         slices = {sl.index: sl for sl in sentence.forms}
-        g_shift = 0 # to keep up to date with how many g-words there are in total
+        g_shift = 0  # to keep up to date with how many g-words there are in total
         for pwc, (pword, pgloss) in enumerate(
             zip(sentence.analyzed.split("\t"), sentence.gloss.split("\t"))
         ):
@@ -43,28 +43,26 @@ def rendered_gloss_units(request, sentence):
                         )
                     )
                     morphs.append(
-                        HTML.span(
-                            rendered_form(request, slices[i]),
-                            class_="morpheme",
-                        )
+                        HTML.span(rendered_form(request, slices[i]), class_="morpheme")
                     )
                     glosses.append(HTML.span(gloss, **{"class": "gloss"}))
                     if slices[i].form.pos:
                         posses.append(
-                                  HTML.span(
-                                            link(request, slices[i].form.pos, label=slices[i].form.pos.id),
-                                            **{"class": "pos"}
-                                            )
-                                  )
+                            HTML.span(
+                                link(
+                                    request,
+                                    slices[i].form.pos,
+                                    label=slices[i].form.pos.id,
+                                ),
+                                **{"class": "pos"},
+                            )
+                        )
                     else:
                         posses.append(HTML.span("?"))
             units.append(
                 HTML.div(
                     HTML.div(*g_words),
-                    HTML.div(
-                        *morphs,
-                        class_="morpheme",
-                    ),
+                    HTML.div(*morphs, class_="morpheme"),
                     HTML.div(*glosses, **{"class": "gloss"}),
                     HTML.div(*posses),
                     class_="gloss-unit",
@@ -84,9 +82,13 @@ def rendered_form(request, example_slice, structure=True):
                             request,
                             form_slice.morph.morpheme,
                             label=form_slice.morph.name.strip("-"),
-                            name=form_slice.morph.id+"-"+form_slice.morpheme_meaning.id,
+                            name=form_slice.morph.id
+                            + "-"
+                            + form_slice.morpheme_meaning.id,
                         )
-                        for form_slice in form.morphs if form_slice.form_meaning.meaning == example_slice.form_meaning.meaning
+                        for form_slice in form.morphs
+                        if form_slice.form_meaning.meaning
+                        == example_slice.form_meaning.meaning
                     ]
                 )
             )

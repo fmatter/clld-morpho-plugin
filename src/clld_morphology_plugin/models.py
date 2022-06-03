@@ -58,8 +58,11 @@ class MorphemeMeaning(Base):
 class POS(Base, IdNameDescriptionMixin):
     pass
 
+
 @implementer(IWordform)
-class Wordform(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin, HasFilesMixin):
+class Wordform(
+    Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin, HasFilesMixin
+):
     __table_args__ = (UniqueConstraint("language_pk", "id"),)
 
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
@@ -73,19 +76,20 @@ class Wordform(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
 
     segmented = Column(String)
 
-
     @property
     def audio(self):
         for f in self._files:
-            if f.mime_type.split('/')[0] == 'audio':
+            if f.mime_type.split("/")[0] == "audio":
                 return f
-                
+
+
 class FormMeaning(Base):
     id = Column(String, unique=True)
     form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
     meaning_pk = Column(Integer, ForeignKey("meaning.pk"), nullable=False)
     form = relationship(Wordform, innerjoin=True, backref="meanings")
     meaning = relationship(Meaning, innerjoin=True, backref="forms")
+
 
 class FormSlice(Base):
     form_pk = Column(Integer, ForeignKey("wordform.pk"))
@@ -97,6 +101,7 @@ class FormSlice(Base):
     index = Column(Integer)
     form_meaning = relationship(FormMeaning)
     morpheme_meaning = relationship(MorphemeMeaning, backref="morph_tokens")
+
 
 class Wordform_files(Base, FilesMixin):
     pass
