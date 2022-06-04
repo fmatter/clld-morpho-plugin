@@ -82,6 +82,8 @@ release:
 	git tag -a $(VERSION) -m"$(VERSION) release"
 	git push; git push --tags
 	make pypi
+	bump2version patch
+	git commit -am "bump"; git push
 
 pypi: dist ## package and upload a release
 	twine upload dist/*

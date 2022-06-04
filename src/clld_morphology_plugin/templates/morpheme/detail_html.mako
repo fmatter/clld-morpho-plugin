@@ -27,17 +27,19 @@
             <td>${h.link(request, ctx.language)}</td>
         </tr>
         <tr>
-            <td>Allomorphs:</td>
-            <td>
-                % for i, morph in enumerate(ctx.allomorphs):
-                    % if i < len(ctx.allomorphs)-1:
-                        <% comma = "," %>
-                    % else:
-                        <% comma = "" %>
-                    % endif
-                <i>${h.link(request, morph)}</i>${comma}
-                % endfor
-            </td>
+            % if ctx.allomorphs:
+                <td>Allomorphs:</td>
+                <td>
+                    % for i, morph in enumerate(ctx.allomorphs):
+                        % if i < len(ctx.allomorphs)-1:
+                            <% comma = "," %>
+                        % else:
+                            <% comma = "" %>
+                        % endif
+                    <i>${h.link(request, morph)}</i>${comma}
+                    % endfor
+                </td>
+            %endif
         </tr>
         <tr>
            <td> Meanings:</td>
@@ -64,7 +66,7 @@ ${h.link(request, contributor)}
 </table>
 
 
-% if len(ctx.allomorphs[0].forms) > 0:
+% if len(ctx.allomorphs) > 0 and len(ctx.allomorphs[0].forms) > 0:
     <% meaning_forms = {} %>
     <% meaning_sentences = {} %>
     <h3>${_('Word forms')}</h3>
