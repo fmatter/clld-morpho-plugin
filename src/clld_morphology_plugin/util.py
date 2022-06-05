@@ -58,7 +58,7 @@ def rendered_gloss_units(request, sentence):
                             )
                         )
                     else:
-                        posses.append(HTML.span("?"))
+                        posses.append(HTML.span("*"))
             units.append(
                 HTML.div(
                     HTML.div(*g_words),
