@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * bugs
 
 ### Changed
+* unknown POS are rendered as `*`
 
 ## [0.0.3] - 2022-06-03
 

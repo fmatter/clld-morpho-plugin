@@ -34,7 +34,7 @@ def rendered_gloss_units(request, sentence):
                     g_words.append(HTML.span(word))
                     morphs.append(HTML.span(word, class_="morpheme"))
                     glosses.append(HTML.span(gloss))
-                    posses.append(HTML.span("?"))
+                    posses.append(HTML.span("*"))
                 else:
                     g_words.append(
                         HTML.span(
