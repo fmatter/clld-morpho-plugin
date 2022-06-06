@@ -40,9 +40,8 @@ class Wordforms(DataTable):
     __constraints__ = [Language, models.POS]
 
     def base_query(self, query):
-        query = query.join(Language).options(joinedload(models.Wordform.language))
-        query = query.join(models.POS).options(joinedload(models.Wordform.pos))
-
+        query = query.join(Language).options(joinedload(models.Wordform.language))\
+            .options(joinedload(models.Wordform.pos))
         query = query.outerjoin(
             models.Wordform_files,
             and_(
@@ -123,5 +122,11 @@ class Meanings(DataTable):
 
 
 class POS(DataTable):
+    def col_defs(self):
+        return [LinkCol(self, "name")]
+
+class Lexemes(DataTable):
+    __constraints__ = [Language]
+
     def col_defs(self):
         return [LinkCol(self, "name")]

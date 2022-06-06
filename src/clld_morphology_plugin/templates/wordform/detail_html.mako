@@ -9,11 +9,12 @@
 <%! active_menu_item = "wordforms" %>
 
 
-<%doc><h2>${_('Form')} ${ctx.name} (${h.link(request, ctx.language)})</h2>
-</%doc>
-
 
 <h3>${_('Form')} <i>${ctx.name}</i></h3>
+
+% for lex in ctx.lexemes:
+${h.link(request, lex.lexeme)}
+% endfor
 
 <table class="table table-nonfluid">
     <tbody>

@@ -14,7 +14,7 @@ from zope.interface import implementer
 from clld_morphology_plugin.interfaces import IMeaning
 from clld_morphology_plugin.interfaces import IMorph, IPOS
 from clld_morphology_plugin.interfaces import IMorphset
-from clld_morphology_plugin.interfaces import IWordform
+from clld_morphology_plugin.interfaces import IWordform, ILexeme
 
 
 @implementer(IMeaning)
@@ -63,7 +63,7 @@ class POS(Base, IdNameDescriptionMixin):
 class Wordform(
     Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin, HasFilesMixin
 ):
-    __table_args__ = (UniqueConstraint("language_pk", "id"),)
+    __table_args__ = (UniqueConstraint("language_pk", "id"), UniqueConstraint("pos_pk", "id"))
 
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
     language = relationship(Language, innerjoin=True)
@@ -72,7 +72,7 @@ class Wordform(
     contribution = relationship(Contribution, backref="wordforms")
 
     pos_pk = Column(Integer, ForeignKey("pos.pk"))
-    pos = relationship(POS, backref="wordforms")
+    pos = relationship(POS, backref="wordforms", innerjoin=True)
 
     segmented = Column(String)
 
@@ -105,3 +105,18 @@ class FormSlice(Base):
 
 class Wordform_files(Base, FilesMixin):
     pass
+
+@implementer(ILexeme)
+class Lexeme(Base, IdNameDescriptionMixin):
+    __table_args__ = (
+        UniqueConstraint("language_pk", "id"),
+    )
+
+    language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
+    language = relationship(Language, innerjoin=True)
+
+class LexemeForm(Base):
+    form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
+    lexeme_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=False)
+    form = relationship(Wordform, innerjoin=True, backref="lexemes")
+    lexeme = relationship(Lexeme, innerjoin=True, backref="forms")

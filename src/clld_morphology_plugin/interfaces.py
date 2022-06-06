@@ -29,3 +29,8 @@ class IPOS(Interface):
     """
     part of speech interface
     """
+
+class ILexeme(Interface):
+    """
+    lexeme interface
+    """
