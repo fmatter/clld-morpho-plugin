@@ -124,6 +124,9 @@ class Lexeme(Base, IdNameDescriptionMixin):
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
     language = relationship(Language, innerjoin=True)
 
+    @property
+    def form_count(self):
+        return len(self.forms)
 
 class Inflection(Base):
     form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)

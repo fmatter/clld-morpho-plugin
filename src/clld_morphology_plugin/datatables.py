@@ -15,6 +15,13 @@ class DescriptionLinkCol(LinkCol):
     def get_attrs(self, item):
         return {"label": item.description}
 
+class FormCountCol(Col):
+    def __init__(self, dt, name, **kw):
+        Col.__init__(self, dt, name, **kw)
+
+    def format(self, item):
+        return item.form_count
+
 
 class AudioCol(Col):
     def __init__(self, dt, name, **kw):
@@ -150,4 +157,7 @@ class Lexemes(DataTable):
     __constraints__ = [Language]
 
     def col_defs(self):
-        return [LinkCol(self, "name")]
+        return [
+            LinkCol(self, "name"),
+            FormCountCol(self, "Forms", bSortable=False, bSearchable=False)
+        ]
