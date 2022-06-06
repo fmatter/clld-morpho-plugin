@@ -18,10 +18,7 @@ def includeme(config):
 
     config.register_resource("morph", models.Morph, interfaces.IMorph, with_index=True)
     config.register_resource(
-        "morpheme",
-        models.Morpheme,
-        interfaces.IMorphset,
-        with_index=True,
+        "morpheme", models.Morpheme, interfaces.IMorphset, with_index=True
     )
     config.register_resource(
         "meaning", models.Meaning, interfaces.IMeaning, with_index=True

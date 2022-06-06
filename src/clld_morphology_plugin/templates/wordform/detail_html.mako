@@ -12,10 +12,6 @@
 
 <h3>${_('Form')} <i>${ctx.name}</i></h3>
 
-% for lex in ctx.lexemes:
-${h.link(request, lex.lexeme)}
-% endfor
-
 <table class="table table-nonfluid">
     <tbody>
 <%doc>        <tr>
@@ -46,6 +42,12 @@ ${h.link(request, lex.lexeme)}
             <td>
                 ${h.link(request, ctx.pos)}
             </td>
+        </tr>
+        % endif
+        % if ctx.lexeme:
+        <tr>
+            <td>Lexeme:</td>
+            <td>${h.link(request, ctx.lexeme, label=ctx.lexeme.name.upper())}</td>
         </tr>
         % endif
         % if getattr(ctx, "segments", None):

@@ -15,6 +15,7 @@ from clld_morphology_plugin.interfaces import IMeaning
 from clld_morphology_plugin.interfaces import IMorph, IPOS
 from clld_morphology_plugin.interfaces import IMorphset
 from clld_morphology_plugin.interfaces import IWordform, ILexeme
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
 @implementer(IMeaning)
@@ -63,7 +64,10 @@ class POS(Base, IdNameDescriptionMixin):
 class Wordform(
     Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin, HasFilesMixin
 ):
-    __table_args__ = (UniqueConstraint("language_pk", "id"), UniqueConstraint("pos_pk", "id"))
+    __table_args__ = (
+        UniqueConstraint("language_pk", "id"),
+        UniqueConstraint("pos_pk", "id"),
+    )
 
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
     language = relationship(Language, innerjoin=True)
@@ -81,6 +85,12 @@ class Wordform(
         for f in self._files:
             if f.mime_type.split("/")[0] == "audio":
                 return f
+
+    @property
+    def lexeme(self):
+        if len(self.lexemes) == 0:
+            return None
+        return self.lexemes[0].lexeme
 
 
 class FormMeaning(Base):
@@ -106,16 +116,16 @@ class FormSlice(Base):
 class Wordform_files(Base, FilesMixin):
     pass
 
+
 @implementer(ILexeme)
 class Lexeme(Base, IdNameDescriptionMixin):
-    __table_args__ = (
-        UniqueConstraint("language_pk", "id"),
-    )
+    __table_args__ = (UniqueConstraint("language_pk", "id"),)
 
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
     language = relationship(Language, innerjoin=True)
 
-class LexemeForm(Base):
+
+class Inflection(Base):
     form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
     lexeme_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=False)
     form = relationship(Wordform, innerjoin=True, backref="lexemes")
