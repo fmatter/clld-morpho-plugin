@@ -17,10 +17,6 @@
 
 <table class="table table-nonfluid">
     <tbody>
-<%doc>        <tr>
-            <td>Form:</td>
-            <td>${ctx.name}</td>
-        </tr></%doc>
         <tr>
             <td>Language:</td>
             <td>${h.link(request, ctx.language)}</td>

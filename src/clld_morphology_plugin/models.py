@@ -134,3 +134,15 @@ class Inflection(Base):
     lexeme_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=False)
     form = relationship(Wordform, innerjoin=True, backref="lexemes")
     lexeme = relationship(Lexeme, innerjoin=True, backref="forms")
+
+class LexemeLexemePart(Base):
+    derived_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=False)
+    base_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=False)
+    derived_lexeme = relationship(Lexeme, innerjoin=True, backref="base_lexemes", foreign_keys=derived_pk)
+    base_lexeme = relationship(Lexeme, innerjoin=True, backref="derived_lexemes", foreign_keys=base_pk)
+
+class LexemeMorphemePart(Base):
+    morpheme_pk = Column(Integer, ForeignKey("morpheme.pk"), nullable=False)
+    lexeme_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=False)
+    morpheme = relationship(Morpheme, innerjoin=True, backref="derived_lexemes")
+    lexeme = relationship(Lexeme, innerjoin=True, backref="derivational_morphemes")

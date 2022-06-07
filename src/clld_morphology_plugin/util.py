@@ -8,6 +8,11 @@ GLOSS_ABBR_PATTERN = re.compile(
     "(?P<personprefix>1|2|3)?(?P<abbr>[A-Z]+)(?P<personsuffix>1|2|3)?(?=([^a-z]|$))"
 )
 
+def get_further_lexemes(lexeme):
+    lex_list = [lexeme]
+    for lex in lexeme.derived_lexemes:
+        lex_list.extend(get_further_lexemes(lex.derived_lexeme))
+    return lex_list
 
 def rendered_gloss_units(request, sentence):
     units = []

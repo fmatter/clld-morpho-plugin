@@ -44,6 +44,18 @@
                 </ol>
             </td>
         </tr>
+        % if ctx.derived_lexemes:
+        <tr>
+           <td> Derived lexemes: </td>
+            <td>
+                <ol>
+                    % for lex in ctx.derived_lexemes:
+                        <li> ${h.link(request, lex.lexeme, label=lex.lexeme.name.upper())} </li>
+                    % endfor
+                </ol>
+            </td>
+        </tr>
+        % endif
         % if ctx.comment:
            <td> Comment: </td>
            <td> ${parent.markdown(request, ctx.comment)|n} </td>
