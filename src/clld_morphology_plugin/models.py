@@ -4,7 +4,7 @@ from clld.db.models.common import Contribution
 from clld.db.models.common import HasSourceMixin, FilesMixin, HasFilesMixin
 from clld.db.models.common import IdNameDescriptionMixin
 from clld.db.models.common import Language
-from sqlalchemy import Column
+from sqlalchemy import Column, Unicode
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
@@ -32,7 +32,7 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
 
     contribution_pk = Column(Integer, ForeignKey("contribution.pk"))
     contribution = relationship(Contribution, backref="morphemes")
-
+    comment = Column(Unicode)
 
 @implementer(IMorph)
 class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):

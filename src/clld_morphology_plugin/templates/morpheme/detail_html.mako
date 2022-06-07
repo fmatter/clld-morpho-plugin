@@ -1,6 +1,7 @@
 <%inherit file="../${context.get('request').registry.settings.get('clld.app_template', 'app.mako')}"/>
 <%namespace name="util" file="../util.mako"/>
 <%namespace name="mutil" file="../morphology_util.mako"/>
+
 <link rel="stylesheet" href="${req.static_url('clld_morphology_plugin:static/clld-morphology.css')}"/>
 % try:
     <%from clld_corpus_plugin.util import rendered_sentence%>
@@ -51,6 +52,10 @@
                 </ol>
             </td>
         </tr>
+        % if ctx.comment:
+           <td> Comment:</td>
+           <td>${parent.markdown(request, ctx.comment)|n}</td>
+        % endif
         % if contribution in dir(ctx):
         <tr>
             <td> Contribution:</td>
