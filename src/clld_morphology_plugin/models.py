@@ -128,6 +128,7 @@ class Lexeme(Base, IdNameDescriptionMixin):
     def form_count(self):
         return len(self.forms)
 
+
 class Inflection(Base):
     form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
     lexeme_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=False)

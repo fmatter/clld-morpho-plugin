@@ -5,5 +5,9 @@
 
 <h3>${_('Lexeme')} <i>${ctx.name.upper()}</i></h3>
 
+% if ctx.description:
+Description: ${ctx.description}
+% endif
+
 <h4>${_('Forms')}:</h4>
 ${request.get_datatable('wordforms', Wordform, lexeme=ctx).render()}

@@ -15,6 +15,7 @@ class DescriptionLinkCol(LinkCol):
     def get_attrs(self, item):
         return {"label": item.description}
 
+
 class FormCountCol(Col):
     def __init__(self, dt, name, **kw):
         Col.__init__(self, dt, name, **kw)
@@ -159,5 +160,6 @@ class Lexemes(DataTable):
     def col_defs(self):
         return [
             LinkCol(self, "name"),
-            FormCountCol(self, "Forms", bSortable=False, bSearchable=False)
+            Col(self, "description"),
+            FormCountCol(self, "Forms", bSortable=False, bSearchable=False),
         ]
