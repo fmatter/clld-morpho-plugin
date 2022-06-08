@@ -63,6 +63,12 @@
             <td>Language:</td>
             <td>${h.link(request, ctx.language)}</td>
         </tr>
+        % if ctx.source:
+            <tr>
+                <td>Source:</td>
+                <td>${h.link(request, ctx.source)}</td>
+            </tr>
+        % endif
     </tbody>
 </table>
 
