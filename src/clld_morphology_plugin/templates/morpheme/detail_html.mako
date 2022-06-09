@@ -44,6 +44,16 @@
                 </ol>
             </td>
         </tr>
+        % if ctx.lexemes:
+        <tr>
+           <td> Corresponding lexeme: </td>
+            <td>
+                % for lex in ctx.lexemes:
+                    ${h.link(request, lex, label=lex.name.upper())} <br>
+                % endfor
+            </td>
+        </tr>
+        % endif
         % if ctx.derived_lexemes:
         <tr>
            <td> Derived lexemes: </td>

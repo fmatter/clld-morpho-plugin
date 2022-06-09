@@ -124,6 +124,9 @@ class Lexeme(Base, IdNameDescriptionMixin):
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
     language = relationship(Language, innerjoin=True)
 
+    morpheme_pk = Column(Integer, ForeignKey("morpheme.pk"))
+    root_morpheme = relationship(Morpheme, innerjoin=True, backref="lexemes")
+
     @property
     def form_count(self):
         return len(self.forms)

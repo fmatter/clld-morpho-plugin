@@ -44,6 +44,12 @@
     </dd>
 % endif
 
+% if ctx.root_morpheme:
+    <dt> ${_('Corresponding morpheme')}: </dt>
+    <dd>
+        ${h.link(request, ctx.root_morpheme)}
+    </dd>
+% endif
 
 </dl>
 
