@@ -51,6 +51,13 @@
     </dd>
 % endif
 
+% if ctx.comment:
+    <dt> ${_('Comment')}: </dt>
+    <dd>
+        ${parent.markdown(request, ctx.comment)|n}
+    </dd>
+% endif
+
 </dl>
 
 

@@ -127,6 +127,7 @@ class Lexeme(Base, IdNameDescriptionMixin):
     morpheme_pk = Column(Integer, ForeignKey("morpheme.pk"))
     root_morpheme = relationship(Morpheme, innerjoin=True, backref="lexemes")
 
+    comment = Column(Unicode)
     @property
     def form_count(self):
         return len(self.forms)

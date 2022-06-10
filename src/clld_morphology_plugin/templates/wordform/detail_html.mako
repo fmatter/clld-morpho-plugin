@@ -1,5 +1,6 @@
 <%inherit file="../${context.get('request').registry.settings.get('clld.app_template', 'app.mako')}"/>
 <%namespace name="util" file="../util.mako"/>
+<% from clld_morphology_plugin.util import rendered_form %>
 <link rel="stylesheet" href="${req.static_url('clld_morphology_plugin:static/clld-morphology.css')}"/>
 % try:
     <%from clld_corpus_plugin.util import rendered_sentence%>
@@ -22,7 +23,7 @@
         <tr>
             <td>Structure:</td>
             <td>
-                    ${h.text2html("-".join([h.link(request, slice.morph.morpheme, label=string) for string, slice in zip(ctx.segmented.split("-"), ctx.morphs)]))}
+                    ${rendered_form(request, ctx)}
             </td>
         </tr>
         % endif
