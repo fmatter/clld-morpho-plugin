@@ -38,7 +38,14 @@
                 "dc:description": "A reference to the meaning denoted by the form",
                 "datatype": "string",
                 "separator": "; "
-            }
+            },
+        {
+            "name": "Source",
+            "required": false,
+            "propertyUrl": "http://cldf.clld.org/v1.0/terms.rdf#source",
+            "datatype": "string",
+            "separator": "; "
+        }
         ]
     }
 }
