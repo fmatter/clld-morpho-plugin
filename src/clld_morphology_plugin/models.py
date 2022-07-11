@@ -141,7 +141,7 @@ class Inflection(Base):
 
 class LexemeLexemePart(Base):
     derived_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=False)
-    base_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=False)
+    base_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=True)
     derived_lexeme = relationship(Lexeme, innerjoin=True, backref="base_lexemes", foreign_keys=derived_pk)
     base_lexeme = relationship(Lexeme, innerjoin=True, backref="derived_lexemes", foreign_keys=base_pk)
 

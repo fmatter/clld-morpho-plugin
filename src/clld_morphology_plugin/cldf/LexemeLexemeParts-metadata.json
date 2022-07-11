@@ -19,7 +19,7 @@
             },
             {
                 "name": "Base_ID",
-                "required": true,
+                "required": false,
                 "dc:extent": "singlevalued",
                 "datatype": "string"
             }
