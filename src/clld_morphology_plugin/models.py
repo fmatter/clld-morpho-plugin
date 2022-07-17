@@ -114,7 +114,7 @@ class FormSlice(Base):
     morpheme_meaning = relationship(MorphemeMeaning, backref="morph_tokens")
 
 
-class WordformFiles(Base, FilesMixin):
+class Wordform_files(Base, FilesMixin):  # noqa: N801
     pass
 
 

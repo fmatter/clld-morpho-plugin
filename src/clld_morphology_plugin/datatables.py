@@ -28,7 +28,7 @@ class AudioCol(Col):
     def __init__(self, dt, name, **kw):
         kw["choices"] = ["yes"]
         kw["input-size"] = "mini"
-        kw["model_col"] = models.Wordform_files.id
+        kw["model_col"] = models.WordformFiles.id
         Col.__init__(self, dt, name, **kw)
 
     def format(self, item):
@@ -37,12 +37,13 @@ class AudioCol(Col):
         return None
 
     def order(self):
-        return models.Wordform_files.id
+        return models.WordformFiles.id
 
     def search(self, qs):
         if qs == "yes":
-            return models.Wordform_files.pk != 0
+            return models.WordformFiles.pk != 0
         return True
+
 
 class Wordforms(DataTable):
 
@@ -52,12 +53,14 @@ class Wordforms(DataTable):
         query = query.join(Language).options(joinedload(models.Wordform.language))
 
         query = query.outerjoin(
-            models.Wordform_files,
+            models.WordformFiles,
             and_(
-                models.Wordform_files.object_pk == models.Wordform.pk,
-                models.Wordform_files.mime_type.contains("audio/"),
+                models.WordformFiles.object_pk == models.Wordform.pk,
+                models.WordformFiles.mime_type.contains("audio/"),
             ),
-        ).options(joinedload(models.Wordform._files)) # pylint: disable=protected-access
+        ).options(
+            joinedload(models.Wordform._files)
+        )  # pylint: disable=protected-access
 
         if self.language:
             return query.filter(models.Wordform.language == self.language)

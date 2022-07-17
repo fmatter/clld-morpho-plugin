@@ -16,7 +16,7 @@ def get_further_lexemes(lexeme):
     return lex_list
 
 
-def rendered_gloss_units(request, sentence): # pylint: disable=too-many-locals
+def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
     units = []
     if sentence.analyzed and sentence.gloss:
         # g-words associated with this sentence
