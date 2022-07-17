@@ -34,6 +34,7 @@ class AudioCol(Col):
     def format(self, item):
         if item.audio:
             return icon("volume-up")
+        return None
 
     def order(self):
         return models.Wordform_files.id
@@ -41,7 +42,7 @@ class AudioCol(Col):
     def search(self, qs):
         if qs == "yes":
             return models.Wordform_files.pk != 0
-
+        return True
 
 class Wordforms(DataTable):
 
@@ -56,7 +57,7 @@ class Wordforms(DataTable):
                 models.Wordform_files.object_pk == models.Wordform.pk,
                 models.Wordform_files.mime_type.contains("audio/"),
             ),
-        ).options(joinedload(models.Wordform._files))
+        ).options(joinedload(models.Wordform._files)) # pylint: disable=protected-access
 
         if self.language:
             return query.filter(models.Wordform.language == self.language)

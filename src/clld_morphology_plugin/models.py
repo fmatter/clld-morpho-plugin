@@ -15,7 +15,6 @@ from clld_morphology_plugin.interfaces import IMeaning
 from clld_morphology_plugin.interfaces import IMorph, IPOS
 from clld_morphology_plugin.interfaces import IMorphset
 from clld_morphology_plugin.interfaces import IWordform, ILexeme
-from sqlalchemy.ext.hybrid import hybrid_property
 
 
 @implementer(IMeaning)
@@ -33,6 +32,7 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
     contribution_pk = Column(Integer, ForeignKey("contribution.pk"))
     contribution = relationship(Contribution, backref="morphemes")
     comment = Column(Unicode)
+
 
 @implementer(IMorph)
 class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
@@ -85,6 +85,7 @@ class Wordform(
         for f in self._files:
             if f.mime_type.split("/")[0] == "audio":
                 return f
+        return None
 
     @property
     def lexeme(self):
@@ -113,7 +114,7 @@ class FormSlice(Base):
     morpheme_meaning = relationship(MorphemeMeaning, backref="morph_tokens")
 
 
-class Wordform_files(Base, FilesMixin):
+class WordformFiles(Base, FilesMixin):
     pass
 
 
@@ -128,6 +129,7 @@ class Lexeme(Base, IdNameDescriptionMixin):
     root_morpheme = relationship(Morpheme, innerjoin=True, backref="lexemes")
 
     comment = Column(Unicode)
+
     @property
     def form_count(self):
         return len(self.forms)
@@ -139,11 +141,17 @@ class Inflection(Base):
     form = relationship(Wordform, innerjoin=True, backref="lexemes")
     lexeme = relationship(Lexeme, innerjoin=True, backref="forms")
 
+
 class LexemeLexemePart(Base):
     derived_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=False)
     base_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=True)
-    derived_lexeme = relationship(Lexeme, innerjoin=True, backref="base_lexemes", foreign_keys=derived_pk)
-    base_lexeme = relationship(Lexeme, innerjoin=True, backref="derived_lexemes", foreign_keys=base_pk)
+    derived_lexeme = relationship(
+        Lexeme, innerjoin=True, backref="base_lexemes", foreign_keys=derived_pk
+    )
+    base_lexeme = relationship(
+        Lexeme, innerjoin=True, backref="derived_lexemes", foreign_keys=base_pk
+    )
+
 
 class LexemeMorphemePart(Base):
     morpheme_pk = Column(Integer, ForeignKey("morpheme.pk"), nullable=False)

@@ -8,13 +8,15 @@ GLOSS_ABBR_PATTERN = re.compile(
     "(?P<personprefix>1|2|3)?(?P<abbr>[A-Z]+)(?P<personsuffix>1|2|3)?(?=([^a-z]|$))"
 )
 
+
 def get_further_lexemes(lexeme):
     lex_list = [lexeme]
     for lex in lexeme.derived_lexemes:
         lex_list.extend(get_further_lexemes(lex.derived_lexeme))
     return lex_list
 
-def rendered_gloss_units(request, sentence):
+
+def rendered_gloss_units(request, sentence): # pylint: disable=too-many-locals
     units = []
     if sentence.analyzed and sentence.gloss:
         # g-words associated with this sentence
@@ -48,7 +50,9 @@ def rendered_gloss_units(request, sentence):
                         )
                     )
                     morphs.append(
-                        HTML.span(rendered_form(request, slices[i].form), class_="morpheme")
+                        HTML.span(
+                            rendered_form(request, slices[i].form), class_="morpheme"
+                        )
                     )
                     glosses.append(HTML.span(gloss, **{"class": "gloss"}))
                     if slices[i].form.pos:
@@ -75,8 +79,11 @@ def rendered_gloss_units(request, sentence):
             )
     return units
 
+
 morph_separators = ["-", "~", "<", ">"]
 sep_pattern = f"([{''.join(morph_separators)}])"
+
+
 def rendered_form(request, form, structure=True):
     if structure:
         if form.morphs != []:
@@ -87,16 +94,18 @@ def rendered_form(request, form, structure=True):
                 if part in morph_separators:
                     form_output.append(part)
                 else:
-                    p_c+=1
-                    if (len(form.morphs) > s_c and p_c == form.morphs[s_c].index):
-                        form_output.append(link(
-                                    request,
-                                    form.morphs[s_c].morph.morpheme,
-                                    label=form.morphs[s_c].morph.name.strip("-"),
-                                    name=form.morphs[s_c].morph.id
-                                    + "-"
-                                    + form.morphs[s_c].morpheme_meaning.id,
-                                ) )
+                    p_c += 1
+                    if len(form.morphs) > s_c and p_c == form.morphs[s_c].index:
+                        form_output.append(
+                            link(
+                                request,
+                                form.morphs[s_c].morph.morpheme,
+                                label=form.morphs[s_c].morph.name.strip("-"),
+                                name=form.morphs[s_c].morph.id
+                                + "-"
+                                + form.morphs[s_c].morpheme_meaning.id,
+                            )
+                        )
                         s_c += 1
                     else:
                         form_output.append(part)
