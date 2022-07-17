@@ -2,10 +2,10 @@ from clld.db.models.common import Language
 from clld.web.datatables.base import Col
 from clld.web.datatables.base import DataTable
 from clld.web.datatables.base import LinkCol
-from sqlalchemy.orm import joinedload
-from clld_morphology_plugin import models
 from clld.web.util.helpers import icon
 from sqlalchemy import and_
+from sqlalchemy.orm import joinedload
+from clld_morphology_plugin import models
 
 
 class DescriptionLinkCol(LinkCol):
@@ -59,8 +59,8 @@ class Wordforms(DataTable):
                 models.WordformFiles.mime_type.contains("audio/"),
             ),
         ).options(
-            joinedload(models.Wordform._files)
-        )  # pylint: disable=protected-access
+            joinedload(models.Wordform._files)  # pylint: disable=protected-access
+        )
 
         if self.language:
             return query.filter(models.Wordform.language == self.language)

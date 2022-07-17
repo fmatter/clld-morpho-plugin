@@ -1,20 +1,25 @@
 from clld.db.meta import Base
 from clld.db.meta import PolymorphicBaseMixin
 from clld.db.models.common import Contribution
-from clld.db.models.common import HasSourceMixin, FilesMixin, HasFilesMixin
+from clld.db.models.common import FilesMixin
+from clld.db.models.common import HasFilesMixin
+from clld.db.models.common import HasSourceMixin
 from clld.db.models.common import IdNameDescriptionMixin
 from clld.db.models.common import Language
-from sqlalchemy import Column, Unicode
+from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
+from sqlalchemy import Unicode
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import relationship
 from zope.interface import implementer
+from clld_morphology_plugin.interfaces import IPOS
+from clld_morphology_plugin.interfaces import ILexeme
 from clld_morphology_plugin.interfaces import IMeaning
-from clld_morphology_plugin.interfaces import IMorph, IPOS
+from clld_morphology_plugin.interfaces import IMorph
 from clld_morphology_plugin.interfaces import IMorphset
-from clld_morphology_plugin.interfaces import IWordform, ILexeme
+from clld_morphology_plugin.interfaces import IWordform
 
 
 @implementer(IMeaning)
