@@ -60,7 +60,7 @@
             <td>
                 <ol>
                     % for lex in ctx.derived_lexemes:
-                        <li> ${h.link(request, lex.lexeme, label=lex.lexeme.name.upper())} </li>
+                        <li> ${h.link(request, lex.lexeme, label=lex.lexeme.name.upper())} ‘${lex.lexeme.description}’ </li>
                     % endfor
                 </ol>
             </td>

@@ -17,7 +17,7 @@
         <dt> ${_('Derived from')}: </dt>
         <dd>
             % for lexlex in ctx.base_lexemes:
-                ${h.link(request, lexlex.base_lexeme,   label=lexlex.base_lexeme.name.upper())}
+                ${h.link(request, lexlex.base_lexeme, label=lexlex.base_lexeme.name.upper())} ‘${lexlex.base_lexeme.description}’
             % endfor
         </dd>
 % endif

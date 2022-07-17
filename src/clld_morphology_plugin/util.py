@@ -88,7 +88,7 @@ def rendered_form(request, form, structure=True):
                     form_output.append(part)
                 else:
                     p_c+=1
-                    if p_c == form.morphs[s_c].index:
+                    if (len(form.morphs) > s_c and p_c == form.morphs[s_c].index):
                         form_output.append(link(
                                     request,
                                     form.morphs[s_c].morph.morpheme,

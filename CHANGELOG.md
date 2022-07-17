@@ -8,11 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+* lexeme meanings
 
 ### Removed
 
 ### Changed
 * derived lexemes need not have a base lexeme
+
+### Fixed
+* fewer FormSlices than morphemes? no problem
 
 ## [0.0.4] -- 2022-06-10
 
