@@ -7,7 +7,7 @@ except ImportError:  # pragma: no cover
     from importlib_resources import files  # pragma: no cover
 
 
-cldf_path = files("clld_morphology_plugin") / "cld"
+cldf_path = files("clld_morphology_plugin") / "cldf"
 FormSlices = jsonlib.load(cldf_path / "FormSlices-metadata.json")
 MorphsetTable = jsonlib.load(cldf_path / "MorphsetTable-metadata.json")
 MorphTable = jsonlib.load(cldf_path / "MorphTable-metadata.json")
