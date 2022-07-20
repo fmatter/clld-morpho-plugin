@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-* lexeme meanings
+* show lexeme meanings (`description`) in views
 
 ### Removed
 
@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * derived lexemes need not have a base lexeme
 
 ### Fixed
-* fewer FormSlices than morphemes? no problem
+* errors for wordforms with fewer formslices than morphemes
 
 ## [0.0.4] -- 2022-06-10
 
