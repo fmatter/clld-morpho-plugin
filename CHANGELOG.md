@@ -7,20 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-### Removed
-
-### Changed
-
 ### Fixed
+* wordform template does not require a meaning
 
 ## [0.0.5] -- 2022-07-19
 
 ### Added
 * show lexeme meanings (`description`) in views
-
-### Removed
 
 ### Changed
 * derived lexemes need not have a base lexeme
@@ -48,8 +41,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * parts of speech
 * button for copying sentence IDs
 
-### Removed
-
 ### Changed
 * glossed morphs in examples link directly to morphemes instead of morphs
 
@@ -60,8 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * highlighting
 * corresponding CLDF table metadata
 * wordform audio
-
-### Removed
 
 ### Changed
 * example rendering, now with g-words
