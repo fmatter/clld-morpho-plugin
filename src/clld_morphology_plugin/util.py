@@ -68,14 +68,23 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                         )
                     else:
                         posses.append(HTML.span("*"))
-            units.append(
-                HTML.div(
+            if posses[0] == HTML.span("*"):
+                interlinear_div = HTML.div(
+                    HTML.div(*g_words),
+                    HTML.div(*morphs, class_="morpheme"),
+                    HTML.div(*glosses, **{"class": "gloss"}),
+                    class_="gloss-unit",
+                )
+            else:
+                interlinear_div = HTML.div(
                     HTML.div(*g_words),
                     HTML.div(*morphs, class_="morpheme"),
                     HTML.div(*glosses, **{"class": "gloss"}),
                     HTML.div(*posses),
                     class_="gloss-unit",
                 )
+            units.append(
+                interlinear_div
             )
     return units
 

@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 * derived lexemes need not have a base lexeme
+* if the first word has no POS, let's assume none do.
 
 ### Fixed
 * errors for wordforms with fewer formslices than morphemes
