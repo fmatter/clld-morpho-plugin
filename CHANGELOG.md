@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 * wordform template does not require a meaning
+* CLDF data in MANIFEST.in
 
 ## [0.0.5] -- 2022-07-19
 
