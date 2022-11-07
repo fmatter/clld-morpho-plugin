@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+* only requiring `zope.interface` instead of everything
+
 ## [0.0.6] - 2022-11-05
 
 ### Fixed
