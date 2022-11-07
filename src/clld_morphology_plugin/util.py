@@ -120,4 +120,4 @@ def rendered_form(request, form, structure=True):
                         form_output.append(part)
             return literal("".join(form_output))
         return literal("&nbsp;")
-    return link(request, form)
+    return link(request, form, label=form.name.strip("="))

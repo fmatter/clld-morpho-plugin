@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+* if clitics have `=` in their name, don't show in interlinearization
+
 ## [0.0.7] - 2022-11-06
 
 ### Changed
