@@ -109,7 +109,7 @@ def rendered_form(request, form, structure=True):
                             link(
                                 request,
                                 form.morphs[s_c].morph.morpheme,
-                                label=form.morphs[s_c].morph.name.strip("-"),
+                                label=form.morphs[s_c].morph.name.strip("-").strip("="),
                                 name=form.morphs[s_c].morph.id
                                 + "-"
                                 + form.morphs[s_c].morpheme_meaning.id,
