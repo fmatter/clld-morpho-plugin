@@ -24,9 +24,7 @@
         <tr>
             <td>Glosses:</td>
             <td>
-                % for gloss in ctx.glosses:
-                    ${h.link(request, gloss)}
-                % endfor
+                ${h.text2html(", ".join([h.link(request, gloss) for gloss in ctx.glosses]))}
             </td>
         </tr>
         % if ctx.morpheme:
