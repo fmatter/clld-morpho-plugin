@@ -23,10 +23,12 @@
         <tr>
             <td>Structure:</td>
             <td>
-                    ${rendered_form(request, ctx)}
+                ${rendered_form(request, ctx) | n}<br>
+                ${rendered_form(request, ctx, level="gloss") | n}
             </td>
         </tr>
         % endif
+        % if ctx.meanings:
         <tr>
             <td> Meanings:</td>
             <td>
@@ -37,18 +39,13 @@
                 </ol>
             </td>
         </tr>
+        % endif
         % if ctx.pos:
         <tr>
             <td>Part of speech:</td>
             <td>
                 ${h.link(request, ctx.pos)}
             </td>
-        </tr>
-        % endif
-        % if ctx.lexeme:
-        <tr>
-            <td>Lexeme:</td>
-            <td>${h.link(request, ctx.lexeme, label=ctx.lexeme.name.upper())}</td>
         </tr>
         % endif
         % if getattr(ctx, "segments", None):
@@ -76,20 +73,6 @@
 % if ctx.audio:
     <audio controls="controls"><source src="/audio/${ctx.audio}" type="audio/x-wav"></source></audio>
 % endif 
-
-% if len(ctx.meanings) > 0:
-    % if getattr(ctx.meanings[0], "form_tokens", None):
-        <h3>${_('Sentences')}</h3>
-        % for form_meaning in ctx.meanings:
-            <h4>‘${h.link(request, form_meaning.meaning)}’:</h4>
-            <ol class="example">
-                % for form_token in form_meaning.form_tokens:
-                    ${rendered_sentence(request, form_token.sentence,       sentence_link=True)}
-                % endfor
-            </ol>
-        % endfor
-    % endif
-% endif
 
 <script>
 var highlight_targets = document.getElementsByName("${ctx.id}");

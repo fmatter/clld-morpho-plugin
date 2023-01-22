@@ -47,7 +47,7 @@ class AudioCol(Col):
 
 class Wordforms(DataTable):
 
-    __constraints__ = [Language, models.POS, models.Lexeme, models.Inflection]
+    __constraints__ = [Language, models.POS, models.Inflection]
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Wordform.language))
@@ -67,11 +67,6 @@ class Wordforms(DataTable):
         if self.pos:
             query = query.join(models.POS).options(joinedload(models.Wordform.pos))
             return query.filter(models.Wordform.pos == self.pos)
-        if self.lexeme:
-            query = query.join(models.Inflection, models.Lexeme).options(
-                joinedload(models.Wordform.lexemes)
-            )
-            return query.filter(models.Inflection.lexeme == self.lexeme)
         return query
 
     def col_defs(self):
@@ -85,22 +80,13 @@ class Wordforms(DataTable):
                     get_obj=lambda i: i.pos,
                 )
             )
-        if not self.language and not self.lexeme:
+        if not self.language:
             cols.append(
                 LinkCol(
                     self,
                     "language",
                     model_col=Language.name,
                     get_obj=lambda i: i.language,
-                )
-            )
-        if not self.lexeme:
-            cols.append(
-                LinkCol(
-                    self,
-                    "lexeme",
-                    model_col=models.Lexeme.name,
-                    get_obj=lambda i: i.lexeme,
                 )
             )
         cols.append(AudioCol(self, "Audio"))
@@ -156,6 +142,11 @@ class Meanings(DataTable):
 class POS(DataTable):
     def col_defs(self):
         return [LinkCol(self, "name")]
+
+
+class Glosses(DataTable):
+    def col_defs(self):
+        return [LinkCol(self, "name"), Col(self, "description")]
 
 
 class Lexemes(DataTable):

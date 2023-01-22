@@ -7,7 +7,7 @@ class IMorph(Interface):
     """
 
 
-class IMorphset(Interface):
+class IMorpheme(Interface):
     """
     morpheme interface
     """
@@ -25,9 +25,21 @@ class IWordform(Interface):
     """
 
 
+class IGloss(Interface):
+    """
+    gloss interface
+    """
+
+
 class IPOS(Interface):
     """
     part of speech interface
+    """
+
+
+class IStem(Interface):
+    """
+    stem interface
     """
 
 

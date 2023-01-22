@@ -10,6 +10,8 @@ from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
+from sqlalchemy.ext.mutable import MutableList
+from sqlalchemy import PickleType
 from sqlalchemy import Unicode
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import relationship
@@ -18,8 +20,10 @@ from clld_morphology_plugin.interfaces import IPOS
 from clld_morphology_plugin.interfaces import ILexeme
 from clld_morphology_plugin.interfaces import IMeaning
 from clld_morphology_plugin.interfaces import IMorph
-from clld_morphology_plugin.interfaces import IMorphset
+from clld_morphology_plugin.interfaces import IMorpheme
 from clld_morphology_plugin.interfaces import IWordform
+from clld_morphology_plugin.interfaces import IStem, IGloss
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
 @implementer(IMeaning)
@@ -27,7 +31,19 @@ class Meaning(Base, PolymorphicBaseMixin, IdNameDescriptionMixin):
     pass
 
 
-@implementer(IMorphset)
+@implementer(IGloss)
+class Gloss(Base):
+    id = Column(String, unique=True)
+    name = Column(String, unique=True)
+    meaning_pk = Column(Integer, ForeignKey("meaning.pk"), nullable=True)
+    meaning = relationship(Meaning, innerjoin=True, backref="glosses")
+
+    @property
+    def morphs(self):
+        return list(set([s.morph for s in self.formslices]))
+
+
+@implementer(IMorpheme)
 class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
     __table_args__ = (UniqueConstraint("language_pk", "id"),)
 
@@ -48,16 +64,14 @@ class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
 
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
     language = relationship(Language, innerjoin=True)
-    morpheme_pk = Column(Integer, ForeignKey("morpheme.pk"), nullable=False)
+    morpheme_pk = Column(Integer, ForeignKey("morpheme.pk"), nullable=True)
     morpheme = relationship(Morpheme, innerjoin=True, backref="allomorphs")
+    rsep = Column(String, nullable=True)
+    lsep = Column(String, nullable=True)
 
-
-class MorphemeMeaning(Base):
-    id = Column(String, unique=True)
-    morpheme_pk = Column(Integer, ForeignKey("morpheme.pk"), nullable=False)
-    meaning_pk = Column(Integer, ForeignKey("meaning.pk"), nullable=False)
-    morpheme = relationship(Morpheme, innerjoin=True, backref="meanings")
-    meaning = relationship(Meaning, innerjoin=True, backref="morphemes")
+    @property
+    def glosses(self):
+        return list(set([s.gloss for s in self.formslices]))
 
 
 @implementer(IPOS)
@@ -83,7 +97,7 @@ class Wordform(
     pos_pk = Column(Integer, ForeignKey("pos.pk"))
     pos = relationship(POS, backref="wordforms", innerjoin=True)
 
-    segmented = Column(String)
+    parts = Column(MutableList.as_mutable(PickleType), default=[])
 
     @property
     def audio(self):
@@ -91,32 +105,6 @@ class Wordform(
             if f.mime_type.split("/")[0] == "audio":
                 return f
         return None
-
-    @property
-    def lexeme(self):
-        if len(self.lexemes) == 0:
-            return None
-        return self.lexemes[0].lexeme
-
-
-class FormMeaning(Base):
-    id = Column(String, unique=True)
-    form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
-    meaning_pk = Column(Integer, ForeignKey("meaning.pk"), nullable=False)
-    form = relationship(Wordform, innerjoin=True, backref="meanings")
-    meaning = relationship(Meaning, innerjoin=True, backref="forms")
-
-
-class FormSlice(Base):
-    form_pk = Column(Integer, ForeignKey("wordform.pk"))
-    morph_pk = Column(Integer, ForeignKey("morph.pk"))
-    morpheme_meaning_pk = Column(Integer, ForeignKey("morphememeaning.pk"))
-    form_meaning_pk = Column(Integer, ForeignKey("formmeaning.pk"))
-    form = relationship(Wordform, backref="morphs")
-    morph = relationship(Morph, backref="forms")
-    index = Column(Integer)
-    form_meaning = relationship(FormMeaning)
-    morpheme_meaning = relationship(MorphemeMeaning, backref="morph_tokens")
 
 
 class Wordform_files(Base, FilesMixin):  # noqa: N801
@@ -130,36 +118,52 @@ class Lexeme(Base, IdNameDescriptionMixin):
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
     language = relationship(Language, innerjoin=True)
 
-    morpheme_pk = Column(Integer, ForeignKey("morpheme.pk"))
-    root_morpheme = relationship(Morpheme, innerjoin=True, backref="lexemes")
-
     comment = Column(Unicode)
 
-    @property
-    def form_count(self):
-        return len(self.forms)
+
+@implementer(IStem)
+class Stem(Base, IdNameDescriptionMixin):
+    __table_args__ = (UniqueConstraint("language_pk", "id"),)
+
+    language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
+    language = relationship(Language, innerjoin=True)
+
+    lexeme_pk = Column(Integer, ForeignKey("lexeme.pk"))
+    lexeme = relationship(Lexeme, innerjoin=True, backref="stems")
+    comment = Column(Unicode)
 
 
 class Inflection(Base):
+    """Inflections link a lexeme with a wordform, adding information about the morph and the inflectional value"""
+
     form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
     lexeme_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=False)
     form = relationship(Wordform, innerjoin=True, backref="lexemes")
     lexeme = relationship(Lexeme, innerjoin=True, backref="forms")
 
 
-class LexemeLexemePart(Base):
-    derived_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=False)
-    base_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=True)
-    derived_lexeme = relationship(
-        Lexeme, innerjoin=True, backref="base_lexemes", foreign_keys=derived_pk
-    )
-    base_lexeme = relationship(
-        Lexeme, innerjoin=True, backref="derived_lexemes", foreign_keys=base_pk
-    )
+class InflectionalCategory(Base, IdNameDescriptionMixin):
+    pass
 
 
-class LexemeMorphemePart(Base):
-    morpheme_pk = Column(Integer, ForeignKey("morpheme.pk"), nullable=False)
-    lexeme_pk = Column(Integer, ForeignKey("lexeme.pk"), nullable=False)
-    morpheme = relationship(Morpheme, innerjoin=True, backref="derived_lexemes")
-    lexeme = relationship(Lexeme, innerjoin=True, backref="derivational_morphemes")
+class InflectionalValue(Base, IdNameDescriptionMixin):
+    category_pk = Column(Integer, ForeignKey("inflectionalcategory.pk"), nullable=False)
+    category = relationship(InflectionalCategory, innerjoin=True, backref="values")
+
+
+class FormPart(Base):
+    form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
+    morph_pk = Column(Integer, ForeignKey("morph.pk"), nullable=False)
+    form = relationship(Wordform, innerjoin=True, backref="morphs")
+    morph = relationship(Morph, innerjoin=True, backref="formslices")
+    index = Column(Integer, nullable=True)
+    gloss_pk = Column(Integer, ForeignKey("gloss.pk"), nullable=False)
+    gloss = relationship(Gloss, innerjoin=True, backref="formslices")
+
+
+class FormMeaning(Base):
+    # id = Column(String, unique=True)
+    form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
+    meaning_pk = Column(Integer, ForeignKey("meaning.pk"), nullable=False)
+    form = relationship(Wordform, innerjoin=True, backref="meanings")
+    meaning = relationship(Meaning, innerjoin=True, backref="forms")

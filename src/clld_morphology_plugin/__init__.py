@@ -18,7 +18,7 @@ def includeme(config):
 
     config.register_resource("morph", models.Morph, interfaces.IMorph, with_index=True)
     config.register_resource(
-        "morpheme", models.Morpheme, interfaces.IMorphset, with_index=True
+        "morpheme", models.Morpheme, interfaces.IMorpheme, with_index=True
     )
     config.register_resource(
         "meaning", models.Meaning, interfaces.IMeaning, with_index=True
@@ -31,9 +31,12 @@ def includeme(config):
         "wordform", models.Wordform, interfaces.IWordform, with_index=True
     )
 
+    config.register_resource("gloss", models.Gloss, interfaces.IGloss, with_index=False)
+
     config.register_datatable("lexemes", datatables.Lexemes)
     config.register_datatable("pos", datatables.POS)
     config.register_datatable("meanings", datatables.Meanings)
     config.register_datatable("morphs", datatables.Morphs)
     config.register_datatable("wordforms", datatables.Wordforms)
     config.register_datatable("morphemes", datatables.Morphemes)
+    config.register_datatable("glosses", datatables.Glosses)

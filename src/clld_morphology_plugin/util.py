@@ -83,9 +83,7 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                     HTML.div(*posses),
                     class_="gloss-unit",
                 )
-            units.append(
-                interlinear_div
-            )
+            units.append(interlinear_div)
     return units
 
 
@@ -93,31 +91,74 @@ morph_separators = ["-", "~", "<", ">"]
 sep_pattern = f"([{''.join(morph_separators)}])"
 
 
-def rendered_form(request, form, structure=True):
-    if structure:
-        if form.morphs != []:
-            form_output = []
-            p_c = -1
-            s_c = 0
-            for part in re.split(sep_pattern, form.segmented):
-                if part in morph_separators:
-                    form_output.append(part)
-                else:
-                    p_c += 1
-                    if len(form.morphs) > s_c and p_c == form.morphs[s_c].index:
-                        form_output.append(
-                            link(
-                                request,
-                                form.morphs[s_c].morph.morpheme,
-                                label=form.morphs[s_c].morph.name.strip("-").strip("="),
-                                name=form.morphs[s_c].morph.id
-                                + "-"
-                                + form.morphs[s_c].morpheme_meaning.id,
-                            )
-                        )
-                        s_c += 1
-                    else:
-                        form_output.append(part)
-            return literal("".join(form_output))
-        return literal("&nbsp;")
-    return link(request, form, label=form.name.strip("="))
+def rendered_form(request, form, level="morph"):
+    parts = {x: part for (x, part) in enumerate(form.parts)}
+    slices = {s.index: s for s in form.morphs}
+    out = []
+    for index, part in parts.items():
+        if index in slices:
+            # if there is a preceding morph without a following separator,
+            # we add either this morph's separator or -
+            if level == "morph":
+                label = part
+            elif level == "gloss":
+                label = slices[index].gloss.name
+            if index > 0:
+                if out[-1] not in morph_separators:
+                    label = (slices[index].morph.lsep or "-") + label
+            if index < len(parts) and slices[index].morph.rsep:
+                label += slices[index].morph.rsep
+            if level == "morph":
+                out.append(link(request, slices[index].morph, label=label))
+            elif level == "gloss":
+                out.append(link(request, slices[index].gloss, label=label))
+            else:
+                out.append("TBD")
+        else:
+            if level == "morph":
+                label = part
+            elif level == "gloss":
+                label = "***"
+            if index > 0:
+                if out[-1] not in morph_separators:
+                    label = "-" + label
+            if level == "morph":
+                out.append(label)
+            elif level == "gloss":
+                out.append(label)
+            else:
+                out.append("TBD")
+    if level == "morph":
+        return "".join(out)
+    else:
+        return "".join(out)
+
+
+# def rendered_form(request, form, structure=True):
+#     if structure:
+#         if form.morphs != []:
+#             form_output = []
+#             p_c = -1
+#             s_c = 0
+#             for part in re.split(sep_pattern, form.segmented):
+#                 if part in morph_separators:
+#                     form_output.append(part)
+#                 else:
+#                     p_c += 1
+#                     if len(form.morphs) > s_c and p_c == form.morphs[s_c].index:
+#                         form_output.append(
+#                             link(
+#                                 request,
+#                                 form.morphs[s_c].morph.morpheme,
+#                                 label=form.morphs[s_c].morph.name.strip("-").strip("="),
+#                                 name=form.morphs[s_c].morph.id
+#                                 + "-"
+#                                 + form.morphs[s_c].morpheme_meaning.id,
+#                             )
+#                         )
+#                         s_c += 1
+#                     else:
+#                         form_output.append(part)
+#             return literal("".join(form_output))
+#         return literal("&nbsp;")
+#     return link(request, form, label=form.name.strip("="))

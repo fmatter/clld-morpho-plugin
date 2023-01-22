@@ -44,12 +44,12 @@
                 </ol>
             </td>
         </tr>
-        % if ctx.lexemes:
+        % if ctx.stems:
         <tr>
-           <td> Corresponding lexeme: </td>
+           <td> Corresponding stem: </td>
             <td>
-                % for lex in ctx.lexemes:
-                    ${h.link(request, lex, label=lex.name.upper())} <br>
+                % for stem in ctx.stems:
+                    ${h.link(request, stem, label=stem.name.upper())} <br>
                 % endfor
             </td>
         </tr>
