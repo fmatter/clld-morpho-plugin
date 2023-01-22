@@ -11,7 +11,7 @@
 
 <%! active_menu_item = "morphemes" %>
 
-<h3>${_('Morpheme')} <i>${ctx.name}</i></h3>
+<h3>${_('Morpheme')} <i>${ctx.name}</i> ‘${ctx.description}’</h3>
 
 <table class="table table-nonfluid">
     <tbody>
@@ -21,7 +21,7 @@
         </tr>
         <tr>
             % if ctx.allomorphs:
-                <td> Allomorphs: </td>
+                <td> Morphs: </td>
                 <td>
                     % for i, morph in enumerate(ctx.allomorphs):
                         % if i < len(ctx.allomorphs)-1:
@@ -35,71 +35,67 @@
             %endif
         </tr>
         <tr>
-           <td> Meanings: </td>
+            <td>Glosses:</td>
             <td>
-                <ol>
-                    % for meaning in ctx.meanings:
-                        <li> ‘${h.link(request, meaning.meaning)}’ </li>
-                    % endfor
-                </ol>
+                ${h.text2html(", ".join([h.link(request, gloss) for gloss in ctx.glosses]))}
             </td>
         </tr>
-        % if ctx.stems:
-        <tr>
-           <td> Corresponding stem: </td>
-            <td>
-                % for stem in ctx.stems:
-                    ${h.link(request, stem, label=stem.name.upper())} <br>
-                % endfor
-            </td>
-        </tr>
-        % endif
-        % if ctx.derived_lexemes:
-        <tr>
-           <td> Derived lexemes: </td>
-            <td>
-                <ol>
-                    % for lex in ctx.derived_lexemes:
-                        <li> ${h.link(request, lex.lexeme, label=lex.lexeme.name.upper())} ‘${lex.lexeme.description}’ </li>
-                    % endfor
-                </ol>
-            </td>
-        </tr>
-        % endif
-        % if ctx.comment:
-           <td> Comment: </td>
-           <td> ${parent.markdown(request, ctx.comment)|n} </td>
-        % endif
-        % if contribution in dir(ctx):
-        <tr>
-            <td> Contribution: </td>
-            <td>
-                ${h.link(request, ctx.contribution)} by
-                % for contributor in ctx.contribution.primary_contributors:
-                    ${h.link(request, contributor)}
-                % endfor
-            </td>
-        </tr>
-        % endif
+        ##% if ctx.stems:
+        ##<tr>
+        ##   <td> Corresponding stem: </td>
+        ##    <td>
+        ##        % for stem in ctx.stems:
+        ##            ${h.link(request, stem, label=stem.name.upper())} <br>
+        ##        % endfor
+        ##    </td>
+        ##</tr>
+        ##% endif
+        ##% if ctx.derived_lexemes:
+        ##<tr>
+        ##   <td> Derived lexemes: </td>
+        ##    <td>
+        ##        <ol>
+        ##            % for lex in ctx.derived_lexemes:
+        ##                <li> ${h.link(request, lex.lexeme, label=lex.lexeme.name.upper())} ‘${lex.lexeme.description}’ </li>
+        ##            % endfor
+        ##        </ol>
+        ##    </td>
+        ##</tr>
+        ##% endif
+        ##% if ctx.comment:
+        ##   <td> Comment: </td>
+        ##   <td> ${parent.markdown(request, ctx.comment)|n} </td>
+        ##% endif
+        ##% if contribution in dir(ctx):
+        ##<tr>
+        ##    <td> Contribution: </td>
+        ##    <td>
+        ##        ${h.link(request, ctx.contribution)} by
+        ##        % for contributor in ctx.contribution.primary_contributors:
+        ##            ${h.link(request, contributor)}
+        ##        % endfor
+        ##    </td>
+        ##</tr>
+        ##% endif
     </tbody>
 </table>
 
 <% meaning_forms = {} %>
 <% meaning_sentences = {} %>
-% for morph in ctx.allomorphs:
-    % for form_slice in morph.forms:
-        % if not form_slice.morpheme_meaning:
-            <li> ${h.link(request, form_slice.form)} </li>
-        % else:
-            <% meaning_forms.setdefault(form_slice.morpheme_meaning, []) %>
-            <% meaning_forms[form_slice.morpheme_meaning].append(form_slice.form) %>
-            % if getattr(form_slice.form_meaning, "form_tokens", None):
-                <% meaning_sentences.setdefault(form_slice.morpheme_meaning, []) %>
-                <% meaning_sentences[form_slice.morpheme_meaning].extend(form_slice.form_meaning.form_tokens) %>
-            % endif
-        % endif
-    % endfor
-% endfor
+##% for morph in ctx.allomorphs:
+##    % for form_slice in morph.forms:
+##        % if not form_slice.morpheme_meaning:
+##            <li> ${h.link(request, form_slice.form)} </li>
+##        % else:
+##            <% meaning_forms.setdefault(form_slice.morpheme_meaning, []) %>
+##            <% meaning_forms[form_slice.morpheme_meaning].append(form_slice.form) %>
+##            % if getattr(form_slice.form_meaning, "form_tokens", None):
+##                <% meaning_sentences.setdefault(form_slice.morpheme_meaning, []) %>
+##                <% meaning_sentences[form_slice.morpheme_meaning].extend(form_slice.form_meaning.form_tokens) %>
+##            % endif
+##        % endif
+##    % endfor
+##% endfor
 
 <div class="tabbable">
     <ul class="nav nav-tabs">
@@ -109,16 +105,11 @@
 
     <div class="tab-content" style="overflow: visible;">
         <div id="forms" class="tab-pane">
-            % for meaning, forms in meaning_forms.items():
-                % if len(meaning_forms) > 1:
-                    <h5> As ‘${h.link(request, meaning.meaning)}’: </h5>
-                % endif
-                <ol>
-                    % for form in forms:
-                        <li> ${h.link(request, form)} ${"("+form.pos.id+")" if form.pos else ""} </li>
-                    % endfor
-                </ol>
+        <ol>
+            % for form in ctx.forms:
+                <li> ${h.link(request, form)} </li>
             % endfor
+        </ol>
         </div>
     
         <div id="corpus" class="tab-pane active">

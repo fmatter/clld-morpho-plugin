@@ -32,16 +32,6 @@
             <td> Morpheme:</td>
             <td>${h.link(request, ctx.morpheme)}</td>
         </tr>
-        <tr>
-            <td> Meanings:</td>
-            <td>
-                <ol>
-                    % for meaning in ctx.morpheme.meanings:
-                        <li> ‘${h.link(request, meaning.meaning)}’ </li>
-                    % endfor
-                </ol>
-            </td>
-        </tr>
         % endif
         % if cognates in dir(ctx):
         <tr>

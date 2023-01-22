@@ -54,6 +54,21 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
     contribution = relationship(Contribution, backref="morphemes")
     comment = Column(Unicode)
 
+    @property
+    def glosses(self):
+        glosslist = []
+        for m in self.allomorphs:
+            glosslist.extend(m.glosses)
+        return list(set(glosslist))
+
+    @property
+    def forms(self):
+        formlist = []
+        for m in self.allomorphs:
+            for fslice in m.formslices:
+                formlist.append(fslice.form)
+        return list(set(formlist))
+
 
 @implementer(IMorph)
 class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
