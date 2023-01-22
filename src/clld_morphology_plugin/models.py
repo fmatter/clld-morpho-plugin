@@ -68,6 +68,7 @@ class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
     morpheme = relationship(Morpheme, innerjoin=True, backref="allomorphs")
     rsep = Column(String, nullable=True)
     lsep = Column(String, nullable=True)
+    morph_type = Column(String, nullable=True)
 
     @property
     def glosses(self):

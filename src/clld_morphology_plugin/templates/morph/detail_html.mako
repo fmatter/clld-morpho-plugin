@@ -13,7 +13,7 @@
 <%doc><h2>${_('Morph')} ${ctx.name} (${h.link(request, ctx.language)})</h2>
 </%doc>
 
-<h3>${_('Morph')} <i>${ctx.name}</i></h3>
+<h3>${_('Morph')} <i>${ctx.name}</i> ‘${ctx.description}’</h3>
 
 <table class="table table-nonfluid">
     <tbody>
@@ -91,9 +91,11 @@ ${h.link(request, contributor)}
 
     <div class="tab-content" style="overflow: visible;">
         <div id="forms" class="tab-pane">
+        <ol>
             % for form_slice in ctx.formslices:
                 <li> ${h.link(request, form_slice.form)} </li>
             % endfor
+        </ol>
         </div>
     
         <div id="corpus" class="tab-pane active">

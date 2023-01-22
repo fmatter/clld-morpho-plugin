@@ -111,6 +111,7 @@ class Morphs(DataTable):
             LinkCol(
                 self, "language", model_col=Language.name, get_obj=lambda i: i.language
             ),
+            Col(self, "morph_type", choices=["prefix", "suffix", "root", "infix"])
         ]
 
 

@@ -11,7 +11,7 @@
 
 
 
-<h3>${_('Form')} <i>${ctx.name}</i></h3>
+<h3>${_('Form')} <i>${ctx.name}</i> ‘${ctx.description}’</h3>
 
 <table class="table table-nonfluid">
     <tbody>

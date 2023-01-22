@@ -18,16 +18,6 @@
 <table class="table table-nonfluid">
     <tbody>
         <tr>
-            <td> Forms:</td>
-            <td>
-                <ol>
-                   % for fslice in ctx.formslices:
-                       <li> ${h.link(request, fslice.form)} </li>
-                   % endfor
-                </ol>
-            </td>
-        </tr>
-        <tr>
             <td> Morphs:</td>
             <td>
                 <ol>
@@ -44,6 +34,16 @@
                    ## % for meaning in ctx.morpheme.meanings:
                    ##     <li> ‘${h.link(request, meaning.meaning)}’ </li>
                    ## % endfor
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td> Forms:</td>
+            <td>
+                <ol>
+                   % for fslice in ctx.formslices:
+                       <li> ${h.link(request, fslice.form)} </li>
+                   % endfor
                 </ol>
             </td>
         </tr>
