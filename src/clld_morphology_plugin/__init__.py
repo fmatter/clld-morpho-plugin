@@ -32,6 +32,31 @@ def includeme(config):
     )
 
     config.register_resource("gloss", models.Gloss, interfaces.IGloss, with_index=False)
+    config.register_resource("stem", models.Stem, interfaces.IStem, with_index=True)
+    config.register_resource(
+        "inflectionalvalue",
+        models.InflectionalValue,
+        interfaces.IInflValue,
+        with_index=True,
+    )
+    config.register_resource(
+        "inflectionalcategory",
+        models.InflectionalCategory,
+        interfaces.IInflCategory,
+        with_index=False,
+    )
+    config.register_resource(
+        "form",
+        models.Form,
+        interfaces.IForm,
+        with_index=True,
+    )
+    config.register_resource(
+        "derivationalprocess",
+        models.DerivationalProcess,
+        interfaces.IDerivProcess,
+        with_index=True,
+    )
 
     config.register_datatable("lexemes", datatables.Lexemes)
     config.register_datatable("pos", datatables.POS)
@@ -40,3 +65,7 @@ def includeme(config):
     config.register_datatable("wordforms", datatables.Wordforms)
     config.register_datatable("morphemes", datatables.Morphemes)
     config.register_datatable("glosses", datatables.Glosses)
+    config.register_datatable("stems", datatables.Stems)
+    config.register_datatable("inflectionalvalues", datatables.Glosses)
+    config.register_datatable("forms", datatables.Forms)
+    config.register_datatable("derivationalprocesses", datatables.Forms)

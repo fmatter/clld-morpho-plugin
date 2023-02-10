@@ -1,5 +1,7 @@
 <%inherit file="../${context.get('request').registry.settings.get('clld.app_template', 'app.mako')}"/>
 <%namespace name="util" file="../util.mako"/>
+<% from clld_morphology_plugin.util import rendered_form %>
+<% from clld_morphology_plugin.util import render_derived_stems %>
 <link rel="stylesheet" href="${req.static_url('clld_morphology_plugin:static/clld-morphology.css')}"/>
 
 % try:
@@ -21,17 +23,45 @@
             <td>Language:</td>
             <td>${h.link(request, ctx.language)}</td>
         </tr>
-        <tr>
-            <td>Glosses:</td>
-            <td>
-                ${h.text2html(", ".join([h.link(request, gloss) for gloss in ctx.glosses]))}
-            </td>
-        </tr>
+        % if ctx.glosses:
+            <tr>
+                <td>Glosses:</td>
+                <td>
+                    ${h.text2html(", ".join([h.link(request, gloss) for gloss in ctx.glosses]))}
+                </td>
+            </tr>
+        %endif
         % if ctx.morpheme:
         <tr>
             <td> Morpheme:</td>
             <td>${h.link(request, ctx.morpheme)}</td>
         </tr>
+        % endif
+        % if ctx.inflectionalvalues:
+        <tr>
+            <td> Inflectional values:</td>
+            <td>
+            <ul>
+              % for val in ctx.inflectionalvalues:
+                 <li>${h.link(request, val, label=val.name)} (${h.link(request, val.category)})</li>
+              % endfor
+            </ul>
+            </td>
+        </tr>
+        % endif
+        % if ctx.morph_type:
+        <tr>
+            <td> Type:</td>
+            <td>${ctx.morph_type}</td>
+        </tr>
+        % endif
+        % if ctx.derivations:
+            <tr>
+                <td> ${_('Derived stems')}: </td>
+                <td>
+                    ${render_derived_stems(request, ctx)}
+                </td>
+            </tr>
         % endif
         % if cognates in dir(ctx):
         <tr>
@@ -73,20 +103,31 @@ ${h.link(request, contributor)}
 
 <div class="tabbable">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#corpus" data-toggle="tab"> Corpus tokens </a></li>
-        <li><a href="#forms" data-toggle="tab"> Wordforms </a></li>
+        <li class="active"><a href="#forms" data-toggle="tab"> Forms </a></li>
+        <li><a href="#corpus" data-toggle="tab"> Corpus tokens </a></li>
+        % if ctx.stemslices:
+            <li><a href="#stems" data-toggle="tab"> Stems </a></li>
+        %endif
     </ul>
 
     <div class="tab-content" style="overflow: visible;">
-        <div id="forms" class="tab-pane">
-        <ol>
-            % for form_slice in ctx.formslices:
-                <li> ${h.link(request, form_slice.form)} </li>
+        <div id="forms" class="tab-pane active">
+        <ul>
+            % for wordform in ctx.wordforms:
+                <li> ${h.link(request, wordform) | n} </li>
             % endfor
-        </ol>
+        </ul>
         </div>
-    
-        <div id="corpus" class="tab-pane active">
+        
+        <div id="stems" class="tab-pane">
+            <ul>
+                % for sslice in ctx.stemslices:
+                    <li> ${h.link(request, sslice.stem)} </li>
+                % endfor
+            </ul>
+        </div>
+
+        <div id="corpus" class="tab-pane">
             % for morpheme_meaning, sentences in meaning_sentences.items():
                 <div id=${morpheme_meaning.id}>
                     % if len(meaning_forms) > 1:
@@ -115,5 +156,6 @@ ${h.link(request, contributor)}
         </div>
     </div>  
 </div>
+
 
 <script src="${req.static_url('clld_morphology_plugin:static/clld-morphology.js')}"></script>

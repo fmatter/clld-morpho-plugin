@@ -2,7 +2,9 @@ import re
 from clld.web.util.helpers import link
 from clld.web.util.htmllib import HTML
 from clld.web.util.htmllib import literal
-
+import pandas as pd
+from math import floor
+from clld_morphology_plugin.models import FormPart
 
 GLOSS_ABBR_PATTERN = re.compile(
     "(?P<personprefix>1|2|3)?(?P<abbr>[A-Z]+)(?P<personsuffix>1|2|3)?(?=([^a-z]|$))"
@@ -91,74 +93,208 @@ morph_separators = ["-", "~", "<", ">"]
 sep_pattern = f"([{''.join(morph_separators)}])"
 
 
-def rendered_form(request, form, level="morph"):
-    parts = {x: part for (x, part) in enumerate(form.parts)}
-    slices = {s.index: s for s in form.morphs}
-    out = []
+def form_representation(request, f, level="morphs", line="obj"):
+    parts = {x: part for (x, part) in enumerate(f.parts)}
+    slices = {fslice.index: fslice for fslice in f.slices}
+    components = {}
+    if level == "stem" and hasattr(
+        f, "stemforms"
+    ):  # returning segmentation and glosses at the stem level
+        if line == "obj":
+            components[0] = (f, link(request, f))
+        elif line == "gloss":
+            components[0] = (
+                f,
+                ".".join([link(request, gloss) for gloss in f.glosses]),
+            )
+        return components
+    if hasattr(f, "formstems"):
+        if level == "morphs":  # filling in morph slices from stem into form
+            for formstem in f.formstems:
+                if len(formstem.index) == 1:
+                    for idx, subform in form_representation(
+                        request, formstem.stem, level=level, line=line
+                    ).items():
+                        components[formstem.index[0] + (idx + 0.1) * 0.1] = subform
+                    if formstem.index[0] in parts:
+                        del parts[formstem.index[0]]
+                else:
+                    raise ValueError(formstem.index)
+        else:  # filling in links from stem
+            for formstem in f.formstems:
+                for idx in formstem.index:
+                    if line == "obj":
+                        components[idx] = (
+                            formstem.stem,
+                            link(request, formstem.stem, label=parts[idx]),
+                        )
+                    else:
+                        components[idx] = (
+                            formstem.stem,
+                            ".".join(
+                                [
+                                    link(request, gloss)
+                                    for gloss in formstem.stem.glosses
+                                ]
+                            ),
+                        )
+                    if idx in slices:
+                        del slices[idx]
     for index, part in parts.items():
         if index in slices:
-            # if there is a preceding morph without a following separator,
-            # we add either this morph's separator or -
-            if level == "morph":
-                label = part
-            elif level == "gloss":
-                label = slices[index].gloss.name
-            if index > 0:
-                if out[-1] not in morph_separators:
-                    label = (slices[index].morph.lsep or "-") + label
-            if index < len(parts) and slices[index].morph.rsep:
-                label += slices[index].morph.rsep
-            if level == "morph":
-                out.append(link(request, slices[index].morph, label=label))
-            elif level == "gloss":
-                out.append(link(request, slices[index].gloss, label=label))
-            else:
-                out.append("TBD")
+            if line == "obj" and slices[index].morph:
+                components[index] = (
+                    slices[index].morph,
+                    link(request, slices[index].morph, label=part),
+                )
+            elif line == "gloss":
+                components[index] = (
+                    slices[index].morph,
+                    ".".join([link(request, x.gloss) for x in slices[index].glosses]),
+                )
+        elif index not in components:
+            if line == "obj":
+                components[index] = (part, part)
+            elif line == "gloss":
+                components[index] = ("***", "***")
+    return dict(sorted(components.items()))
+
+
+def rendered_form(request, f, level="morphs", line="obj"):
+    if hasattr(f, "formslices"):
+        if level == "wordforms":
+            return " ".join([link(request, x.wordform) for x in f.formslices])
+        elif level == "forms":
+            return link(request, f)
         else:
-            if level == "morph":
-                label = part
-            elif level == "gloss":
-                label = "***"
-            if index > 0:
-                if out[-1] not in morph_separators:
-                    label = "-" + label
-            if level == "morph":
-                out.append(label)
-            elif level == "gloss":
-                out.append(label)
-            else:
-                out.append("TBD")
-    if level == "morph":
-        return "".join(out)
+            return " ".join(
+                [rendered_form(request, x.wordform, level, line) for x in f.formslices]
+            )
+    form_components = []
+    representation = form_representation(request, f, level, line)
+    for index, (part, partlink) in enumerate(representation.values()):
+        if index >= 1:
+            if form_components[-1] not in morph_separators:
+                if isinstance(part, str):
+                    form_components.append("-")
+                elif part and part.lsep:
+                    form_components.append(part.lsep)
+                else:
+                    form_components.append("-")
+        if part and index < len(representation) and not isinstance(part, str) and part.rsep:
+            form_components.append(part.rsep)
+        form_components.append(partlink)
+    print(form_components)
+    return "".join(form_components)
+
+
+def render_paradigm(self, html=False):
+    forms = {x.form: {"Form": x.form} for x in self.inflections}
+    for inflection in self.inflections:
+        if hasattr(inflection.form, "formslices"):
+            for fslice in inflection.form.formslices:
+                for infl in fslice.wordform.inflections:
+                    forms[inflection.form][infl.value.category] = infl.value
+        else:
+            forms[inflection.form][inflection.value.category] = inflection.value
+
+    df = pd.DataFrame.from_dict(list(forms.values()))
+
+    cut = floor(len(self.inflectionalcategories) / 2) - 1
+    y = self.inflectionalcategories[cut + 1 : :]
+    x = self.inflectionalcategories[0 : cut + 1]
+    df = df.fillna("-")
+    print(df)
+
+    if self.paradigm_x:
+        x = sorted([cat for cat in self.inflectionalcategories if cat.name in self.paradigm_x], key=lambda x: self.paradigm_x)
+    if self.paradigm_y:
+        y = sorted([cat for cat in self.inflectionalcategories if cat.name in self.paradigm_y], key=lambda x: self.paradigm_y)
+
+    def listify(stuff):
+        return [x for x in stuff]
+
+    paradigm = pd.pivot_table(df, values="Form", columns=x, index=y, aggfunc=listify)
+    paradigm = paradigm.fillna("")
+    
+    sort_orders = {cat: cat.ordered for cat in self.inflectionalcategories}
+
+    def sorter(s):
+        if s.name in sort_orders:
+            return s.map({k:v for v,k in enumerate(sort_orders[s.name])})
+        return s
+
+    paradigm.sort_index(level=paradigm.index.names, key=sorter, inplace=True)
+    paradigm.sort_index(level=paradigm.columns.names, key=sorter, inplace=True, axis=1)
+    paradigm.index = pd.MultiIndex.from_frame(paradigm.index.to_frame().fillna(""))
+
+    if html:
+        return paradigm.to_html()
+    return {
+        "colnames": paradigm.columns.names,
+        "columns": paradigm.columns.tolist(),
+        "idxnames": paradigm.index.names,
+        "index": paradigm.index.tolist(),
+        "cells": paradigm.values.tolist(),
+    }
+
+
+
+def dict_to_list(dd):
+    for a, b in dd.items():
+        yield HTML.li(a)
+        if isinstance(b, dict):
+            yield HTML.ul(*dict_to_list(b))
+        else:
+            yield HTML.ul(HTML.li(b))
+
+def build_etymology_tree(request, stem):
+    output = {}
+    for derivation in stem.derivations:
+        output[link(request, derivation.target) + f" ‘{derivation.target.description}’ (" + link(request, derivation.process) + ")"] = build_etymology_tree(request, derivation.target)
+    return output
+
+def build_etymology_source(request, stem, tree=None):
+    if not hasattr(stem, "derived_from"):
+        return tree
+    if not stem.derived_from:
+        return tree or {}
     else:
-        return "".join(out)
+        derivation = stem.derived_from[0]
+        parent = derivation.source
+    if not tree:
+        tree = link(request, stem)
+    tree = {link(request, parent) + f" ‘{derivation.target.description}’ + "+ link(request, derivation.process) +":": tree}
+    return build_etymology_source(request, parent, tree)
 
 
-# def rendered_form(request, form, structure=True):
-#     if structure:
-#         if form.morphs != []:
-#             form_output = []
-#             p_c = -1
-#             s_c = 0
-#             for part in re.split(sep_pattern, form.segmented):
-#                 if part in morph_separators:
-#                     form_output.append(part)
-#                 else:
-#                     p_c += 1
-#                     if len(form.morphs) > s_c and p_c == form.morphs[s_c].index:
-#                         form_output.append(
-#                             link(
-#                                 request,
-#                                 form.morphs[s_c].morph.morpheme,
-#                                 label=form.morphs[s_c].morph.name.strip("-").strip("="),
-#                                 name=form.morphs[s_c].morph.id
-#                                 + "-"
-#                                 + form.morphs[s_c].morpheme_meaning.id,
-#                             )
-#                         )
-#                         s_c += 1
-#                     else:
-#                         form_output.append(part)
-#             return literal("".join(form_output))
-#         return literal("&nbsp;")
-#     return link(request, form, label=form.name.strip("="))
+def render_derived_stems(request, stem):
+    res = build_etymology_tree(request, stem)
+    print(res)
+    return HTML.ul(*dict_to_list(res))
+
+def render_derived_from(request, stem):
+    res = build_etymology_source(request, stem)
+    return HTML.ul(*dict_to_list(res))
+
+
+def rendered_gloss_units(request, forms):
+    units = []
+    keys = ["wordforms", "morphs", "glosses"]
+    for form in forms:
+        units.append(
+            {
+                "wordforms": link(request, form),
+                "morphs": rendered_form(request, form),
+                "glosses": rendered_form(request, form, line="gloss"),
+            }
+        )
+        if form.stem:
+            units[-1]["stems"] = rendered_form(request, form.stem)
+            keys.append("stems")
+    return units, keys
+
+
+def render_wordforms(request, formlist):
+    units, keys = rendered_gloss_units(request, formlist)
+    return units, keys

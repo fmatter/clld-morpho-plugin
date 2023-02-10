@@ -7,6 +7,12 @@ class IMorph(Interface):
     """
 
 
+class IForm(Interface):
+    """
+    morph interface
+    """
+
+
 class IMorpheme(Interface):
     """
     morpheme interface
@@ -46,4 +52,22 @@ class IStem(Interface):
 class ILexeme(Interface):
     """
     lexeme interface
+    """
+
+
+class IInflValue(Interface):
+    """
+    infl value interface
+    """
+
+
+class IInflCategory(Interface):
+    """
+    infl category interface
+    """
+
+
+class IDerivProcess(Interface):
+    """
+    derivational process interface
     """

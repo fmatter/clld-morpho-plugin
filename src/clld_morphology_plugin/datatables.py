@@ -47,7 +47,7 @@ class AudioCol(Col):
 
 class Wordforms(DataTable):
 
-    __constraints__ = [Language, models.POS, models.Inflection]
+    __constraints__ = [Language, models.POS, models.Inflection, models.Stem]
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Wordform.language))
@@ -64,6 +64,13 @@ class Wordforms(DataTable):
 
         if self.language:
             return query.filter(models.Wordform.language == self.language)
+        if self.stem:
+            query = query.join(models.WordformStem).options(
+                joinedload(models.Wordform.formstems)
+            )
+            return query.filter(
+                models.Wordform.formstems.any(models.WordformStem.stem == self.stem)
+            )
         if self.pos:
             query = query.join(models.POS).options(joinedload(models.Wordform.pos))
             return query.filter(models.Wordform.pos == self.pos)
@@ -93,6 +100,32 @@ class Wordforms(DataTable):
         return cols
 
 
+class Forms(DataTable):
+
+    __constraints__ = [Language, models.Wordform]
+
+    def base_query(self, query):
+        query = query.join(Language).options(joinedload(models.Form.language))
+        query = query.join(models.FormPart).options(joinedload(models.Form.formslices))
+
+        if self.language:
+            return query.filter(models.Form.language == self.language)
+        if self.wordform:
+            return query.filter(
+                models.Form.formslices.any(models.FormPart.wordform == self.wordform)
+            )
+        return query
+
+    def col_defs(self):
+        return [
+            LinkCol(self, "name"),
+            Col(self, "description"),
+            LinkCol(
+                self, "language", model_col=Language.name, get_obj=lambda i: i.language
+            ),
+        ]
+
+
 class Morphs(DataTable):
 
     __constraints__ = [Language]
@@ -111,7 +144,7 @@ class Morphs(DataTable):
             LinkCol(
                 self, "language", model_col=Language.name, get_obj=lambda i: i.language
             ),
-            Col(self, "morph_type", choices=["prefix", "suffix", "root", "infix"])
+            Col(self, "morph_type", choices=["prefix", "suffix", "root", "infix"]),
         ]
 
 
@@ -123,6 +156,26 @@ class Morphemes(DataTable):
 
         if self.language:
             return query.filter(models.Morpheme.language == self.language)
+        return query
+
+    def col_defs(self):
+        return [
+            LinkCol(self, "name"),
+            Col(self, "description"),
+            LinkCol(
+                self, "language", model_col=Language.name, get_obj=lambda i: i.language
+            ),
+        ]
+
+
+class Stems(DataTable):
+    __constraints__ = [Language]
+
+    def base_query(self, query):
+        query = query.join(Language).options(joinedload(models.Stem.language))
+
+        if self.language:
+            return query.filter(models.Stem.language == self.language)
         return query
 
     def col_defs(self):
@@ -157,5 +210,5 @@ class Lexemes(DataTable):
         return [
             LinkCol(self, "name"),
             Col(self, "description"),
-            FormCountCol(self, "Forms", bSortable=False, bSearchable=False),
+            # FormCountCol(self, "Forms", bSortable=False, bSearchable=False),
         ]

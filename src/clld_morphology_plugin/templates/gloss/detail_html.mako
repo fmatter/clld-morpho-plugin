@@ -9,10 +9,6 @@
 % endtry 
 <%! active_menu_item = "glosses" %>
 
-
-<%doc><h2>${_('Gloss')} ${ctx.name}</h2>
-</%doc>
-
 <h3>${_('Gloss')} <i>${ctx.name}</i></h3>
 
 <table class="table table-nonfluid">
@@ -20,31 +16,43 @@
         <tr>
             <td> Morphs:</td>
             <td>
-                <ol>
+                <ul>
                    % for morph in ctx.morphs:
                        <li> ${h.link(request, morph)} </li>
                    % endfor
-                </ol>
+                </ul>
             </td>
         </tr>
+        % if ctx.values:
+            <tr>
+                <td> Inflectional values:</td>
+                <td>
+                    <ul>
+                       % for value in ctx.values:
+                           <li>${h.link(request, value, label=value.name)} (${h.link(request, value.category)})</li>
+                       % endfor
+                    </ul>
+                </td>
+            </tr>
+        % endif
         <tr>
             <td> Meanings:</td>
             <td>
-                <ol>
+                <ul>
                    ## % for meaning in ctx.morpheme.meanings:
                    ##     <li> ‘${h.link(request, meaning.meaning)}’ </li>
                    ## % endfor
-                </ol>
+                </ul>
             </td>
         </tr>
         <tr>
             <td> Forms:</td>
             <td>
-                <ol>
-                   % for fslice in ctx.formslices:
-                       <li> ${h.link(request, fslice.form)} </li>
+                <ul>
+                   % for fslice in ctx.formglosses:
+                   <li>${h.link(request, fslice.formpart.form)}</li>
                    % endfor
-                </ol>
+                </ul>
             </td>
         </tr>
     </tbody>
