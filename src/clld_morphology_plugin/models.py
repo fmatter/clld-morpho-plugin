@@ -311,7 +311,7 @@ class InflectionalCategory(Base, IdNameDescriptionMixin):
         sort_count = len(order)
         for plus, val in enumerate(self.values):
             if val.id not in order:
-                order[val.id] = sort_count+plus
+                order[val.id] = sort_count + plus
         if self.value_order[0] == "-":
             return ["-"] + sorted(self.values, key=lambda x: order[x.id])
         return sorted(self.values, key=lambda x: order[x.id]) + ["-"]
@@ -393,6 +393,7 @@ class Derivation(Base):
         if self.source_root:
             return self.source_root
         return None
+
 
 class StemPartDerivation(Base):
     stempart_pk = Column(Integer, ForeignKey("stempart.pk"), nullable=False)

@@ -26,20 +26,20 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
         g_shift = 0  # to keep up to date with how many g-words there are in total
         for pwc, (pword, pgloss) in enumerate(
             zip(sentence.analyzed.split("\t"), sentence.gloss.split("\t"))
-        ):
+        ):  # iterate p-words
             g_words = []
             morphs = []
             glosses = []
             posses = []
             for gwc, (word, gloss) in enumerate(
                 zip(pword.split("="), pgloss.split("="))
-            ):
-                i = pwc + gwc + g_shift
+            ):  # iterate g-words in p-word
+                idx = pwc + gwc + g_shift
                 if gwc > 0:
                     g_shift += 1
-                    for glosslist in [g_words, morphs, glosses, posses]:
+                    for glosslist in [glosses, posses]:
                         glosslist.append("=")
-                if i not in slices:
+                if idx not in slices:
                     g_words.append(HTML.span(word))
                     morphs.append(HTML.span(word, class_="morpheme"))
                     glosses.append(HTML.span(gloss))
@@ -47,23 +47,28 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                 else:
                     g_words.append(
                         HTML.span(
-                            rendered_form(request, slices[i].form, structure=False),
-                            name=slices[i].form.id,
+                            link(request, slices[idx].form),
+                            name=slices[idx].form.id,
                         )
                     )
                     morphs.append(
                         HTML.span(
-                            rendered_form(request, slices[i].form), class_="morpheme"
+                            rendered_form(request, slices[idx].form), class_="morpheme"
                         )
                     )
-                    glosses.append(HTML.span(gloss, **{"class": "gloss"}))
-                    if slices[i].form.pos:
+                    glosses.append(
+                        HTML.span(
+                            rendered_form(request, slices[idx].form, line="gloss"),
+                            **{"class": "gloss"},
+                        )
+                    )
+                    if slices[idx].form.pos:
                         posses.append(
                             HTML.span(
                                 link(
                                     request,
-                                    slices[i].form.pos,
-                                    label=slices[i].form.pos.id,
+                                    slices[idx].form.pos,
+                                    label=slices[idx].form.pos.id,
                                 ),
                                 **{"class": "pos"},
                             )
@@ -101,11 +106,11 @@ def form_representation(request, f, level="morphs", line="obj"):
         f, "stemforms"
     ):  # returning segmentation and glosses at the stem level
         if line == "obj":
-            components[0] = (f, link(request, f))
+            components[0] = (f, HTML.span(link(request, f)))
         elif line == "gloss":
             components[0] = (
                 f,
-                ".".join([link(request, gloss) for gloss in f.glosses]),
+                HTML.span(".".join([link(request, gloss) for gloss in f.glosses])),
             )
         return components
     if hasattr(f, "formstems"):
@@ -126,16 +131,18 @@ def form_representation(request, f, level="morphs", line="obj"):
                     if line == "obj":
                         components[idx] = (
                             formstem.stem,
-                            link(request, formstem.stem, label=parts[idx]),
+                            HTML.span(link(request, formstem.stem, label=parts[idx])),
                         )
                     else:
                         components[idx] = (
                             formstem.stem,
-                            ".".join(
-                                [
-                                    link(request, gloss)
-                                    for gloss in formstem.stem.glosses
-                                ]
+                            HTML.span(
+                                ".".join(
+                                    [
+                                        link(request, gloss)
+                                        for gloss in formstem.stem.glosses
+                                    ]
+                                )
                             ),
                         )
                     if idx in slices:
@@ -145,12 +152,12 @@ def form_representation(request, f, level="morphs", line="obj"):
             if line == "obj" and slices[index].morph:
                 components[index] = (
                     slices[index].morph,
-                    link(request, slices[index].morph, label=part),
+                    HTML.span(link(request, slices[index].morph, label=part)),
                 )
             elif line == "gloss":
                 components[index] = (
                     slices[index].morph,
-                    ".".join([link(request, x.gloss) for x in slices[index].glosses]),
+                    HTML.span(*[link(request, x.gloss) for x in slices[index].glosses]),
                 )
         elif index not in components:
             if line == "obj":
@@ -163,12 +170,17 @@ def form_representation(request, f, level="morphs", line="obj"):
 def rendered_form(request, f, level="morphs", line="obj"):
     if hasattr(f, "formslices"):
         if level == "wordforms":
-            return " ".join([link(request, x.wordform) for x in f.formslices])
+            return HTML.i(" ".join([link(request, x.wordform) for x in f.formslices]))
         elif level == "forms":
-            return link(request, f)
+            return HTML.i(link(request, f))
         else:
-            return " ".join(
-                [rendered_form(request, x.wordform, level, line) for x in f.formslices]
+            return HTML.i(
+                " ".join(
+                    [
+                        rendered_form(request, x.wordform, level, line)
+                        for x in f.formslices
+                    ]
+                )
             )
     form_components = []
     representation = form_representation(request, f, level, line)
@@ -181,11 +193,18 @@ def rendered_form(request, f, level="morphs", line="obj"):
                     form_components.append(part.lsep)
                 else:
                     form_components.append("-")
-        if part and index < len(representation) and not isinstance(part, str) and part.rsep:
+        if (
+            part
+            and index < len(representation)
+            and not isinstance(part, str)
+            and part.rsep
+        ):
             form_components.append(part.rsep)
         form_components.append(partlink)
-    print(form_components)
-    return "".join(form_components)
+    if line != "gloss":
+        return HTML.i(*form_components)
+    else:
+        return HTML.span(*form_components)
 
 
 def render_paradigm(self, html=False):
@@ -207,21 +226,27 @@ def render_paradigm(self, html=False):
     print(df)
 
     if self.paradigm_x:
-        x = sorted([cat for cat in self.inflectionalcategories if cat.name in self.paradigm_x], key=lambda x: self.paradigm_x)
+        x = sorted(
+            [cat for cat in self.inflectionalcategories if cat.name in self.paradigm_x],
+            key=lambda x: self.paradigm_x,
+        )
     if self.paradigm_y:
-        y = sorted([cat for cat in self.inflectionalcategories if cat.name in self.paradigm_y], key=lambda x: self.paradigm_y)
+        y = sorted(
+            [cat for cat in self.inflectionalcategories if cat.name in self.paradigm_y],
+            key=lambda x: self.paradigm_y,
+        )
 
     def listify(stuff):
         return [x for x in stuff]
 
     paradigm = pd.pivot_table(df, values="Form", columns=x, index=y, aggfunc=listify)
     paradigm = paradigm.fillna("")
-    
+
     sort_orders = {cat: cat.ordered for cat in self.inflectionalcategories}
 
     def sorter(s):
         if s.name in sort_orders:
-            return s.map({k:v for v,k in enumerate(sort_orders[s.name])})
+            return s.map({k: v for v, k in enumerate(sort_orders[s.name])})
         return s
 
     paradigm.sort_index(level=paradigm.index.names, key=sorter, inplace=True)
@@ -239,7 +264,6 @@ def render_paradigm(self, html=False):
     }
 
 
-
 def dict_to_list(dd):
     for a, b in dd.items():
         yield HTML.li(a)
@@ -248,11 +272,18 @@ def dict_to_list(dd):
         else:
             yield HTML.ul(HTML.li(b))
 
+
 def build_etymology_tree(request, stem):
     output = {}
     for derivation in stem.derivations:
-        output[link(request, derivation.target) + f" ‘{derivation.target.description}’ (" + link(request, derivation.process) + ")"] = build_etymology_tree(request, derivation.target)
+        output[
+            link(request, derivation.target)
+            + f" ‘{derivation.target.description}’ ("
+            + link(request, derivation.process)
+            + ")"
+        ] = build_etymology_tree(request, derivation.target)
     return output
+
 
 def build_etymology_source(request, stem, tree=None):
     if not hasattr(stem, "derived_from"):
@@ -264,21 +295,26 @@ def build_etymology_source(request, stem, tree=None):
         parent = derivation.source
     if not tree:
         tree = link(request, stem)
-    tree = {link(request, parent) + f" ‘{derivation.target.description}’ + "+ link(request, derivation.process) +":": tree}
+    tree = {
+        link(request, parent)
+        + f" ‘{derivation.target.description}’ + "
+        + link(request, derivation.process)
+        + ":": tree
+    }
     return build_etymology_source(request, parent, tree)
 
 
 def render_derived_stems(request, stem):
     res = build_etymology_tree(request, stem)
-    print(res)
     return HTML.ul(*dict_to_list(res))
+
 
 def render_derived_from(request, stem):
     res = build_etymology_source(request, stem)
     return HTML.ul(*dict_to_list(res))
 
 
-def rendered_gloss_units(request, forms):
+def rendered_gloss_units1(request, forms):
     units = []
     keys = ["wordforms", "morphs", "glosses"]
     for form in forms:
@@ -296,5 +332,5 @@ def rendered_gloss_units(request, forms):
 
 
 def render_wordforms(request, formlist):
-    units, keys = rendered_gloss_units(request, formlist)
+    units, keys = rendered_gloss_units1(request, formlist)
     return units, keys
