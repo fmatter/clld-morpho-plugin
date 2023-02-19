@@ -40,7 +40,8 @@ Inflected forms:
             % for x in range(len(paradigm["idxnames"])-1):
                 <td> </td>
             % endfor
-            <th> ${h.link(request, colname)} </th>
+            ${colname}
+            ## <th> ${h.link(request, colname)} </th>
             % for column in paradigm["columns"]:
                 <th> ${print_cell(column[col_idx])} </th>
             % endfor
@@ -48,7 +49,7 @@ Inflected forms:
     % endfor
     <tr>
         % for idxname in paradigm["idxnames"]:
-            <th> 
+            <th>
                 ${print_cell(idxname)}
             </th>
         % endfor

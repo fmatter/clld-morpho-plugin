@@ -241,7 +241,6 @@ def render_paradigm(self, html=False):
 
     paradigm = pd.pivot_table(df, values="Form", columns=x, index=y, aggfunc=listify)
     paradigm = paradigm.fillna("")
-
     sort_orders = {cat: cat.ordered for cat in self.inflectionalcategories}
 
     def sorter(s):
@@ -255,8 +254,12 @@ def render_paradigm(self, html=False):
 
     if html:
         return paradigm.to_html()
+    if None in paradigm.columns.names:
+        colnames = []
+    else:
+        colnames = paradigm.columns.names
     return {
-        "colnames": paradigm.columns.names,
+        "colnames": colnames,
         "columns": paradigm.columns.tolist(),
         "idxnames": paradigm.index.names,
         "index": paradigm.index.tolist(),

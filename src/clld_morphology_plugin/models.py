@@ -313,7 +313,7 @@ class InflectionalCategory(Base, IdNameDescriptionMixin):
         for plus, val in enumerate(self.values):
             if val.id not in order:
                 order[val.id] = sort_count + plus
-        if self.value_order[0] == "-":
+        if len(self.value_order) > 0 and self.value_order[0] == "-":
             return ["-"] + sorted(self.values, key=lambda x: order[x.id])
         return sorted(self.values, key=lambda x: order[x.id]) + ["-"]
 
@@ -425,7 +425,7 @@ class WordformPartInflection(Base):
     form = relationship(Form, innerjoin=True, backref="inflections")
     formpart_pk = Column(Integer, ForeignKey("wordformpart.pk"), nullable=False)
     formpart = relationship(WordformPart, innerjoin=True, backref="inflections")
-    value_pk = Column(Integer, ForeignKey("inflection.pk"), nullable=False)
+    infl_pk = Column(Integer, ForeignKey("inflection.pk"), nullable=False)
     inflection = relationship(Inflection, innerjoin=True, backref="formparts")
 
 
