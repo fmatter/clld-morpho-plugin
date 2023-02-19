@@ -58,8 +58,10 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
     def glosses(self):
         glosslist = []
         for m in self.allomorphs:
-            glosslist.extend(m.glosses)
-        return list(set(glosslist))
+            for glosses in m.glosses:
+                if glosses not in glosslist:
+                    glosslist.append(glosses)
+        return glosslist
 
     @property
     def forms(self):
@@ -89,9 +91,8 @@ class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
     def glosses(self):
         glosslist = []
         for fslice in self.formslices:
-            for fgloss in fslice.glosses:
-                if fgloss.gloss not in glosslist:
-                    glosslist.append(fgloss.gloss)
+            if fslice.glosses not in glosslist:
+                glosslist.append(fslice.glosses)
         return glosslist
 
     @property

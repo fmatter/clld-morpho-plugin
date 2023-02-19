@@ -34,12 +34,14 @@
                 </td>
             %endif
         </tr>
-        <tr>
-            <td>Glosses:</td>
-            <td>
-                ${h.text2html(", ".join([h.link(request, gloss) for gloss in ctx.glosses]))}
-            </td>
-        </tr>
+        % if ctx.glosses:
+            <tr>
+                <td>Glosses:</td>
+                <td>
+                    ${h.text2html(", ".join([".".join([h.link(request, gloss.gloss) for gloss in glosslist]) for glosslist in ctx.glosses]))}
+                </td>
+            </tr>
+        %endif
         ##% if ctx.stems:
         ##<tr>
         ##   <td> Corresponding stem: </td>
