@@ -170,18 +170,15 @@ def form_representation(request, f, level="morphs", line="obj"):
 def rendered_form(request, f, level="morphs", line="obj"):
     if hasattr(f, "formslices"):
         if level == "wordforms":
-            return HTML.i(" ".join([link(request, x.wordform) for x in f.formslices]))
+            return HTML.i(*[link(request, x.wordform)+" " for x in f.formslices])
         elif level == "forms":
             return HTML.i(link(request, f))
         else:
-            return HTML.i(
-                " ".join(
-                    [
+            return HTML.i(*[
                         rendered_form(request, x.wordform, level, line)
                         for x in f.formslices
                     ]
                 )
-            )
     form_components = []
     representation = form_representation(request, f, level, line)
     for index, (part, partlink) in enumerate(representation.values()):
