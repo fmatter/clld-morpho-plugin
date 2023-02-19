@@ -121,8 +121,8 @@ def form_representation(request, f, level="morphs", line="obj"):
                         request, formstem.stem, level=level, line=line
                     ).items():
                         components[formstem.index[0] + (idx + 0.1) * 0.1] = subform
-                    if formstem.index[0] in parts:
-                        del parts[formstem.index[0]]
+                        if formstem.index[0] in parts:
+                            del parts[formstem.index[0]]
                 else:
                     raise ValueError(formstem.index)
         else:  # filling in links from stem
