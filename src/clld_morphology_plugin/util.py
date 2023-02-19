@@ -249,15 +249,21 @@ def render_paradigm(self, html=False):
     paradigm.sort_index(level=paradigm.columns.names, key=sorter, inplace=True, axis=1)
     paradigm.index = pd.MultiIndex.from_frame(paradigm.index.to_frame().fillna(""))
 
+    def cast_list(stuff):
+        if not isinstance(stuff, list) or isinstance(stuff, tuple):
+            return [stuff]
+        return stuff
+        
     if html:
         return paradigm.to_html()
     if None in paradigm.columns.names:
         colnames = []
     else:
         colnames = paradigm.columns.names
+
     return {
         "colnames": colnames,
-        "columns": paradigm.columns.tolist(),
+        "columns": [cast_list(x) for x in paradigm.columns.tolist()],
         "idxnames": paradigm.index.names,
         "index": paradigm.index.tolist(),
         "cells": paradigm.values.tolist(),
