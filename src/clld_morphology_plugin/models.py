@@ -91,8 +91,9 @@ class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
     def glosses(self):
         glosslist = []
         for fslice in self.formslices:
-            if fslice.glosses not in glosslist:
-                glosslist.append(fslice.glosses)
+            g = [x.gloss for x in fslice.glosses]
+            if g not in glosslist:
+                glosslist.append(g)
         return glosslist
 
     @property
