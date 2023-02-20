@@ -99,7 +99,7 @@ ${h.link(request, contributor)}
 </table>
 
 <% meaning_forms = {} %>
-<% meaning_sentences = {} %>
+<% gloss_sentences = {} %>
 
 <div class="tabbable">
     <ul class="nav nav-tabs">
@@ -113,8 +113,14 @@ ${h.link(request, contributor)}
     <div class="tab-content" style="overflow: visible;">
         <div id="forms" class="tab-pane active">
         <ul>
-            % for wordform in ctx.wordforms:
-                <li> ${h.link(request, wordform) | n} </li>
+            % for fslice in ctx.formslices:
+                <li> ${h.link(request, fslice.form) | n} </li>
+                <% gloss = ".".join([str(x.gloss) for x in fslice.glosses]) %>
+                <% gloss_sentences.setdefault(gloss, []) %>
+                % for s in fslice.form.sentence_assocs:
+                <% gloss_sentences[gloss].append(s.sentence) %>
+                % endfor
+
             % endfor
         </ul>
         </div>
@@ -128,26 +134,28 @@ ${h.link(request, contributor)}
         </div>
 
         <div id="corpus" class="tab-pane">
-            % for morpheme_meaning, sentences in meaning_sentences.items():
-                <div id=${morpheme_meaning.id}>
-                    % if len(meaning_forms) > 1:
-                        <h5> As ‘${h.link(request, morpheme_meaning.meaning)}’:</h5>
+            % for gloss, sentences in gloss_sentences.items():
+                <div id=${gloss}>
+                    % if len(sentences) > 1:
+                        <h5> As ‘${gloss}’:</h5>
                     % endif
-                    <button type="button" class="btn btn-link" onclick="copyIDs('${morpheme_meaning.id}-ids')">Copy sentence IDs</button>
-                    <code class="id_list" id=${morpheme_meaning.id}-ids> ${" ".join([x.sentence.id for x in sentences])} </code>
+            ##         <button type="button" class="btn btn-link" onclick="copyIDs('${gloss}-ids')">Copy sentence IDs</button>
+            ##         <code class="id_list" id=${morpheme_meaning.id}-ids> ${" ".join([x.id for x in sentences])} </code>
                     <% stc_ids = [] %>
                     <ol class="example">
                         % for sentence in sentences:
-                            % if sentence.sentence.id not in stc_ids:
-                                ${rendered_sentence(request, sentence.sentence, sentence_link=True)}
-                                <% stc_ids.append(sentence.sentence.id) %>
+                            % if sentence.id not in stc_ids:
+                                ${rendered_sentence(request, sentence, sentence_link=True)}
+                                <% stc_ids.append(sentence.id) %>
                             % endif
                         % endfor
                     </ol>
                 </div>
                 <script>
-                    var highlight_div = document.getElementById("${morpheme_meaning.id}");
-                    var highlight_targets = highlight_div.querySelectorAll("*[name='${ctx.id}-${morpheme_meaning.id}']")
+                    var highlight_div = document.getElementById("${gloss}");
+                    var highlight_targets = highlight_div.querySelectorAll("*[name='${ctx.id}']")
+                    console.log(highlight_targets)
+                    console.log("*[name='${ctx.id}-${gloss}']")
                     for (index = 0; index < highlight_targets.length; index++) {
                         highlight_targets[index].classList.add("morpho-highlight");
                     }

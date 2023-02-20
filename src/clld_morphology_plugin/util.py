@@ -152,7 +152,7 @@ def form_representation(request, f, level="morphs", line="obj"):
             if line == "obj" and slices[index].morph:
                 components[index] = (
                     slices[index].morph,
-                    HTML.span(link(request, slices[index].morph, label=part)),
+                    HTML.span(link(request, slices[index].morph, label=part, name=slices[index].morph.id)),
                 )
             elif line == "gloss":
                 glosslist = []
