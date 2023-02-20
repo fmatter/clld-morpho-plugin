@@ -1,3 +1,5 @@
+from math import floor
+import pandas as pd
 from clld.db.meta import Base
 from clld.db.meta import PolymorphicBaseMixin
 from clld.db.models.common import Contribution
@@ -9,17 +11,15 @@ from clld.db.models.common import Language
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy import PickleType
+from sqlalchemy import String
 from sqlalchemy import Unicode
 from sqlalchemy import UniqueConstraint
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import relationship
 from zope.interface import implementer
 from clld_morphology_plugin import interfaces
-from sqlalchemy.ext.hybrid import hybrid_property
-import pandas as pd
-from math import floor
 
 
 @implementer(interfaces.IMeaning)

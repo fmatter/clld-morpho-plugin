@@ -1,10 +1,11 @@
 import re
+from math import floor
+import pandas as pd
 from clld.web.util.helpers import link
 from clld.web.util.htmllib import HTML
 from clld.web.util.htmllib import literal
-import pandas as pd
-from math import floor
 from clld_morphology_plugin.models import FormPart
+
 
 GLOSS_ABBR_PATTERN = re.compile(
     "(?P<personprefix>1|2|3)?(?P<abbr>[A-Z]+)(?P<personsuffix>1|2|3)?(?=([^a-z]|$))"
@@ -152,7 +153,14 @@ def form_representation(request, f, level="morphs", line="obj"):
             if line == "obj" and slices[index].morph:
                 components[index] = (
                     slices[index].morph,
-                    HTML.span(link(request, slices[index].morph, label=part, name=slices[index].morph.id)),
+                    HTML.span(
+                        link(
+                            request,
+                            slices[index].morph,
+                            label=part,
+                            name=slices[index].morph.id,
+                        )
+                    ),
                 )
             elif line == "gloss":
                 glosslist = []
@@ -175,15 +183,13 @@ def form_representation(request, f, level="morphs", line="obj"):
 def rendered_form(request, f, level="morphs", line="obj"):
     if hasattr(f, "formslices"):
         if level == "wordforms":
-            return HTML.i(*[link(request, x.wordform)+" " for x in f.formslices])
+            return HTML.i(*[link(request, x.wordform) + " " for x in f.formslices])
         elif level == "forms":
             return HTML.i(link(request, f))
         else:
-            return HTML.i(*[
-                        rendered_form(request, x.wordform, level, line)
-                        for x in f.formslices
-                    ]
-                )
+            return HTML.i(
+                *[rendered_form(request, x.wordform, level, line) for x in f.formslices]
+            )
     form_components = []
     representation = form_representation(request, f, level, line)
     for index, (part, partlink) in enumerate(representation.values()):
@@ -258,7 +264,7 @@ def render_paradigm(self, html=False):
         if not isinstance(stuff, list) or isinstance(stuff, tuple):
             return [stuff]
         return stuff
-        
+
     if html:
         return paradigm.to_html()
     if None in paradigm.columns.names:
