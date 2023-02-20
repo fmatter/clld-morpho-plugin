@@ -35,16 +35,15 @@
                 </td>
             </tr>
         % endif
-        <tr>
-            <td> Meanings:</td>
-            <td>
-                <ul>
-                   ## % for meaning in ctx.morpheme.meanings:
-                   ##     <li> ‘${h.link(request, meaning.meaning)}’ </li>
-                   ## % endfor
-                </ul>
-            </td>
-        </tr>
+        ## % if ctx.meanings:
+        ##     <tr>
+        ##         <td> Meanings:</td>
+        ##         <td>
+        ##             <ul>
+        ##             </ul>
+        ##         </td>
+        ##     </tr>
+        ## % endif
         <tr>
             <td> Forms:</td>
             <td>
