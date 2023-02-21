@@ -262,7 +262,7 @@ def render_paradigm(self, html=False):
 
     print(paradigm)
     def cast_list(stuff):
-        if not isinstance(stuff, list) or isinstance(stuff, tuple):
+        if not (isinstance(stuff, list) or isinstance(stuff, tuple)):
             return [stuff]
         return stuff
 
