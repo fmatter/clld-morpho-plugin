@@ -260,6 +260,7 @@ def render_paradigm(self, html=False):
     paradigm.sort_index(level=paradigm.columns.names, key=sorter, inplace=True, axis=1)
     paradigm.index = pd.MultiIndex.from_frame(paradigm.index.to_frame().fillna(""))
 
+    print(paradigm)
     def cast_list(stuff):
         if not isinstance(stuff, list) or isinstance(stuff, tuple):
             return [stuff]

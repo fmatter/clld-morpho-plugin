@@ -11,5 +11,3 @@ Values:
     <li>${h.link(request, val)} (${val.name})</li>
 % endfor
 </ul>
-
-${ctx.value_order}
