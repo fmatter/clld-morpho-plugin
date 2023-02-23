@@ -10,17 +10,21 @@
 % endtry
 <%! active_menu_item = "processes" %>
 
-<h3>${ctx.name} (${_('Derivational process')})</h3>
+<h3>${_('Derivational process')}: ${ctx.name}</h3>
 
-${ctx.description}
+% if ctx.description:
+    ${ctx.description}
+% endif
 
-Applications:
-<ul>
-    % for deriv in ctx.derivations:
-    <% parts = [] %>
-    % for part in deriv.stemparts:
-        <% parts.append(h.link(request, part.stempart.morph)) %>
-    % endfor
-    <li>${h.link(request, deriv.source)}→${h.link(request, deriv.target)} (${", ".join(parts) | n })</li>
-    % endfor
-</ul>   
+% if ctx.derivations:
+    Derivations:
+    <ul>
+        % for deriv in ctx.derivations:
+            <% parts = [] %>
+            % for part in deriv.stemparts:
+                <% parts.append(h.link(request, part.stempart.morph)) %>
+            % endfor
+            <li><i>${h.link(request, deriv.source)}</i> ‘${deriv.source.description}’ → <i>${h.link(request, deriv.target)}</i> ‘${deriv.   target.description}’ (<i>${", ".join(parts) | n }</i>)</li>
+        % endfor
+    </ul>
+% endif
