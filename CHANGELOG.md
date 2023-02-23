@@ -7,8 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+* lexemes **and** stems
+* inflectional paradigms
+* derivational lineages
+* flexible wordform rendering
+
 ### Changed
 * if clitics have `=` in their name, don't show in interlinearization
+* massive overhaul
 
 ## [0.0.7] - 2022-11-06
 

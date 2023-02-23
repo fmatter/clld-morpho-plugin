@@ -35,7 +35,6 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
             ):  # iterate g-words in p-word
                 idx = pwc + gwc + g_shift
                 if gwc > 0:
-                    g_shift += 1
                     for glosslist in [glosses, posses]:
                         glosslist.append("=")
                 if idx not in slices:
@@ -74,6 +73,7 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                         )
                     else:
                         posses.append(HTML.span("*"))
+            g_shift += gwc
             if posses[0] == HTML.span("*"):
                 interlinear_div = HTML.div(
                     HTML.div(*g_words),
