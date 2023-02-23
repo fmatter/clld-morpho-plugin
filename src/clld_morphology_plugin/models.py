@@ -23,12 +23,14 @@ from clld_morphology_plugin import interfaces
 @implementer(interfaces.IMeaning)
 class Meaning(Base, PolymorphicBaseMixin, IdNameDescriptionMixin):
     """Placeholder for meaning."""
+
     pass
 
 
 @implementer(interfaces.IGloss)
 class Gloss(Base):
     """A gloss is a word in the metalanguage or a `glossing abbreviation <https://en.m.wikipedia.org/wiki/List_of_glossing_abbreviations>`_ that is used to represent a semantic or functional aspect of an object language element."""
+
     id = Column(String, unique=True)
     name = Column(String, unique=True)
     meaning_pk = Column(Integer, ForeignKey("meaning.pk"), nullable=True)
@@ -49,6 +51,7 @@ class Gloss(Base):
 @implementer(interfaces.IMorpheme)
 class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
     """A morpheme is a set of morphs."""
+
     __table_args__ = (UniqueConstraint("language_pk", "id"),)
 
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
@@ -81,6 +84,7 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
 @implementer(interfaces.IMorph)
 class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
     """A morph is a pairing of a sequence of segments and function, which can not be further segmented."""
+
     __table_args__ = (
         UniqueConstraint("language_pk", "id"),
         UniqueConstraint("morpheme_pk", "id"),
@@ -131,6 +135,7 @@ class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
 @implementer(interfaces.IPOS)
 class POS(Base, IdNameDescriptionMixin):
     """A part of speech is a language-specific open or closed set of wordforms (or lexemes)"""
+
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
     language = relationship(Language, innerjoin=True)
 
@@ -140,6 +145,7 @@ class Wordform(
     Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin, HasFilesMixin
 ):
     """A wordform is a grammatical or morphosyntactic word. It can have a stem and bear inflectional morphology."""
+
     __table_args__ = (
         UniqueConstraint("language_pk", "id"),
         UniqueConstraint("pos_pk", "id"),
@@ -191,10 +197,51 @@ class Wordform(
         return None
 
 
+class WordformPart(Base):
+    """The association table between wordforms and morphs. ``index`` corresponds to the ``parts`` of the wordform."""
+
+    id = Column(String, unique=True, nullable=False)
+    form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
+    morph_pk = Column(Integer, ForeignKey("morph.pk"), nullable=True)
+    form = relationship(Wordform, innerjoin=True, backref="slices")
+    morph = relationship(Morph, innerjoin=True, backref="formslices")
+    index = Column(Integer, nullable=True)
+
+
+class WordformPartGloss(Base):
+    """The association table between wordformparts (bound morph tokens) and glosses."""
+
+    formpart_pk = Column(Integer, ForeignKey("wordformpart.pk"), nullable=False)
+    formpart = relationship(WordformPart, innerjoin=True, backref="glosses")
+    gloss_pk = Column(Integer, ForeignKey("gloss.pk"), nullable=False)
+    gloss = relationship(Gloss, innerjoin=True, backref="formglosses")
+
+
+class WordformStem(Base):
+    """The association table between stems and inflected forms. ``ìndex`` represents the position(s) in the ``parts`` of the stem."""
+
+    form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
+    stem_pk = Column(Integer, ForeignKey("stem.pk"), nullable=False)
+    form = relationship(Wordform, innerjoin=True, backref="formstems")
+    stem = relationship(Stem, innerjoin=True, backref="stemforms")
+    index = Column(MutableList.as_mutable(PickleType), default=[])
+
+
+class WordformMeaning(Base):
+    """The association table between wordforms and meanings."""
+
+    form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
+    meaning_pk = Column(Integer, ForeignKey("meaning.pk"), nullable=False)
+    form = relationship(Wordform, innerjoin=True, backref="meanings")
+    meaning = relationship(Meaning, innerjoin=True, backref="forms")
+
+
 @implementer(interfaces.IForm)
 class Form(
     Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin, HasFilesMixin
 ):
+    """An arbitrarily long form, from suffix to entire sentence. Work in progress."""
+
     __table_args__ = (UniqueConstraint("language_pk", "id"),)
 
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
@@ -240,7 +287,8 @@ class Wordform_files(Base, FilesMixin):  # noqa: N801
 
 @implementer(interfaces.ILexeme)
 class Lexeme(Base, IdNameDescriptionMixin):
-    """"A lexeme is a 'dictionary entry'."""
+    """ "A lexeme is a 'dictionary entry'."""
+
     __table_args__ = (UniqueConstraint("language_pk", "id"),)
 
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
@@ -273,6 +321,7 @@ class Lexeme(Base, IdNameDescriptionMixin):
 @implementer(interfaces.IStem)
 class Stem(Base, IdNameDescriptionMixin):
     """A stem is the part of a wordform that is not inflected. It is associated with a lexeme, and is potentially morphologically complex."""
+
     __table_args__ = (UniqueConstraint("language_pk", "id"),)
 
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
@@ -313,28 +362,31 @@ class Stem(Base, IdNameDescriptionMixin):
 
 class StemGloss(Base):
     """The association table between stems and glosses."""
+
     stem_pk = Column(Integer, ForeignKey("stem.pk"), nullable=False)
     stem = relationship(Stem, innerjoin=True, backref="stemglosses")
     gloss_pk = Column(Integer, ForeignKey("gloss.pk"), nullable=False)
     gloss = relationship(Gloss, innerjoin=True, backref="stemglosses")
 
 
-class WordformPart(Base):
-    """The association table between wordforms and morphs. ``index`` corresponds to the ``parts`` of the wordform."""
-    id = Column(String, unique=True, nullable=False)
-    form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
-    morph_pk = Column(Integer, ForeignKey("morph.pk"), nullable=True)
-    form = relationship(Wordform, innerjoin=True, backref="slices")
-    morph = relationship(Morph, innerjoin=True, backref="formslices")
+class StemPart(Base):
+    """The association table between stems and morphs. ``index`` corresponds to the ``parts`` of the stem."""
+
+    id = Column(String, unique=True)
+    stem_pk = Column(Integer, ForeignKey("stem.pk"), nullable=False)
+    morph_pk = Column(Integer, ForeignKey("morph.pk"), nullable=False)
+    stem = relationship(Stem, innerjoin=True, backref="slices")
+    morph = relationship(Morph, innerjoin=True, backref="stemslices")
     index = Column(Integer, nullable=True)
 
 
-class WordformPartGloss(Base):
-    """The association table between wordformparts (bound morph tokens) and glosses."""
-    formpart_pk = Column(Integer, ForeignKey("wordformpart.pk"), nullable=False)
-    formpart = relationship(WordformPart, innerjoin=True, backref="glosses")
+class StemPartGloss(Base):
+    """The association table between stemparts (bound morph tokens) and glosses."""
+
+    stempart_pk = Column(Integer, ForeignKey("stempart.pk"), nullable=False)
+    stempart = relationship(StemPart, innerjoin=True, backref="glosses")
     gloss_pk = Column(Integer, ForeignKey("gloss.pk"), nullable=False)
-    gloss = relationship(Gloss, innerjoin=True, backref="formglosses")
+    gloss = relationship(Gloss, innerjoin=True, backref="stempartglosses")
 
 
 @implementer(interfaces.IInflCategory)
@@ -385,24 +437,46 @@ class InflectionalValue(Base, IdNameDescriptionMixin):
         return res
 
 
-class StemPart(Base):
-    """The association table between stems and morphs. ``index`` corresponds to the ``parts`` of the stem."""
-    id = Column(String, unique=True)
+class Inflection(Base):
+    """An inflection links an inflectional value with a stem, as well as morphs in a wordform."""
+
+    value_pk = Column(Integer, ForeignKey("inflectionalvalue.pk"), nullable=False)
     stem_pk = Column(Integer, ForeignKey("stem.pk"), nullable=False)
-    morph_pk = Column(Integer, ForeignKey("morph.pk"), nullable=False)
-    stem = relationship(Stem, innerjoin=True, backref="slices")
-    morph = relationship(Morph, innerjoin=True, backref="stemslices")
-    index = Column(Integer, nullable=True)
+    value = relationship(InflectionalValue, innerjoin=True, backref="inflections")
+    stem = relationship(Stem, innerjoin=True, backref="inflections")
+
+    @property
+    def form(self):
+        if self.formparts[0].form:
+            return self.formparts[0].form
+        return self.formparts[0].formpart.form
+
+    @property
+    def morphs(self):
+        return [x.formpart.morph for x in self.formparts]
+
+
+class WordformPartInflection(Base):
+    """The association table between form morphs and inflections. This allows modeling things like an inflectional value being expressed by two distinct morphs."""
+
+    form_pk = Column(Integer, ForeignKey("form.pk"), nullable=True)
+    form = relationship(Form, innerjoin=True, backref="inflections")
+    formpart_pk = Column(Integer, ForeignKey("wordformpart.pk"), nullable=False)
+    formpart = relationship(WordformPart, innerjoin=True, backref="inflections")
+    infl_pk = Column(Integer, ForeignKey("inflection.pk"), nullable=False)
+    inflection = relationship(Inflection, innerjoin=True, backref="formparts")
 
 
 @implementer(interfaces.IDerivProcess)
 class DerivationalProcess(Base, IdNameDescriptionMixin):
     """A derivational process derives new stems from roots or other stems."""
+
     pass
 
 
 class Derivation(Base):
     """A derivation links a source stem or root with a derivational process and a target stem."""
+
     process_pk = Column(Integer, ForeignKey("derivationalprocess.pk"), nullable=False)
     process = relationship(DerivationalProcess, innerjoin=True, backref="derivations")
     source_root_pk = Column(Integer, ForeignKey("morph.pk"), nullable=True)
@@ -429,56 +503,8 @@ class Derivation(Base):
 
 class StemPartDerivation(Base):
     """The association table between stem morphs and derivations. This allows modeling things like a derivational process adding two distinct morphs to a stem."""
+
     stempart_pk = Column(Integer, ForeignKey("stempart.pk"), nullable=False)
     stempart = relationship(StemPart, innerjoin=True, backref="derivations")
     derivation_pk = Column(Integer, ForeignKey("derivation.pk"), nullable=False)
     derivation = relationship(Derivation, innerjoin=True, backref="stemparts")
-
-
-class Inflection(Base):
-    """An inflection links an inflectional value with a stem, as well as morphs in a wordform."""
-    value_pk = Column(Integer, ForeignKey("inflectionalvalue.pk"), nullable=False)
-    stem_pk = Column(Integer, ForeignKey("stem.pk"), nullable=False)
-    value = relationship(InflectionalValue, innerjoin=True, backref="inflections")
-    stem = relationship(Stem, innerjoin=True, backref="inflections")
-
-    @property
-    def form(self):
-        if self.formparts[0].form:
-            return self.formparts[0].form
-        return self.formparts[0].formpart.form
-
-    @property
-    def morphs(self):
-        return [x.formpart.morph for x in self.formparts]
-
-
-class WordformPartInflection(Base):
-    form_pk = Column(Integer, ForeignKey("form.pk"), nullable=True)
-    form = relationship(Form, innerjoin=True, backref="inflections")
-    formpart_pk = Column(Integer, ForeignKey("wordformpart.pk"), nullable=False)
-    formpart = relationship(WordformPart, innerjoin=True, backref="inflections")
-    infl_pk = Column(Integer, ForeignKey("inflection.pk"), nullable=False)
-    inflection = relationship(Inflection, innerjoin=True, backref="formparts")
-
-
-class StemPartGloss(Base):
-    stempart_pk = Column(Integer, ForeignKey("stempart.pk"), nullable=False)
-    stempart = relationship(StemPart, innerjoin=True, backref="glosses")
-    gloss_pk = Column(Integer, ForeignKey("gloss.pk"), nullable=False)
-    gloss = relationship(Gloss, innerjoin=True, backref="stempartglosses")
-
-
-class WordformStem(Base):
-    form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
-    stem_pk = Column(Integer, ForeignKey("stem.pk"), nullable=False)
-    form = relationship(Wordform, innerjoin=True, backref="formstems")
-    stem = relationship(Stem, innerjoin=True, backref="stemforms")
-    index = Column(MutableList.as_mutable(PickleType), default=[])
-
-
-class WordformMeaning(Base):
-    form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
-    meaning_pk = Column(Integer, ForeignKey("meaning.pk"), nullable=False)
-    form = relationship(Wordform, innerjoin=True, backref="meanings")
-    meaning = relationship(Meaning, innerjoin=True, backref="forms")
