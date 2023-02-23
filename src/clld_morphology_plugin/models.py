@@ -22,18 +22,23 @@ from clld_morphology_plugin import interfaces
 
 @implementer(interfaces.IMeaning)
 class Meaning(Base, PolymorphicBaseMixin, IdNameDescriptionMixin):
+    """Placeholder for meaning."""
     pass
 
 
 @implementer(interfaces.IGloss)
 class Gloss(Base):
+    """A gloss is a word in the metalanguage or a `glossing abbreviation <https://en.m.wikipedia.org/wiki/List_of_glossing_abbreviations>`_ that is used to represent a semantic or functional aspect of an object language element."""
     id = Column(String, unique=True)
     name = Column(String, unique=True)
     meaning_pk = Column(Integer, ForeignKey("meaning.pk"), nullable=True)
+    """The meaning associated with this gloss."""
+    # todo: this should maybe be a many-to-many mapping?
     meaning = relationship(Meaning, innerjoin=True, backref="glosses")
 
     @property
     def morphs(self):
+        """A list of all morphs that have this gloss"""
         return list(
             dict.fromkeys(
                 [s.formpart.morph for s in self.formglosses if s.formpart.morph]
@@ -43,6 +48,7 @@ class Gloss(Base):
 
 @implementer(interfaces.IMorpheme)
 class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
+    """A morpheme is a set of morphs."""
     __table_args__ = (UniqueConstraint("language_pk", "id"),)
 
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
@@ -54,6 +60,7 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
 
     @property
     def glosses(self):
+        """A list of sets of glosses used for the morphs of this morpheme"""
         glosslist = []
         for m in self.allomorphs:
             for glosses in m.glosses:
@@ -63,6 +70,7 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
 
     @property
     def forms(self):
+        """A list of wordforms in which morphs belonging to this morpheme occur."""
         formlist = []
         for m in self.allomorphs:
             for fslice in m.formslices:
@@ -72,6 +80,7 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
 
 @implementer(interfaces.IMorph)
 class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
+    """A morph is a pairing of a sequence of segments and function, which can not be further segmented."""
     __table_args__ = (
         UniqueConstraint("language_pk", "id"),
         UniqueConstraint("morpheme_pk", "id"),
@@ -81,12 +90,16 @@ class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
     language = relationship(Language, innerjoin=True)
     morpheme_pk = Column(Integer, ForeignKey("morpheme.pk"), nullable=True)
     morpheme = relationship(Morpheme, innerjoin=True, backref="allomorphs")
+    """The right-hand separator for this morph (e.g.: ``-`` or ``>``)"""
     rsep = Column(String, nullable=True)
+    """The right-hand separator for this morph (e.g.: ``-`` or ``>``)"""
     lsep = Column(String, nullable=True)
+    """The morph type (e.g.: ``root`` or ``prefix``)"""
     morph_type = Column(String, nullable=True)
 
     @property
     def glosses(self):
+        """A list of gloss sets that tokens of this morph have."""
         glosslist = []
         for fslice in self.formslices:
             g = [x.gloss for x in fslice.glosses]
@@ -96,6 +109,7 @@ class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
 
     @property
     def inflectionalvalues(self):
+        """A list of inflectional values marked by tokens of this morph."""
         infllist = []
         for fslice in self.formslices:
             for partinflection in fslice.inflections:
@@ -105,6 +119,7 @@ class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
 
     @property
     def wordforms(self):
+        """A list of wordforms this morph occurs in."""
         formlist = [x.form for x in self.formslices]
         for x in self.stemslices:
             for form in x.stem.wordforms:
