@@ -32,7 +32,7 @@ class Gloss(Base):
     """A gloss is a word in the metalanguage or a `glossing abbreviation <https://en.m.wikipedia.org/wiki/List_of_glossing_abbreviations>`_ that is used to represent a semantic or functional aspect of an object language element."""
 
     id = Column(String, unique=True)
-    name = Column(String, unique=True)
+    name = Column(String, unique=False)
     meaning_pk = Column(Integer, ForeignKey("meaning.pk"), nullable=True)
     """The meaning associated with this gloss."""
     # todo: this should maybe be a many-to-many mapping?
