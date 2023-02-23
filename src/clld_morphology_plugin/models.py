@@ -217,16 +217,6 @@ class WordformPartGloss(Base):
     gloss = relationship(Gloss, innerjoin=True, backref="formglosses")
 
 
-class WordformStem(Base):
-    """The association table between stems and inflected forms. ``ìndex`` represents the position(s) in the ``parts`` of the stem."""
-
-    form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
-    stem_pk = Column(Integer, ForeignKey("stem.pk"), nullable=False)
-    form = relationship(Wordform, innerjoin=True, backref="formstems")
-    stem = relationship(Stem, innerjoin=True, backref="stemforms")
-    index = Column(MutableList.as_mutable(PickleType), default=[])
-
-
 class WordformMeaning(Base):
     """The association table between wordforms and meanings."""
 
@@ -387,6 +377,16 @@ class StemPartGloss(Base):
     stempart = relationship(StemPart, innerjoin=True, backref="glosses")
     gloss_pk = Column(Integer, ForeignKey("gloss.pk"), nullable=False)
     gloss = relationship(Gloss, innerjoin=True, backref="stempartglosses")
+
+
+class WordformStem(Base):
+    """The association table between stems and inflected forms. ``ìndex`` represents the position(s) in the ``parts`` of the stem."""
+
+    form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
+    stem_pk = Column(Integer, ForeignKey("stem.pk"), nullable=False)
+    form = relationship(Wordform, innerjoin=True, backref="formstems")
+    stem = relationship(Stem, innerjoin=True, backref="stemforms")
+    index = Column(MutableList.as_mutable(PickleType), default=[])
 
 
 @implementer(interfaces.IInflCategory)
