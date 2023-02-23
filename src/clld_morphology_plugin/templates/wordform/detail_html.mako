@@ -122,9 +122,11 @@
     <audio controls="controls"><source src="/audio/${ctx.audio}" type="audio/x-wav"></source></audio>
 % endif 
 
-% for assoc in ctx.sentence_assocs:
-    ${rendered_sentence(request, assoc.sentence, sentence_link=True)}
-% endfor
+% if hasattr(ctx, "sentence_assocs"):
+    % for assoc in ctx.sentence_assocs:
+        ${rendered_sentence(request, assoc.sentence, sentence_link=True)}
+    % endfor
+% endif
 ## <h4>${_('Longer forms')}:</h4>
 ## ${request.get_datatable('forms', Form, wordform=ctx).render()}
 
