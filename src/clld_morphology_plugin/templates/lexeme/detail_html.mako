@@ -32,58 +32,50 @@
     % endif
 </%def>
 
-Inflected forms:
 <% paradigm = render_paradigm(ctx) %>
-<table border="1">
-    % for col_idx, colname in enumerate(paradigm["colnames"]):
-        <tr>
-            % for x in range(len(paradigm["idxnames"])-1):
-                <td> </td>
-            % endfor
-            <th> ${h.link(request, colname)} </th>
-            % for column in paradigm["columns"]:
-                <th> ${print_cell(column[col_idx])} </th>
-            % endfor
-        </tr>
-    % endfor
-    <tr>
-        % for idxname in paradigm["idxnames"]:
-            <th>
-                ${print_cell(idxname)}
-            </th>
+% if paradigm:
+    Inflected forms:
+    <table border="1">
+        % for col_idx, colname in enumerate(paradigm["colnames"]):
+            <tr>
+                % for x in range(len(paradigm["idxnames"])-1):
+                    <td> </td>
+                % endfor
+                <th> ${h.link(request, colname)} </th>
+                % for column in paradigm["columns"]:
+                    <th> ${print_cell(column[col_idx])} </th>
+                % endfor
+            </tr>
         % endfor
-    </tr>
         <tr>
-        % for idxnames, cells in zip(paradigm["index"], paradigm["cells"]):
-        <tr>
-            % for idxname in idxnames:
-            <th>
-                ${print_cell(idxname)}
+            % for idxname in paradigm["idxnames"]:
+                <th>
+                    ${print_cell(idxname)}
                 </th>
             % endfor
-            % for cell in cells:
-            <td>
-                % for form in cell:
-                    <i>${rendered_form(request, form, level="wordforms") | n}</i> <br>
+        </tr>
+            <tr>
+            % for idxnames, cells in zip(paradigm["index"], paradigm["cells"]):
+            <tr>
+                % for idxname in idxnames:
+                <th>
+                    ${print_cell(idxname)}
+                    </th>
                 % endfor
-                </td>
+                % for cell in cells:
+                <td>
+                    % for form in cell:
+                        <i>${rendered_form(request, form, level="wordforms") | n}</i> <br>
+                    % endfor
+                    </td>
+                % endfor
+            </tr>
             % endfor
         </tr>
-        % endfor
-    </tr>
- </table>
+     </table>
+% endif
     ## ${render_paradigm(ctx, html=True) | n}
-##  <select  class="select control input-small" name="View" id="wf-mode">
-##     <option value="stem">stems</option>
-##     <option value="morphemes">morphemes</option>
-## </select>
 
-##  <select  class="select control input-small" name="View" id="wmode">
-##     <option value="wordforms">wordforms</option>
-##     <option value="forms">forms</option>
-##     <option value="morphemes">morphemes</option>
-## </select>
-<dl>
 
-<h4>${_('Forms')}:</h4>
+<h4>${_('Wordforms')}:</h4>
 ${request.get_datatable('wordforms', Wordform, lexeme=ctx, language=ctx.language).render()}
