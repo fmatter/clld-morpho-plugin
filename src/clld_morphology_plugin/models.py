@@ -130,13 +130,16 @@ class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
 
 @implementer(interfaces.IPOS)
 class POS(Base, IdNameDescriptionMixin):
-    pass
+    """A part of speech is a language-specific open or closed set of wordforms (or lexemes)"""
+    language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
+    language = relationship(Language, innerjoin=True)
 
 
 @implementer(interfaces.IWordform)
 class Wordform(
     Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin, HasFilesMixin
 ):
+    """A wordform is a grammatical or morphosyntactic word. It can have a stem and bear inflectional morphology."""
     __table_args__ = (
         UniqueConstraint("language_pk", "id"),
         UniqueConstraint("pos_pk", "id"),
@@ -149,18 +152,22 @@ class Wordform(
     contribution = relationship(Contribution, backref="wordforms")
 
     pos_pk = Column(Integer, ForeignKey("pos.pk"))
+    """The part of speech of this wordform."""
     pos = relationship(POS, backref="wordforms", innerjoin=True)
 
+    """The parts into which this wordform can be segmented. Note that these are not necessarily morphs, as 1) there may be segments that have no meaning attached to them, 2) parts may be stems which could be further segmentable, and 3) morphs split by infixation appear as two separate parts."""
     parts = Column(MutableList.as_mutable(PickleType), default=[])
 
     @property
     def lexeme(self):
+        """The lexeme to which this wordform belongs."""
         if len(self.formstems) > 0:
             return self.formstems[0].stem.lexeme
         return None
 
     @property
     def audio(self):
+        """The audio file associated with this wordform."""
         for f in self._files:
             if f.mime_type.split("/")[0] == "audio":
                 return f
@@ -168,12 +175,14 @@ class Wordform(
 
     @property
     def inflections(self):
+        """A list of inflections (linking to stems and inflectional values) found in this wordform."""
         for s in self.slices:
             for infl in s.inflections:
                 yield infl.inflection
 
     @property
     def stem(self):
+        """The stem of this wordform."""
         if self.formstems:
             return self.formstems[0].stem
         for infl in self.inflections:
@@ -231,6 +240,7 @@ class Wordform_files(Base, FilesMixin):  # noqa: N801
 
 @implementer(interfaces.ILexeme)
 class Lexeme(Base, IdNameDescriptionMixin):
+    """"A lexeme is a 'dictionary entry'."""
     __table_args__ = (UniqueConstraint("language_pk", "id"),)
 
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
@@ -238,11 +248,14 @@ class Lexeme(Base, IdNameDescriptionMixin):
 
     comment = Column(Unicode)
 
+    """What inflectional categories should be shown on the x-axis of the inflectional paradigm?"""
     paradigm_x = Column(MutableList.as_mutable(PickleType), default=[])
+    """What inflectional categories should be shown on the y-axis of the inflectional paradigm?"""
     paradigm_y = Column(MutableList.as_mutable(PickleType), default=[])
 
     @hybrid_property
     def inflections(self):
+        """A list of all inflections (linking stems of the lexeme with wordforms and inflectional values) associated with this lexeme."""
         infl_list = []
         for stem in self.stems:
             infl_list.extend(stem.inflections)
@@ -250,6 +263,7 @@ class Lexeme(Base, IdNameDescriptionMixin):
 
     @property
     def inflectionalcategories(self):
+        """The inflectional categories stems of this lexeme are inflected for."""
         infl_list = []
         for stem in self.stems:
             infl_list.extend(stem.inflectionalcategories)
@@ -258,6 +272,7 @@ class Lexeme(Base, IdNameDescriptionMixin):
 
 @implementer(interfaces.IStem)
 class Stem(Base, IdNameDescriptionMixin):
+    """A stem is the part of a wordform that is not inflected. It is associated with a lexeme, and is potentially morphologically complex."""
     __table_args__ = (UniqueConstraint("language_pk", "id"),)
 
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
@@ -267,6 +282,7 @@ class Stem(Base, IdNameDescriptionMixin):
     lexeme = relationship(Lexeme, innerjoin=True, backref="stems")
     comment = Column(Unicode)
 
+    """The parts into which this stem can be segmented. Note that these are not necessarily morphs, as 1) there may be segments that have no meaning attached to them, 2) parts may be other stems which could be further segmentable, and 3) morphs split by infixation appear as two separate parts."""
     parts = Column(MutableList.as_mutable(PickleType), default=[])
 
     rsep = Column(String, nullable=True)
@@ -274,24 +290,29 @@ class Stem(Base, IdNameDescriptionMixin):
 
     @property
     def inflectionalcategories(self):
+        """The inflectional categories this stem is inflected for in wordforms."""
         return list(dict.fromkeys([x.value.category for x in self.inflections]))
 
     @property
     def glosses(self):
+        """A set of glosses used for this stem."""
         return [x.gloss for x in self.stemglosses]
 
     @property
     def gloss(self):
+        """A string representation of the glosses (e.g., ``burn.INTR``)"""
         if self.glosses:
             return ".".join([x.name for x in self.glosses])
         return self.description
 
     @property
     def wordforms(self):
+        """A list of inflected wordforms of this stem."""
         return [x.form for x in self.stemforms]
 
 
 class StemGloss(Base):
+    """The association table between stems and glosses."""
     stem_pk = Column(Integer, ForeignKey("stem.pk"), nullable=False)
     stem = relationship(Stem, innerjoin=True, backref="stemglosses")
     gloss_pk = Column(Integer, ForeignKey("gloss.pk"), nullable=False)
@@ -299,6 +320,7 @@ class StemGloss(Base):
 
 
 class WordformPart(Base):
+    """The association table between wordforms and morphs. ``index`` corresponds to the ``parts`` of the wordform."""
     id = Column(String, unique=True, nullable=False)
     form_pk = Column(Integer, ForeignKey("wordform.pk"), nullable=False)
     morph_pk = Column(Integer, ForeignKey("morph.pk"), nullable=True)
@@ -308,6 +330,7 @@ class WordformPart(Base):
 
 
 class WordformPartGloss(Base):
+    """The association table between wordformparts (bound morph tokens) and glosses."""
     formpart_pk = Column(Integer, ForeignKey("wordformpart.pk"), nullable=False)
     formpart = relationship(WordformPart, innerjoin=True, backref="glosses")
     gloss_pk = Column(Integer, ForeignKey("gloss.pk"), nullable=False)
@@ -316,10 +339,14 @@ class WordformPartGloss(Base):
 
 @implementer(interfaces.IInflCategory)
 class InflectionalCategory(Base, IdNameDescriptionMixin):
+    """An inflectional category like person or tense."""
+
+    """The order in which the inflectional values of this category should be ordered. For instance, person should be 1,2,3."""
     value_order = Column(MutableList.as_mutable(PickleType), default=[])
 
     @property
-    def ordered(self):
+    def ordered_values(self):
+        """A sorted list of inflectional values associated with this category."""
         order = {val: pos for pos, val in enumerate(self.value_order)}
         sort_count = len(order)
         for plus, val in enumerate(self.values):
@@ -348,28 +375,18 @@ class InflectionalValue(Base, IdNameDescriptionMixin):
         return self.name < other.name
 
     @property
-    def morphs(self):
-        morphlist = []
-        for inflection in self.inflections:
-            morphlist.extend(inflection.morphs)
-        return list(dict.fromkeys(morphlist))
-
-    @property
     def exponents(self):
+        """A dict of morphs (exponents) expressing this inflectional value, values are wordforms."""
         res = {}
         for inflection in self.inflections:
-            res[
-                tuple(formpart.formpart.morph for formpart in inflection.formparts)
-            ] = []
-        for inflection in self.inflections:
-            res[
-                tuple(formpart.formpart.morph for formpart in inflection.formparts)
-            ].append(inflection.form)
-        print(res)
+            key = tuple(formpart.formpart.morph for formpart in inflection.formparts)
+            res.setdefault(key, [])
+            res[key].append(inflection.form)
         return res
 
 
 class StemPart(Base):
+    """The association table between stems and morphs. ``index`` corresponds to the ``parts`` of the stem."""
     id = Column(String, unique=True)
     stem_pk = Column(Integer, ForeignKey("stem.pk"), nullable=False)
     morph_pk = Column(Integer, ForeignKey("morph.pk"), nullable=False)
@@ -380,10 +397,12 @@ class StemPart(Base):
 
 @implementer(interfaces.IDerivProcess)
 class DerivationalProcess(Base, IdNameDescriptionMixin):
+    """A derivational process derives new stems from roots or other stems."""
     pass
 
 
 class Derivation(Base):
+    """A derivation links a source stem or root with a derivational process and a target stem."""
     process_pk = Column(Integer, ForeignKey("derivationalprocess.pk"), nullable=False)
     process = relationship(DerivationalProcess, innerjoin=True, backref="derivations")
     source_root_pk = Column(Integer, ForeignKey("morph.pk"), nullable=True)
@@ -409,6 +428,7 @@ class Derivation(Base):
 
 
 class StemPartDerivation(Base):
+    """The association table between stem morphs and derivations. This allows modeling things like a derivational process adding two distinct morphs to a stem."""
     stempart_pk = Column(Integer, ForeignKey("stempart.pk"), nullable=False)
     stempart = relationship(StemPart, innerjoin=True, backref="derivations")
     derivation_pk = Column(Integer, ForeignKey("derivation.pk"), nullable=False)
@@ -416,6 +436,7 @@ class StemPartDerivation(Base):
 
 
 class Inflection(Base):
+    """An inflection links an inflectional value with a stem, as well as morphs in a wordform."""
     value_pk = Column(Integer, ForeignKey("inflectionalvalue.pk"), nullable=False)
     stem_pk = Column(Integer, ForeignKey("stem.pk"), nullable=False)
     value = relationship(InflectionalValue, innerjoin=True, backref="inflections")
