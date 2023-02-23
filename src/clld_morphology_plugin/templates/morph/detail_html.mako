@@ -114,13 +114,14 @@ ${h.link(request, contributor)}
         <div id="forms" class="tab-pane active">
         <ul>
             % for fslice in ctx.formslices:
-                <li> ${h.link(request, fslice.form) | n} </li>
-                <% gloss = ".".join([str(x.gloss) for x in fslice.glosses]) %>
-                <% gloss_sentences.setdefault(gloss, []) %>
-                % for s in fslice.form.sentence_assocs:
-                <% gloss_sentences[gloss].append(s.sentence) %>
-                % endfor
-
+                % if hasattr(fslice.form, "sentence_assocs"):
+                    <li> ${h.link(request, fslice.form) | n} </li>
+                    <% gloss = ".".join([str(x.gloss) for x in fslice.glosses]) %>
+                    <% gloss_sentences.setdefault(gloss, []) %>
+                    % for s in fslice.form.sentence_assocs:
+                        <% gloss_sentences[gloss].append(s.sentence) %>
+                    % endfor
+                % endif
             % endfor
         </ul>
         </div>
