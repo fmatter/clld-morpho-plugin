@@ -198,6 +198,7 @@ def rendered_form(request, f, level="morphs", line="obj"):
                     form_components.append(part.lsep)
                 else:
                     form_components.append("-")
+        form_components.append(partlink)
         if (
             part
             and index < len(representation)
@@ -205,7 +206,6 @@ def rendered_form(request, f, level="morphs", line="obj"):
             and part.rsep
         ):
             form_components.append(part.rsep)
-        form_components.append(partlink)
     if line != "gloss":
         return HTML.i(*form_components)
     return HTML.span(*form_components)
