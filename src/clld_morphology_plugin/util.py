@@ -3,8 +3,6 @@ from math import floor
 import pandas as pd
 from clld.web.util.helpers import link
 from clld.web.util.htmllib import HTML
-from clld.web.util.htmllib import literal
-from clld_morphology_plugin.models import FormPart
 
 
 GLOSS_ABBR_PATTERN = re.compile(
@@ -100,7 +98,7 @@ sep_pattern = f"([{''.join(morph_separators)}])"
 
 
 def form_representation(request, f, level="morphs", line="obj"):
-    parts = {x: part for (x, part) in enumerate(f.parts)}
+    parts = dict(enumerate(f.parts))
     slices = {fslice.index: fslice for fslice in f.slices}
     components = {}
     if level == "stem" and hasattr(
@@ -184,12 +182,11 @@ def rendered_form(request, f, level="morphs", line="obj"):
     if hasattr(f, "formslices"):
         if level == "wordforms":
             return HTML.i(*[link(request, x.wordform) + " " for x in f.formslices])
-        elif level == "forms":
+        if level == "forms":
             return HTML.i(link(request, f))
-        else:
-            return HTML.i(
-                *[rendered_form(request, x.wordform, level, line) for x in f.formslices]
-            )
+        return HTML.i(
+            *[rendered_form(request, x.wordform, level, line) for x in f.formslices]
+        )
     form_components = []
     representation = form_representation(request, f, level, line)
     for index, (part, partlink) in enumerate(representation.values()):
@@ -211,8 +208,7 @@ def rendered_form(request, f, level="morphs", line="obj"):
         form_components.append(partlink)
     if line != "gloss":
         return HTML.i(*form_components)
-    else:
-        return HTML.span(*form_components)
+    return HTML.span(*form_components)
 
 
 def render_paradigm(self, html=False):
@@ -226,7 +222,8 @@ def render_paradigm(self, html=False):
             forms[inflection.form][inflection.value.category] = inflection.value
 
     df = pd.DataFrame.from_dict(list(forms.values()))
-
+    if len(df) == 0:
+        return None
     cut = floor(len(self.inflectionalcategories) / 2) - 1
     y = self.inflectionalcategories[cut + 1 : :]
     x = self.inflectionalcategories[0 : cut + 1]
@@ -245,7 +242,7 @@ def render_paradigm(self, html=False):
         )
 
     def listify(stuff):
-        return [x for x in stuff]
+        return list(stuff)
 
     paradigm = pd.pivot_table(df, values="Form", columns=x, index=y, aggfunc=listify)
     paradigm = paradigm.fillna("")
@@ -261,8 +258,9 @@ def render_paradigm(self, html=False):
     paradigm.index = pd.MultiIndex.from_frame(paradigm.index.to_frame().fillna(""))
 
     print(paradigm)
+
     def cast_list(stuff):
-        if not (isinstance(stuff, list) or isinstance(stuff, tuple)):
+        if not isinstance(stuff, (list, tuple)):
             return [stuff]
         return stuff
 
@@ -308,9 +306,8 @@ def build_etymology_source(request, stem, tree=None):
         return tree
     if not stem.derived_from:
         return tree or {}
-    else:
-        derivation = stem.derived_from[0]
-        parent = derivation.source
+    derivation = stem.derived_from[0]
+    parent = derivation.source
     if not tree:
         tree = link(request, stem)
     tree = {

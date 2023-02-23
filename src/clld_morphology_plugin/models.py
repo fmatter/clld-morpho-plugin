@@ -1,5 +1,3 @@
-from math import floor
-import pandas as pd
 from clld.db.meta import Base
 from clld.db.meta import PolymorphicBaseMixin
 from clld.db.models.common import Contribution
@@ -163,10 +161,9 @@ class Wordform(
     def stem(self):
         if self.formstems:
             return self.formstems[0].stem
-        if self.inflections:
-            for infl in self.inflections:
-                if infl.stem:
-                    return infl.stem
+        for infl in self.inflections:
+            if infl.stem:
+                return infl.stem
         return None
 
 
@@ -190,8 +187,7 @@ class Form(
             print(self)
             print(self.formslices)
             return self
-        else:
-            return self.formslices[0].wordform
+        return self.formslices[0].wordform
 
     @property
     def audio(self):
@@ -348,11 +344,11 @@ class InflectionalValue(Base, IdNameDescriptionMixin):
         res = {}
         for inflection in self.inflections:
             res[
-                tuple([formpart.formpart.morph for formpart in inflection.formparts])
+                tuple(formpart.formpart.morph for formpart in inflection.formparts)
             ] = []
         for inflection in self.inflections:
             res[
-                tuple([formpart.formpart.morph for formpart in inflection.formparts])
+                tuple(formpart.formpart.morph for formpart in inflection.formparts)
             ].append(inflection.form)
         print(res)
         return res
