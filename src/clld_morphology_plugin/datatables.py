@@ -224,7 +224,9 @@ class MorphoPhonoChanges(DataTable):
         )
 
         if self.language:
-            return query.filter(models.MorphoPhonologicalChange.language == self.language)
+            return query.filter(
+                models.MorphoPhonologicalChange.language == self.language
+            )
         return query
 
     def col_defs(self):

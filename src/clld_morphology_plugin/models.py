@@ -522,12 +522,17 @@ class StemPartDerivation(Base):
 @implementer(interfaces.IMorphoPhonoChange)
 class MorphoPhonologicalChange(Base, IdNameDescriptionMixin):
     """A morphophonological change."""
+
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
     language = relationship(Language, innerjoin=True)
 
+
 class MorphoPhonoInstance(Base):
     """An instance of a morphophonological change, connecting it with part of a form, and optionally an inflection."""
-    change_pk = Column(Integer, ForeignKey("morphophonologicalchange.pk"), nullable=False)
+
+    change_pk = Column(
+        Integer, ForeignKey("morphophonologicalchange.pk"), nullable=False
+    )
     inflection_pk = Column(Integer, ForeignKey("inflection.pk"), nullable=True)
     formpart_pk = Column(Integer, ForeignKey("wordformpart.pk"), nullable=False)
 

@@ -34,12 +34,18 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                 zip(pword.split("="), pgloss.split("="))
             ):  # iterate g-words in p-word
                 idx = pwc + gwc + g_shift
+                in_clitic_str = False
                 if gwc > 0:
                     for glosslist in [glosses, posses]:
                         glosslist.append("=")
+                    in_clitic_str = True
                 if idx not in slices:
-                    g_words.append(HTML.span(word))
-                    morphs.append(HTML.span(word, class_="morpheme"))
+                    g_words.append(HTML.span(word.replace("-", "")))
+                    morph_list = []
+                    if in_clitic_str:
+                        morph_list.append("=")
+                    morph_list.append(word)
+                    morphs.append(HTML.span(*morph_list, class_="morpheme"))
                     glosses.append(HTML.span(gloss))
                     posses.append(HTML.span("*"))
                 else:
@@ -49,12 +55,15 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                             name=slices[idx].form.id,
                         )
                     )
-                    morphs.append(
-                        HTML.span(
-                            rendered_form(request, slices[idx].form), class_="morpheme"
-                        )
+                    r_form = rendered_form(request, slices[idx].form)
+                    if r_form:
+                        morphs.append(HTML.span(r_form, class_="morpheme"))
+                    else:
+                        morphs.append(word)
+
+                    rendered_gloss = rendered_form(
+                        request, slices[idx].form, line="gloss"
                     )
-                    rendered_gloss = rendered_form(request, slices[idx].form, line="gloss")
                     glosses.append(
                         HTML.span(
                             rendered_gloss or gloss,
@@ -76,20 +85,22 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                         posses.append(HTML.span("*"))
             g_shift += gwc
             if posses[0] == HTML.span("*"):
-                interlinear_div = HTML.div(
+                gloss_divs = [
                     HTML.div(*g_words),
                     HTML.div(*morphs, class_="morpheme"),
                     HTML.div(*glosses, **{"class": "gloss"}),
-                    class_="gloss-unit",
-                )
+                ]
             else:
-                interlinear_div = HTML.div(
+                gloss_divs = [
                     HTML.div(*g_words),
                     HTML.div(*morphs, class_="morpheme"),
                     HTML.div(*glosses, **{"class": "gloss"}),
                     HTML.div(*posses),
-                    class_="gloss-unit",
-                )
+                ]
+            interlinear_div = HTML.div(
+                *gloss_divs,
+                class_="gloss-unit",
+            )
             units.append(interlinear_div)
     return units
 
@@ -212,9 +223,9 @@ def rendered_form(request, f, level="morphs", line="obj"):
             and part.rsep
         ):
             form_components.append(part.rsep)
-    if line != "gloss":
-        return HTML.i(*form_components)
     if form_components:
+        if line != "gloss":
+            return HTML.i(*form_components)
         return HTML.span(*form_components)
     return None
 
