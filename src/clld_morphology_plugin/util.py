@@ -167,6 +167,10 @@ def form_representation(request, f, level="morphs", line="obj"):
                     glosslist.append(".")
                 if len(glosslist) > 0:
                     del glosslist[-1]
+                for change in slices[index].mpchanges:
+                    if change.inflection:
+                        glosslist.append("\\")
+                        glosslist.append(link(request, change.inflection.value))
                 components[index] = (
                     slices[index].morph,
                     HTML.span(*glosslist),

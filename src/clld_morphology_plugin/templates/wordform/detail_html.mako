@@ -58,6 +58,13 @@
                                 </ul>
                             </li>
                         % endif
+                        % for mpchange in formpart.mpchanges:
+                            <li>${h.link(request, mpchange.change)}</li>
+                            ## (in <i>${formpart.morph}</i>)
+                            <ul>
+                                    <li>${h.link(request, mpchange.inflection.value.category)}: ${h.link(request,     mpchange.inflection.value, label=mpchange.inflection.value.name)}</li>
+                            </ul>
+                        % endfor
                     % endfor
                     </ul>
                 </td>

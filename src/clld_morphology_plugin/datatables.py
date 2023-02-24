@@ -212,3 +212,26 @@ class Lexemes(DataTable):
             Col(self, "description"),
             # FormCountCol(self, "Forms", bSortable=False, bSearchable=False),
         ]
+
+
+class MorphoPhonoChanges(DataTable):
+
+    __constraints__ = [Language]
+
+    def base_query(self, query):
+        query = query.join(Language).options(
+            joinedload(models.MorphoPhonologicalChange.language)
+        )
+
+        if self.language:
+            return query.filter(models.MorphoPhonologicalChange.language == self.language)
+        return query
+
+    def col_defs(self):
+        return [
+            LinkCol(self, "name"),
+            Col(self, "description"),
+            LinkCol(
+                self, "language", model_col=Language.name, get_obj=lambda i: i.language
+            ),
+        ]

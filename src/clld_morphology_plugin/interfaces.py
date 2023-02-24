@@ -71,3 +71,7 @@ class IDerivProcess(Interface):
     """
     derivational process interface
     """
+
+
+class IMorphoPhonoChange(Interface):
+    """morphophonological change interface"""

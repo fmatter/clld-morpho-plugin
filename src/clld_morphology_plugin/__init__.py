@@ -57,7 +57,15 @@ def includeme(config):
         interfaces.IDerivProcess,
         with_index=True,
     )
+    config.register_resource(
+        "morphophonologicalchange",
+        models.MorphoPhonologicalChange,
+        interfaces.IMorphoPhonoChange,
+        with_index=True,
+        route="morphophonologicalchanges"
+    )
 
+    config.register_datatable("morphophonologicalchanges", datatables.MorphoPhonoChanges)
     config.register_datatable("lexemes", datatables.Lexemes)
     config.register_datatable("pos", datatables.POS)
     config.register_datatable("meanings", datatables.Meanings)

@@ -431,9 +431,15 @@ class InflectionalValue(Base, IdNameDescriptionMixin):
         """A dict of morphs (exponents) expressing this inflectional value, values are wordforms."""
         res = {}
         for inflection in self.inflections:
-            key = tuple(formpart.formpart.morph for formpart in inflection.formparts)
+            # morphs
+            key = [formpart.formpart.morph for formpart in inflection.formparts]
+            for mpchange in inflection.mpchanges:
+                print("weeee", mpchange)
+                key.append(mpchange.change)
+            key = tuple(key)
             res.setdefault(key, [])
             res[key].append(inflection.form)
+
         return res
 
 
@@ -447,9 +453,12 @@ class Inflection(Base):
 
     @property
     def form(self):
-        if self.formparts[0].form:
-            return self.formparts[0].form
-        return self.formparts[0].formpart.form
+        if self.formparts:
+            if self.formparts[0].form:
+                return self.formparts[0].form
+            return self.formparts[0].formpart.form
+        elif self.mpchanges:
+            return self.mpchanges[0].formpart.form
 
     @property
     def morphs(self):
@@ -508,3 +517,20 @@ class StemPartDerivation(Base):
     stempart = relationship(StemPart, innerjoin=True, backref="derivations")
     derivation_pk = Column(Integer, ForeignKey("derivation.pk"), nullable=False)
     derivation = relationship(Derivation, innerjoin=True, backref="stemparts")
+
+
+@implementer(interfaces.IMorphoPhonoChange)
+class MorphoPhonologicalChange(Base, IdNameDescriptionMixin):
+    """A morphophonological change."""
+    language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
+    language = relationship(Language, innerjoin=True)
+
+class MorphoPhonoInstance(Base):
+    """An instance of a morphophonological change, connecting it with part of a form, and optionally an inflection."""
+    change_pk = Column(Integer, ForeignKey("morphophonologicalchange.pk"), nullable=False)
+    inflection_pk = Column(Integer, ForeignKey("inflection.pk"), nullable=True)
+    formpart_pk = Column(Integer, ForeignKey("wordformpart.pk"), nullable=False)
+
+    change = relationship(MorphoPhonologicalChange, innerjoin=True, backref="tokens")
+    inflection = relationship(Inflection, innerjoin=True, backref="mpchanges")
+    formpart = relationship(WordformPart, innerjoin=True, backref="mpchanges")
