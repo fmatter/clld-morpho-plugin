@@ -100,6 +100,22 @@ class Wordforms(DataTable):
         return cols
 
 
+class Wordforms_noPOS(Wordforms):
+    def col_defs(self):
+        cols = [LinkCol(self, "name"), Col(self, "description")]
+        if not self.language:
+            cols.append(
+                LinkCol(
+                    self,
+                    "language",
+                    model_col=Language.name,
+                    get_obj=lambda i: i.language,
+                )
+            )
+        cols.append(AudioCol(self, "Audio"))
+        return cols
+
+
 class Forms(DataTable):
 
     __constraints__ = [Language, models.Wordform]

@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * derivation including derivational lineages
 * flexible wordform rendering
 * morphophonological changes
+* optionally hide POS in wordform datatable
 
 ### Changed
 * if clitics have `=` in their name, don't show in interlinearization

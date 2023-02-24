@@ -72,7 +72,10 @@ def includeme(config):
     config.register_datatable("pos", datatables.POS)
     config.register_datatable("meanings", datatables.Meanings)
     config.register_datatable("morphs", datatables.Morphs)
-    config.register_datatable("wordforms", datatables.Wordforms)
+    if config.registry.settings["clld_morphology_plugin"].get("pos", True):
+        config.register_datatable("wordforms", datatables.Wordforms)
+    else:
+        config.register_datatable("wordforms", datatables.Wordforms_noPOS)
     config.register_datatable("morphemes", datatables.Morphemes)
     config.register_datatable("glosses", datatables.Glosses)
     config.register_datatable("stems", datatables.Stems)
