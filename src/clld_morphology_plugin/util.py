@@ -54,9 +54,10 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                             rendered_form(request, slices[idx].form), class_="morpheme"
                         )
                     )
+                    rendered_gloss = rendered_form(request, slices[idx].form, line="gloss")
                     glosses.append(
                         HTML.span(
-                            rendered_form(request, slices[idx].form, line="gloss"),
+                            rendered_gloss or gloss,
                             **{"class": "gloss"},
                         )
                     )
@@ -213,7 +214,9 @@ def rendered_form(request, f, level="morphs", line="obj"):
             form_components.append(part.rsep)
     if line != "gloss":
         return HTML.i(*form_components)
-    return HTML.span(*form_components)
+    if form_components:
+        return HTML.span(*form_components)
+    return None
 
 
 def render_paradigm(self, html=False):
