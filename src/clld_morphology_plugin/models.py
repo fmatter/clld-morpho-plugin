@@ -429,15 +429,12 @@ class InflectionalValue(Base, IdNameDescriptionMixin):
         """A dict of morphs (exponents) expressing this inflectional value, values are wordforms."""
         res = {}
         for inflection in self.inflections:
-            # morphs
             key = [formpart.formpart.morph for formpart in inflection.formparts]
             for mpchange in inflection.mpchanges:
-                print("weeee", mpchange)
                 key.append(mpchange.change)
             key = tuple(key)
             res.setdefault(key, [])
             res[key].append(inflection.form)
-
         return res
 
 

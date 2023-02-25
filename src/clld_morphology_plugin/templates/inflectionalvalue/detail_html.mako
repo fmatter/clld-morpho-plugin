@@ -48,17 +48,6 @@
             % endfor
         </ul>
     </td>
-    % elif ctx.morphs:
-        <tr>
-            <td>Morphs:</td>
-            <td>
-                <ul>
-                % for morph in ctx.morphs:
-                    <li> ${h.link(request, morph)} </li>
-                % endfor
-                </ul>
-            </td>
-        </tr>
     % endif
     </tbody>
 </table>
