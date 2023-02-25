@@ -11,6 +11,8 @@ GLOSS_ABBR_PATTERN = re.compile(
 
 
 def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
+    """This method takes a sentence and returns the interlinear gloss lines as nested divs for displaying.
+    If there are ExampleParts present, the associated wordforms will be rendered accordingly."""
     units = []
     if sentence.analyzed and sentence.gloss:
         # g-words associated with this sentence
@@ -103,6 +105,7 @@ sep_pattern = f"([{''.join(morph_separators)}])"
 
 
 def form_representation(request, f, level="morphs", line="obj"):
+    """Returns a dict of indices and links that make up a given form."""
     parts = dict(enumerate(f.parts))
     slices = {fslice.index: fslice for fslice in f.slices}
     components = {}
@@ -189,6 +192,7 @@ def form_representation(request, f, level="morphs", line="obj"):
 
 
 def rendered_form(request, f, level="morphs", line="obj"):
+    """Displays a rendered version of a form or wordform or stem."""
     if hasattr(f, "formslices"):
         if level == "wordforms":
             return HTML.i(*[link(request, x.wordform) + " " for x in f.formslices])
@@ -240,7 +244,6 @@ def render_paradigm(self, html=False):
     y = self.inflectionalcategories[cut + 1 : :]
     x = self.inflectionalcategories[0 : cut + 1]
     df = df.fillna("-")
-    print(df)
 
     if self.paradigm_x:
         x = sorted(
@@ -268,8 +271,6 @@ def render_paradigm(self, html=False):
     paradigm.sort_index(level=paradigm.index.names, key=sorter, inplace=True)
     paradigm.sort_index(level=paradigm.columns.names, key=sorter, inplace=True, axis=1)
     paradigm.index = pd.MultiIndex.from_frame(paradigm.index.to_frame().fillna(""))
-
-    print(paradigm)
 
     def cast_list(stuff):
         if not isinstance(stuff, (list, tuple)):
