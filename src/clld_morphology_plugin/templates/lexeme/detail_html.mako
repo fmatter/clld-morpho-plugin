@@ -64,7 +64,7 @@
                 % for cell in cells:
                 <td>
                     % for form in cell:
-                        <i>${rendered_form(request, form, level="wordforms") | n}</i> <br>
+                        <i>${rendered_form(request, form, level="morphs") | n}</i> <br>
                     % endfor
                     </td>
                 % endfor

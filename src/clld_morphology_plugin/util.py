@@ -199,7 +199,7 @@ def rendered_form(request, f, level="morphs", line="obj"):
         if level == "forms":
             return HTML.i(link(request, f))
         return HTML.i(
-            *[rendered_form(request, x.wordform, level, line) for x in f.formslices]
+            *[rendered_form(request, x.wordform, level, line) + " " for x in f.formslices]
         )
     form_components = []
     representation = form_representation(request, f, level, line)
