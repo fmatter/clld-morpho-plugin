@@ -14,8 +14,8 @@ A plugin for modelling morphology in CLLD apps.
 * morphemes (have different [allo]morphs)
 
 ## Markdown
-Since this plugin was primarily developed for [interactive digital corpus-based grammar](https://github.com/fmatter/indicogram), comments on models are rendered using markdown.
-However, it is up to the app developer to choose what markdown you want to use; templates assume that the parent mako template provides a function `markdown(request, content)`.
+Since this plugin is primarily being developed for an [interactive digital corpus-based grammar](https://github.com/fmatter/indicogram), comments on models are rendered using markdown.
+However, it is up to the app developer to choose what markdown you want to use; the templates here assume that the parent mako template provides a function `markdown(request, content)`.
 If you want to use the [clld-markdown-plugin](https://github.com/clld/clld-markdown-plugin/), use the following code in your top-level `.mako`:
 
     <%def name="markdown(request, content)">
