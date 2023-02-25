@@ -24,8 +24,6 @@ from clld_morphology_plugin import interfaces
 class Meaning(Base, PolymorphicBaseMixin, IdNameDescriptionMixin):
     """Placeholder for meaning."""
 
-    pass
-
 
 @implementer(interfaces.IGloss)
 class Gloss(Base):
@@ -393,8 +391,8 @@ class WordformStem(Base):
 class InflectionalCategory(Base, IdNameDescriptionMixin):
     """An inflectional category like person or tense."""
 
-    """The order in which the inflectional values of this category should be ordered. For instance, person should be 1,2,3."""
     value_order = Column(MutableList.as_mutable(PickleType), default=[])
+    """The order in which the inflectional values of this category should be ordered. For instance, person should be 1,2,3."""
 
     @property
     def ordered_values(self):
@@ -457,8 +455,9 @@ class Inflection(Base):
             if self.formparts[0].form:
                 return self.formparts[0].form
             return self.formparts[0].formpart.form
-        elif self.mpchanges:
+        if self.mpchanges:
             return self.mpchanges[0].formpart.form
+        raise ValueError(f"Inflection {self} has no associated forms")
 
     @property
     def morphs(self):
@@ -479,8 +478,6 @@ class WordformPartInflection(Base):
 @implementer(interfaces.IDerivProcess)
 class DerivationalProcess(Base, IdNameDescriptionMixin):
     """A derivational process derives new stems from roots or other stems."""
-
-    pass
 
 
 class Derivation(Base):
