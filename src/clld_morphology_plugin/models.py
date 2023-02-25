@@ -531,8 +531,10 @@ class MorphoPhonoInstance(Base):
         Integer, ForeignKey("morphophonologicalchange.pk"), nullable=False
     )
     inflection_pk = Column(Integer, ForeignKey("inflection.pk"), nullable=True)
-    formpart_pk = Column(Integer, ForeignKey("wordformpart.pk"), nullable=False)
+    formpart_pk = Column(Integer, ForeignKey("wordformpart.pk"), nullable=True)
+    stempart_pk = Column(Integer, ForeignKey("stempart.pk"), nullable=True)
 
     change = relationship(MorphoPhonologicalChange, innerjoin=True, backref="tokens")
     inflection = relationship(Inflection, innerjoin=True, backref="mpchanges")
     formpart = relationship(WordformPart, innerjoin=True, backref="mpchanges")
+    stempart = relationship(StemPart, innerjoin=True, backref="mpchanges")
