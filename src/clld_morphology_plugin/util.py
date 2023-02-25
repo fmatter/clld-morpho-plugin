@@ -259,6 +259,7 @@ def render_paradigm(self, html=False):
     def listify(stuff):
         return list(stuff)
 
+    print(df)
     paradigm = pd.pivot_table(df, values="Form", columns=x, index=y, aggfunc=listify)
     paradigm = paradigm.fillna("")
     sort_orders = {cat: cat.ordered_values for cat in self.inflectionalcategories}
@@ -340,23 +341,6 @@ def render_derived_stems(request, stem):
 def render_derived_from(request, stem):
     res = build_etymology_source(request, stem)
     return HTML.ul(*dict_to_list(res))
-
-
-def rendered_gloss_units1(request, forms):
-    units = []
-    keys = ["wordforms", "morphs", "glosses"]
-    for form in forms:
-        units.append(
-            {
-                "wordforms": link(request, form),
-                "morphs": rendered_form(request, form),
-                "glosses": rendered_form(request, form, line="gloss"),
-            }
-        )
-        if form.stem:
-            units[-1]["stems"] = rendered_form(request, form.stem)
-            keys.append("stems")
-    return units, keys
 
 
 def render_wordforms(request, formlist):
