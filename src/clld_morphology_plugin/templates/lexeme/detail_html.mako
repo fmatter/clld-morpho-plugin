@@ -1,7 +1,6 @@
 <%inherit file="../${context.get('request').registry.settings.get('clld.app_template', 'app.mako')}"/>
 <%namespace name="util" file="../util.mako"/>
 <% from clld_morphology_plugin.models import Wordform %>
-<% from clld_morphology_plugin.util import get_further_lexemes %>
 <% from clld_morphology_plugin.util import render_paradigm %>
 <% from clld_morphology_plugin.util import rendered_form %>
 <%! active_menu_item = "lexemes" %>

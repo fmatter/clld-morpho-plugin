@@ -10,13 +10,6 @@ GLOSS_ABBR_PATTERN = re.compile(
 )
 
 
-def get_further_lexemes(lexeme):
-    lex_list = [lexeme]
-    for lex in lexeme.derived_lexemes:
-        lex_list.extend(get_further_lexemes(lex.derived_lexeme))
-    return lex_list
-
-
 def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
     units = []
     if sentence.analyzed and sentence.gloss:
