@@ -42,99 +42,79 @@
                 </td>
             </tr>
         %endif
-        ##% if ctx.stems:
-        ##<tr>
-        ##   <td> Corresponding stem: </td>
-        ##    <td>
-        ##        % for stem in ctx.stems:
-        ##            ${h.link(request, stem, label=stem.name.upper())} <br>
-        ##        % endfor
-        ##    </td>
-        ##</tr>
-        ##% endif
-        ##% if ctx.derived_lexemes:
-        ##<tr>
-        ##   <td> Derived lexemes: </td>
-        ##    <td>
-        ##        <ol>
-        ##            % for lex in ctx.derived_lexemes:
-        ##                <li> ${h.link(request, lex.lexeme, label=lex.lexeme.name.upper())} ‘${lex.lexeme.description}’ </li>
-        ##            % endfor
-        ##        </ol>
-        ##    </td>
-        ##</tr>
-        ##% endif
-        ##% if ctx.comment:
-        ##   <td> Comment: </td>
-        ##   <td> ${parent.markdown(request, ctx.comment)|n} </td>
-        ##% endif
-        ##% if contribution in dir(ctx):
-        ##<tr>
-        ##    <td> Contribution: </td>
-        ##    <td>
-        ##        ${h.link(request, ctx.contribution)} by
-        ##        % for contributor in ctx.contribution.primary_contributors:
-        ##            ${h.link(request, contributor)}
-        ##        % endfor
-        ##    </td>
-        ##</tr>
-        ##% endif
+        % if ctx.inflectionalvalues:
+            <tr>
+                <td> Inflectional values:</td>
+                <td>
+                <ul>
+                  % for val in ctx.inflectionalvalues:
+                     <li>${h.link(request, val, label=val.name)} (${h.link(request, val.category)})</li>
+                  % endfor
+                </ul>
+                </td>
+            </tr>
+        % endif
     </tbody>
 </table>
 
 <% meaning_forms = {} %>
-<% meaning_sentences = {} %>
-##% for morph in ctx.allomorphs:
-##    % for form_slice in morph.forms:
-##        % if not form_slice.morpheme_meaning:
-##            <li> ${h.link(request, form_slice.form)} </li>
-##        % else:
-##            <% meaning_forms.setdefault(form_slice.morpheme_meaning, []) %>
-##            <% meaning_forms[form_slice.morpheme_meaning].append(form_slice.form) %>
-##            % if getattr(form_slice.form_meaning, "form_tokens", None):
-##                <% meaning_sentences.setdefault(form_slice.morpheme_meaning, []) %>
-##                <% meaning_sentences[form_slice.morpheme_meaning].extend(form_slice.form_meaning.form_tokens) %>
-##            % endif
-##        % endif
-##    % endfor
-##% endfor
+<% gloss_sentences = {} %>
+
+% for fslice in ctx.formslices:
+    % if hasattr(fslice.form, "sentence_assocs"):
+        <% gloss = ".".join([str(x.gloss) for x in fslice.glosses]) %>
+        <% gloss_sentences.setdefault(gloss, []) %>
+        % for s in fslice.form.sentence_assocs:
+            <% gloss_sentences[gloss].append(s.sentence) %>
+        % endfor
+    % endif
+% endfor
+
 
 <div class="tabbable">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#corpus" data-toggle="tab"> Corpus tokens </a></li>
-        <li><a href="#forms" data-toggle="tab"> Wordforms </a></li>
+        % if gloss_sentences:
+            <li class="active"><a href="#corpus" data-toggle="tab"> Corpus tokens </a></li>
+            <li><a href="#forms" data-toggle="tab">Wordforms</a></li>
+        % else:
+            <li class="active"><a href="#forms" data-toggle="tab">Wordforms</a></li>        
+        % endif
     </ul>
 
     <div class="tab-content" style="overflow: visible;">
-        <div id="forms" class="tab-pane">
-        <ol>
-            % for form in ctx.forms:
-                <li> ${h.link(request, form)} </li>
-            % endfor
-        </ol>
+
+        <div id="forms" class="tab-pane ${'' if gloss_sentences else 'active'}">
+            <ol>
+                % for fslice in ctx.formslices:
+                    <li> ${h.link(request, fslice.form)} </li>
+                % endfor
+            </ol>
         </div>
-    
-        <div id="corpus" class="tab-pane active">
-            % for morpheme_meaning, sentences in meaning_sentences.items():
-                <div id=${morpheme_meaning.id}>
-                    % if len(meaning_forms) > 1:
-                        <h5> As ‘${h.link(request, morpheme_meaning.meaning)}’:</h5>
+
+        <div id="corpus" class="tab-pane ${'active' if gloss_sentences else ''}">
+            % for gloss, sentences in gloss_sentences.items():
+                <div id=${gloss}>
+                    % if len(sentences) > 1:
+                        <h5> As ‘${gloss}’:</h5>
                     % endif
-                    <button type="button" class="btn btn-link" onclick="copyIDs('${morpheme_meaning.id}-ids')">Copy sentence IDs</button>
-                    <code class="id_list" id=${morpheme_meaning.id}-ids> ${" ".join([x.sentence.id for x in sentences])} </code>
+                    <button type="button" class="btn btn-link" onclick="copyIDs('${gloss}-ids')">Copy sentence IDs</button>
                     <% stc_ids = [] %>
                     <ol class="example">
                         % for sentence in sentences:
-                            % if sentence.sentence.id not in stc_ids:
-                                ${rendered_sentence(request, sentence.sentence, sentence_link=True)}
-                                <% stc_ids.append(sentence.sentence.id) %>
+                            % if sentence.id not in stc_ids:
+                                ${rendered_sentence(request, sentence, sentence_link=True)}
+                                <% stc_ids.append(sentence.id) %>
                             % endif
                         % endfor
                     </ol>
                 </div>
                 <script>
-                    var highlight_div = document.getElementById("${morpheme_meaning.id}");
-                    var highlight_targets = highlight_div.querySelectorAll("*[name*='${morpheme_meaning.id}']")
+                    var highlight_div = document.getElementById("${gloss}");
+                    var highlight_targets = [];
+                    % for x in ctx.allomorphs:
+                        highlight_targets.push(...highlight_div.querySelectorAll("*[name='${x.id}']"))
+                    % endfor
+                    console.log(highlight_targets)
                     for (index = 0; index < highlight_targets.length; index++) {
                         highlight_targets[index].classList.add("morpho-highlight");
                     }

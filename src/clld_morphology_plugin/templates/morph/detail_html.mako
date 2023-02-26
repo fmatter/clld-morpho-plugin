@@ -98,35 +98,42 @@ ${h.link(request, contributor)}
     </tbody>
 </table>
 
-<% meaning_forms = {} %>
 <% gloss_sentences = {} %>
+
+% for fslice in ctx.formslices:
+    % if hasattr(fslice.form, "sentence_assocs"):
+        <% gloss = ".".join([str(x.gloss) for x in fslice.glosses]) %>
+        <% gloss_sentences.setdefault(gloss, []) %>
+        % for s in fslice.form.sentence_assocs:
+            <% gloss_sentences[gloss].append(s.sentence) %>
+        % endfor
+    % endif
+% endfor
+
 
 <div class="tabbable">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#forms" data-toggle="tab"> Forms </a></li>
-        <li><a href="#corpus" data-toggle="tab"> Corpus tokens </a></li>
+        % if gloss_sentences:
+            <li class=${'active' if gloss_sentences else ''}><a href="#corpus" data-toggle="tab"> Corpus tokens </a></li>
+        % endif
+        % if ctx.formslices:
+            <li class=${'' if gloss_sentences else 'active'}><a href="#forms" data-toggle="tab"> Wordforms </a></li>
+        % endif
         % if ctx.stemslices:
-            <li><a href="#stems" data-toggle="tab"> Stems </a></li>
-        %endif
+            <li class=${'' if gloss_sentences or ctx.formslices else 'active'}><a href="#stems" data-toggle="tab"> Stems </a></li>
+        % endif
     </ul>
 
     <div class="tab-content" style="overflow: visible;">
-        <div id="forms" class="tab-pane active">
+        <div id="forms" class="tab-pane ${'' if gloss_sentences else 'active'}">
         <ul>
             % for fslice in ctx.formslices:
-                % if hasattr(fslice.form, "sentence_assocs"):
-                    <li> ${h.link(request, fslice.form) | n} </li>
-                    <% gloss = ".".join([str(x.gloss) for x in fslice.glosses]) %>
-                    <% gloss_sentences.setdefault(gloss, []) %>
-                    % for s in fslice.form.sentence_assocs:
-                        <% gloss_sentences[gloss].append(s.sentence) %>
-                    % endfor
-                % endif
+                <li> ${h.link(request, fslice.form) | n} </li>
             % endfor
         </ul>
         </div>
-        
-        <div id="stems" class="tab-pane">
+
+        <div id="stems" class="tab-pane ${'' if gloss_sentences or ctx.formslices else 'active'}">
             <ul>
                 % for sslice in ctx.stemslices:
                     <li> ${h.link(request, sslice.stem)} </li>
@@ -134,14 +141,14 @@ ${h.link(request, contributor)}
             </ul>
         </div>
 
-        <div id="corpus" class="tab-pane">
+
+        <div id="corpus" class="tab-pane ${'active' if gloss_sentences else ''}">
             % for gloss, sentences in gloss_sentences.items():
                 <div id=${gloss}>
                     % if len(sentences) > 1:
                         <h5> As ‘${gloss}’:</h5>
                     % endif
-            ##         <button type="button" class="btn btn-link" onclick="copyIDs('${gloss}-ids')">Copy sentence IDs</button>
-            ##         <code class="id_list" id=${morpheme_meaning.id}-ids> ${" ".join([x.id for x in sentences])} </code>
+                    <button type="button" class="btn btn-link" onclick="copyIDs('${gloss}-ids')">Copy sentence IDs</button>
                     <% stc_ids = [] %>
                     <ol class="example">
                         % for sentence in sentences:
@@ -156,7 +163,6 @@ ${h.link(request, contributor)}
                     var highlight_div = document.getElementById("${gloss}");
                     var highlight_targets = highlight_div.querySelectorAll("*[name='${ctx.id}']")
                     console.log(highlight_targets)
-                    console.log("*[name='${ctx.id}-${gloss}']")
                     for (index = 0; index < highlight_targets.length; index++) {
                         highlight_targets[index].classList.add("morpho-highlight");
                     }

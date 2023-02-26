@@ -79,6 +79,24 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
         return list(set(formlist))
 
 
+    @property
+    def formslices(self):
+        """A list of positions in wordforms in which morphs belonging to this morpheme occur."""
+        slicelist = []
+        for m in self.allomorphs:
+            for fslice in m.formslices:
+                slicelist.append(fslice)
+        return slicelist
+
+    @property
+    def inflectionalvalues(self):
+        """A list of inflectional values expressed with morphs belonging to this morpheme."""
+        vallist = []
+        for m in self.allomorphs:
+            for val in m.inflectionalvalues:
+                vallist.append(val)
+        return list(set(vallist))        
+
 @implementer(interfaces.IMorph)
 class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
     """A morph is a pairing of a sequence of segments and function, which can not be further segmented."""
@@ -243,8 +261,6 @@ class Form(
     @property
     def link_form(self):
         if len(self.formslices) > 1:
-            print(self)
-            print(self.formslices)
             return self
         return self.formslices[0].wordform
 
