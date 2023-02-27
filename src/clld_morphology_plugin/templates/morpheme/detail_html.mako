@@ -61,7 +61,7 @@
 <% gloss_sentences = {} %>
 
 % for fslice in ctx.formslices:
-    % if hasattr(fslice.form, "sentence_assocs"):
+    % if hasattr(fslice.form, "sentence_assocs") and fslice.form.sentence_assocs:
         <% gloss = ".".join([str(x.gloss) for x in fslice.glosses]) %>
         <% gloss_sentences.setdefault(gloss, []) %>
         % for s in fslice.form.sentence_assocs:
@@ -69,7 +69,6 @@
         % endfor
     % endif
 % endfor
-
 
 <div class="tabbable">
     <ul class="nav nav-tabs">
@@ -84,11 +83,11 @@
     <div class="tab-content" style="overflow: visible;">
 
         <div id="forms" class="tab-pane ${'' if gloss_sentences else 'active'}">
-            <ol>
+            <ul>
                 % for fslice in ctx.formslices:
                     <li> ${h.link(request, fslice.form)} </li>
                 % endfor
-            </ol>
+            </ul>
         </div>
 
         <div id="corpus" class="tab-pane ${'active' if gloss_sentences else ''}">

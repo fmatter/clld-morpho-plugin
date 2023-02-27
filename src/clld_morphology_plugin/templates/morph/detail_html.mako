@@ -101,7 +101,7 @@ ${h.link(request, contributor)}
 <% gloss_sentences = {} %>
 
 % for fslice in ctx.formslices:
-    % if hasattr(fslice.form, "sentence_assocs"):
+    % if hasattr(fslice.form, "sentence_assocs") and fslice.form.sentence_assocs:
         <% gloss = ".".join([str(x.gloss) for x in fslice.glosses]) %>
         <% gloss_sentences.setdefault(gloss, []) %>
         % for s in fslice.form.sentence_assocs:
