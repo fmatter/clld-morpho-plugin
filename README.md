@@ -9,9 +9,10 @@ A plugin for modelling morphology in CLLD apps.
 ![Versions](https://img.shields.io/pypi/pyversions/clld-morphology-plugin)
 
 ## Models
-* word forms (consist of morphs)
-* morphs (are parts of word forms, belong to morphemes)
-* morphemes (have different [allo]morphs)
+The [models](/src/clld_morphology_plugin/models.py) largely reflect the structure of the morphological components of the [cldf-ldd](https://github.com/fmatter/cldf-ldd) collection.
+Wordforms consist of morphologically segmentable `parts`.
+These parts are in turn 
+
 
 ## Markdown
 Since this plugin is primarily being developed for an [interactive digital corpus-based grammar](https://github.com/fmatter/indicogram), comments on models are rendered using markdown.
