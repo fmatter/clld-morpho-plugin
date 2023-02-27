@@ -18,6 +18,28 @@ Wordform structure and inflectional information is rendered as follows:
 
 <img src="https://user-images.githubusercontent.com/2378389/221690084-36690385-7f9d-4bd6-99ac-d87c1964f06b.png" width="50%" height="50%">
 
+`Morpheme` detail view with `Morph`s, inflectional values, and wordforms/corpus tokens:
+
+
+
+If a `WordformPart` is not associated with a `Morph`, this is interpreted as zero marking (usually for inflection):
+
+Morphophonological change is modeled by `MorphoPhonoInstance`s connecting `MorphoPhonologicalChange`s with one or more of the following things: an `Inflection`, a `WordformPart`, or a `StemPart`:
+
+
+Since `InflectionalValue`s are connected via `Inflection`s to `WordformPart`s, their exponents can be efficiently visualized:
+
+`Stems` can have a `Lexeme`, and the way inflection is modeled provides all the necessary information to automatically generated inflectional paradigms for lexemes:
+
+`Derivation`s connect `Stems` with other `Stem`s (or `Morph`s [roots]) and `DerivationalProcess`es.
+These derivational links can then be used to render the "derivational lineage" of a stem:
+
+Detail views of stems also show all derived (directly or indirectly) stems:
+
+
+`DerivationalProcess`es know what stems they create (optionally using specific morphs):
+
+
 
 
 ## Markdown
