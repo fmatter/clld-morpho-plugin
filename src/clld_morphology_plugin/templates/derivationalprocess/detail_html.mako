@@ -10,7 +10,7 @@
 % endtry
 <%! active_menu_item = "processes" %>
 
-<h3>${_('Derivational process')}: ${ctx.name}</h3>
+<h3>${h.link(request, ctx.language)} ${_('derivational process')}: ${ctx.name}</h3>
 
 % if ctx.description:
     ${ctx.description}

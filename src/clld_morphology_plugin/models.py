@@ -492,6 +492,9 @@ class WordformPartInflection(Base):
 class DerivationalProcess(Base, IdNameDescriptionMixin):
     """A derivational process derives new stems from roots or other stems."""
 
+    language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
+    language = relationship(Language, innerjoin=True)
+
 
 class Derivation(Base):
     """A derivation links a source stem or root with a derivational process and a target stem."""
