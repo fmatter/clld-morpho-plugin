@@ -10,8 +10,13 @@ A plugin for modelling morphology in CLLD apps.
 
 ## Models
 The [models](/src/clld_morphology_plugin/models.py) largely reflect the structure of the morphological components of the [cldf-ldd](https://github.com/fmatter/cldf-ldd) collection.
-Wordforms consist of morphologically segmentable `parts`.
-These parts are in turn 
+
+The basic mechanism of segmentation is implemented such that `Wordform`s and `Stem`s have a list column `parts` containing the segmentation.
+These parts are referenced via indices by `WordformPart`s, `StemPart`s, and `WordformStem`s, so these entities "know" their constituents.
+X`Parts` can in turn be referenced by `Inflection`s, meaning that `InflectionalValue`s (which belong to `InflectionalCategorie`s) are associated with part of a wordform.
+Wordform structure and inflectional information is rendered as follows:
+
+
 
 
 ## Markdown
