@@ -16,8 +16,7 @@ These parts are referenced via indices by `WordformPart`s, `StemPart`s, and `Wor
 X`Parts` can in turn be referenced by `Inflection`s, meaning that `InflectionalValue`s (which belong to `InflectionalCategorie`s) are associated with part of a wordform.
 Wordform structure and inflectional information is rendered as follows:
 
-![wf](https://user-images.githubusercontent.com/2378389/221690084-36690385-7f9d-4bd6-99ac-d87c1964f06b.png)
-
+<img src="[https://your-image-url.type](https://user-images.githubusercontent.com/2378389/221690084-36690385-7f9d-4bd6-99ac-d87c1964f06b.png)" width="50" height="50">
 
 
 
