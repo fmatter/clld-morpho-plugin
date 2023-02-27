@@ -25,17 +25,19 @@ If a `WordformPart` is not associated with a `Morph`, this is interpreted as zer
 <img src="https://user-images.githubusercontent.com/2378389/221693358-7f8d3ffe-d008-4efe-a49c-b90c7de1e7dc.png" width="50%" height="50%">
 
 Morphophonological change is modeled by `MorphoPhonoInstance`s connecting `MorphoPhonologicalChange`s with one or more of the following things: an `Inflection`, a `WordformPart`, or a `StemPart`:
+
 <img src="https://user-images.githubusercontent.com/2378389/221693377-b45ae02b-45b0-4480-9b10-7b271cdb56cc.png" width="50%" height="50%">
 
-Since `InflectionalValue`s are connected via `Inflection`s to `WordformPart`s, their exponents can be efficiently visualized:
+Since `InflectionalValue`s are connected via `Inflection`s to `WordformPart`s, their exponents can be easily visualized:
 <img src="https://user-images.githubusercontent.com/2378389/221693413-3d95b17c-b67b-434d-8db3-68e9ffe99a4b.png" width="50%" height="50%">
 
 `Stems` can have a `Lexeme`, and the way inflection is modeled provides all the necessary information to automatically generated inflectional paradigms for lexemes:
-<img src="https://user-images.githubusercontent.com/2378389/221693515-b0adcf48-f68a-4040-9f7e-47898bc73b38.png" width="50%" height="50%">
+<img src="https://user-images.githubusercontent.com/2378389/221693515-b0adcf48-f68a-4040-9f7e-47898bc73b38.png" width="90%" height="90%">
 
 `Derivation`s connect `Stems` with other `Stem`s (or `Morph`s [roots]) and `DerivationalProcess`es.
 These derivational links can then be used to render the "derivational lineage" of a stem:
-<img src="https://user-images.githubusercontent.com/2378389/221693470-9c811e78-8fef-45be-a648-fb73c6314dc7.png" width="50%" height="50%">
+
+<img src="https://user-images.githubusercontent.com/2378389/221693470-9c811e78-8fef-45be-a648-fb73c6314dc7.png" width="60%" height="60%">
 
 Detail views of stems also show all derived (directly or indirectly) stems:
 <img src="https://user-images.githubusercontent.com/2378389/221693580-91e07656-3b0b-401c-b961-a5f5ca7dc1d0.png" width="50%" height="50%">
