@@ -97,7 +97,7 @@
                     % if len(sentences) > 1:
                         <h5> As ‘${gloss}’:</h5>
                     % endif
-                    <button type="button" class="btn btn-link" onclick="copyIDs('${gloss}-ids')">Copy sentence IDs</button>
+                    <button type="button" class="btn btn-outline-info" onclick="copyIDs('${gloss}-ids')">Copy sentence IDs</button>
                     <% stc_ids = [] %>
                     <ol class="example">
                         % for sentence in sentences:
