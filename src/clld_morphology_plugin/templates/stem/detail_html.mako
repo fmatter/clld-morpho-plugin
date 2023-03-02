@@ -20,6 +20,12 @@
                 <td> ${h.link(request, ctx.lexeme)}</td>
             </tr>        
         % endif
+        % if ctx.glosses:
+            <tr>
+                <td> Gloss: </td>
+                <td> ${h.text2html(", ".join([h.link(request, g) for g in ctx.glosses]))}</td>
+            </tr>        
+        % endif
         % if ctx.stemforms and not ctx.inflections:
             <tr>
                 <td> Forms: </td>
@@ -55,7 +61,6 @@
         % endif
     </tbody>
 </table>
-
 
 <%def name="print_cell(entity)">
     % if isinstance(entity, str):

@@ -13,16 +13,30 @@
 
 <table class="table table-nonfluid">
     <tbody>
-        <tr>
-            <td> Morphs:</td>
-            <td>
-                <ul>
-                   % for morph in ctx.morphs:
-                       <li> ${h.link(request, morph)} </li>
-                   % endfor
-                </ul>
-            </td>
-        </tr>
+        % if ctx.morphs:
+            <tr>
+                <td> Morphs:</td>
+                <td>
+                    <ul>
+                       % for morph in ctx.morphs:
+                           <li> ${h.link(request, morph)} </li>
+                       % endfor
+                    </ul>
+                </td>
+            </tr>
+        % endif
+        % if ctx.stemglosses:
+            <tr>
+                <td> Stems:</td>
+                <td>
+                    <ul>
+                       % for stemgloss in ctx.stemglosses:
+                           <li> ${h.link(request, stemgloss.stem)} </li>
+                       % endfor
+                    </ul>
+                </td>
+            </tr>
+        % endif
         % if ctx.values:
             <tr>
                 <td> Inflectional values:</td>
@@ -44,16 +58,18 @@
         ##         </td>
         ##     </tr>
         ## % endif
-        <tr>
-            <td> Forms:</td>
-            <td>
-                <ul>
-                   % for fslice in ctx.formglosses:
-                   <li>${h.link(request, fslice.formpart.form)}</li>
-                   % endfor
-                </ul>
-            </td>
-        </tr>
+        % if ctx.formglosses:
+            <tr>
+                <td> Forms:</td>
+                <td>
+                    <ul>
+                       % for fslice in ctx.formglosses:
+                       <li>${h.link(request, fslice.formpart.form)}</li>
+                       % endfor
+                    </ul>
+                </td>
+            </tr>
+        % endif
     </tbody>
 </table>
 
