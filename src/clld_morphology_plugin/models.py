@@ -298,6 +298,9 @@ class Lexeme(Base, IdNameDescriptionMixin):
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
     language = relationship(Language, innerjoin=True)
 
+    pos_pk = Column(Integer, ForeignKey("pos.pk"), nullable=True)
+    pos = relationship(POS, backref="lexemes", innerjoin=True)
+
     comment = Column(Unicode)
 
     """What inflectional categories should be shown on the x-axis of the inflectional paradigm?"""

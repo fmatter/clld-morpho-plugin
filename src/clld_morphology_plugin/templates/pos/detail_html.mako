@@ -1,6 +1,6 @@
 <%inherit file="../${context.get('request').registry.settings.get('clld.app_template', 'app.mako')}"/>
 <%namespace name="util" file="../util.mako"/>
-<%from clld_morphology_plugin.models import Wordform%>
+<%from clld_morphology_plugin import models%>
 <%! active_menu_item = "pos" %>
 
 
@@ -11,10 +11,18 @@
 % endif
 
 % if ctx.wordforms:
-<h4>Wordforms:</h4>
-<div>
-    ${request.get_datatable('wordforms', Wordform, pos=ctx).render()}
-</div>
+    <h4>Wordforms:</h4>
+    <div>
+        ${request.get_datatable('wordforms', models.Wordform, pos=ctx).render()}
+    </div>
+% endif
+
+
+% if ctx.lexemes:
+    <h4>Lexemes:</h4>
+    <div>
+        ${request.get_datatable('lexemes',models.Lexeme, pos=ctx).render()}
+    </div>
 % endif
 
 

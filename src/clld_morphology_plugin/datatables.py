@@ -72,7 +72,6 @@ class Wordforms(DataTable):
                 models.Wordform.formstems.any(models.WordformStem.stem == self.stem)
             )
         if self.pos:
-            query = query.join(models.POS).options(joinedload(models.Wordform.pos))
             return query.filter(models.Wordform.pos == self.pos)
         return query
 
@@ -220,7 +219,13 @@ class Glosses(DataTable):
 
 
 class Lexemes(DataTable):
-    __constraints__ = [Language]
+    __constraints__ = [Language, models.POS]
+
+    def base_query(self,query):
+        # query = query.join(Language).options(joinedload(models.Lexeme.language))
+        if self.pos:
+            return query.filter(models.Lexeme.pos == self.pos)
+        return query
 
     def col_defs(self):
         return [

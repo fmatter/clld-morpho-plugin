@@ -13,6 +13,12 @@
                 <td> Language: </td>
                 <td> ${h.link(request, ctx.language)}</td>
             </tr> 
+        % if ctx.pos:
+            <tr>
+                <td> Part of speech: </td>
+                <td> ${h.link(request, ctx.pos)} </td>
+            </tr> 
+        % endif
         % if ctx.stems:
             <tr>
                 <td> Stems: </td>
