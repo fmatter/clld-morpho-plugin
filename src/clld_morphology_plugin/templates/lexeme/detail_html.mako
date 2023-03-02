@@ -79,8 +79,7 @@
         </tr>
      </table>
 % endif
-    ## ${render_paradigm(ctx, html=True) | n}
-
+##${render_paradigm(ctx, html=True) | n}
 
 <h4>${_('Wordforms')}:</h4>
-${request.get_datatable('wordforms', Wordform, lexeme=ctx, language=ctx.language).render()}
+${request.get_datatable('wordforms', Wordform, lexeme=ctx).render()}

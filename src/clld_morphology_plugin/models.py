@@ -183,8 +183,8 @@ class Wordform(
     @property
     def lexeme(self):
         """The lexeme to which this wordform belongs."""
-        if len(self.formstems) > 0:
-            return self.formstems[0].stem.lexeme
+        for formstem in self.formstems:
+            return formstem.stem.lexeme
         return None
 
     @property

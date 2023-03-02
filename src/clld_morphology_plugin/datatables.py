@@ -47,7 +47,7 @@ class AudioCol(Col):
 
 class Wordforms(DataTable):
 
-    __constraints__ = [Language, models.POS, models.Inflection, models.Stem]
+    __constraints__ = [Language, models.Lexeme, models.POS, models.Inflection, models.Stem]
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Wordform.language))
@@ -65,14 +65,13 @@ class Wordforms(DataTable):
         if self.language:
             return query.filter(models.Wordform.language == self.language)
         if self.stem:
-            query = query.join(models.WordformStem).options(
-                joinedload(models.Wordform.formstems)
-            )
             return query.filter(
                 models.Wordform.formstems.any(models.WordformStem.stem == self.stem)
             )
         if self.pos:
             return query.filter(models.Wordform.pos == self.pos)
+        if self.lexeme:
+            return query.filter(models.Wordform.lexeme == self.lexeme)
         return query
 
     def col_defs(self):
