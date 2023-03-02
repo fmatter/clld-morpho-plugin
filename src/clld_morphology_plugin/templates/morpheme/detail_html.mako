@@ -73,10 +73,10 @@
 <div class="tabbable">
     <ul class="nav nav-tabs">
         % if gloss_sentences:
-            <li class="active"><a href="#corpus" data-toggle="tab"> Corpus tokens </a></li>
-            <li><a href="#forms" data-toggle="tab">Wordforms</a></li>
-        % else:
-            <li class="active"><a href="#forms" data-toggle="tab">Wordforms</a></li>        
+            <li class=${'active' if gloss_sentences else ''}><a href="#corpus" data-toggle="tab"> Corpus tokens </a></li>
+        % endif
+        % if ctx.formslices:
+            <li class=${'' if gloss_sentences else 'active'}><a href="#forms" data-toggle="tab"> Wordforms </a></li>
         % endif
     </ul>
 
