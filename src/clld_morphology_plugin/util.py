@@ -326,7 +326,7 @@ def build_etymology_source(request, stem, tree=None):
         tree = link(request, stem)
     tree = {
         link(request, parent)
-        + f" ‘{derivation.target.description}’ + "
+        + f" ‘{derivation.source.description}’ + "
         + link(request, derivation.process)
         + ":": tree
     }
