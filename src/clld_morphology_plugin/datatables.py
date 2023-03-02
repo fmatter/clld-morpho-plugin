@@ -221,17 +221,27 @@ class Lexemes(DataTable):
     __constraints__ = [Language, models.POS]
 
     def base_query(self,query):
-        # query = query.join(Language).options(joinedload(models.Lexeme.language))
         if self.pos:
             return query.filter(models.Lexeme.pos == self.pos)
         return query
 
     def col_defs(self):
-        return [
+        cols = [
             LinkCol(self, "name"),
             Col(self, "description"),
             # FormCountCol(self, "Forms", bSortable=False, bSearchable=False),
         ]
+        if not self.pos:
+            cols.append(
+                LinkCol(
+                    self,
+                    "part of speech",
+                    # model_col=models.POS.name,
+                    get_obj=lambda i: i.pos,
+                )
+            )
+        return cols
+
 
 
 class MorphoPhonoChanges(DataTable):

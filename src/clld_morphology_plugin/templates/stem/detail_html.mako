@@ -31,7 +31,7 @@
                 <td> Structure: </td>
                 <td>
                     ${rendered_form(request, ctx) | n}<br>
-                    ${rendered_form(request, ctx, line="gloss") | n}<br>
+                    ${rendered_form(request, ctx, line="gloss") | n}
                     ## ${rendered_form(request, ctx, level="stem") | n}<br>
                     ## ${rendered_form(request, ctx, level="stem", line="gloss") | n}
                 </td>
