@@ -70,6 +70,18 @@
     % endif
 % endfor
 
+% for sslice in ctx.stemslices:
+    % for wf in sslice.stem.wordforms:
+        % if hasattr(wf, "sentence_assocs") and wf.sentence_assocs:
+            <% gloss = ".".join([str(x.gloss) for x in sslice.glosses]) %>
+            <% gloss_sentences.setdefault(gloss, []) %>
+            % for s in wf.sentence_assocs:
+                <% gloss_sentences[gloss].append(s.sentence) %>
+            % endfor
+        % endif
+    % endfor
+% endfor
+
 <div class="tabbable">
     <ul class="nav nav-tabs">
         % if gloss_sentences:
@@ -77,6 +89,9 @@
         % endif
         % if ctx.formslices:
             <li class=${'' if gloss_sentences else 'active'}><a href="#forms" data-toggle="tab"> Wordforms </a></li>
+        % endif
+        % if ctx.stemslices:
+            <li class=${'' if gloss_sentences or ctx.formslices else 'active'}><a href="#stems" data-toggle="tab"> Stems </a></li>
         % endif
     </ul>
 
@@ -86,6 +101,14 @@
             <ul>
                 % for fslice in ctx.formslices:
                     <li> ${h.link(request, fslice.form)} </li>
+                % endfor
+            </ul>
+        </div>
+
+        <div id="stems" class="tab-pane ${'' if gloss_sentences or ctx.formslices else 'active'}">
+            <ul>
+                % for sslice in ctx.stemslices:
+                    <li> ${h.link(request, sslice.stem)} </li>
                 % endfor
             </ul>
         </div>

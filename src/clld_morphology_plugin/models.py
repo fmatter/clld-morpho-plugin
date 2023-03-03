@@ -88,6 +88,15 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
         return slicelist
 
     @property
+    def stemslices(self):
+        """A list of positions in stems in which morphs belonging to this morpheme occur."""
+        slicelist = []
+        for m in self.allomorphs:
+            for fslice in m.stemslices:
+                slicelist.append(fslice)
+        return slicelist
+
+    @property
     def inflectionalvalues(self):
         """A list of inflectional values expressed with morphs belonging to this morpheme."""
         vallist = []

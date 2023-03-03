@@ -110,6 +110,19 @@ ${h.link(request, contributor)}
     % endif
 % endfor
 
+% for sslice in ctx.stemslices:
+    % for wf in sslice.stem.wordforms:
+        % if hasattr(wf, "sentence_assocs") and wf.sentence_assocs:
+            <% gloss = ".".join([str(x.gloss) for x in sslice.glosses]) %>
+            <% gloss_sentences.setdefault(gloss, []) %>
+            % for s in wf.sentence_assocs:
+                <% gloss_sentences[gloss].append(s.sentence) %>
+            % endfor
+        % endif
+    % endfor
+% endfor
+
+
 
 <div class="tabbable">
     <ul class="nav nav-tabs">
@@ -148,7 +161,7 @@ ${h.link(request, contributor)}
                     % if len(sentences) > 1:
                         <h5> As ‘${gloss}’:</h5>
                     % endif
-                    <button type="button" class="btn btn-link" onclick="copyIDs('${gloss}-ids')">Copy sentence IDs</button>
+                    ## <button type="button" class="btn btn-link" onclick="copyIDs('${gloss}-ids')">Copy sentence IDs</button>
                     <% stc_ids = [] %>
                     <ol class="example">
                         % for sentence in sentences:
