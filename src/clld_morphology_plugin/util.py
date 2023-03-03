@@ -31,7 +31,7 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                 idx = pwc + gwc + g_shift
                 in_clitic_str = False
                 if gwc > 0:
-                    for glosslist in [glosses, posses]:
+                    for glosslist in [morphs, glosses, posses]:
                         glosslist.append("=")
                     in_clitic_str = True
                 if idx not in slices:
