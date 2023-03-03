@@ -47,7 +47,13 @@ class AudioCol(Col):
 
 class Wordforms(DataTable):
 
-    __constraints__ = [Language, models.Lexeme, models.POS, models.Inflection, models.Stem]
+    __constraints__ = [
+        Language,
+        models.Lexeme,
+        models.POS,
+        models.Inflection,
+        models.Stem,
+    ]
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Wordform.language))
@@ -220,7 +226,7 @@ class Glosses(DataTable):
 class Lexemes(DataTable):
     __constraints__ = [Language, models.POS]
 
-    def base_query(self,query):
+    def base_query(self, query):
         if self.pos:
             return query.filter(models.Lexeme.pos == self.pos)
         return query
@@ -241,7 +247,6 @@ class Lexemes(DataTable):
                 )
             )
         return cols
-
 
 
 class MorphoPhonoChanges(DataTable):

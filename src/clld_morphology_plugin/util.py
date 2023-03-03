@@ -77,7 +77,12 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                             )
                         )
                     else:
-                        posses.append(HTML.span("*"))
+                        posses.append(
+                            HTML.span(
+                                "?",
+                                **{"class": "pos"},
+                            )
+                        )
             g_shift += gwc
             gloss_divs = []
             if slices:
@@ -199,7 +204,10 @@ def rendered_form(request, f, level="morphs", line="obj"):
         if level == "forms":
             return HTML.i(link(request, f))
         return HTML.i(
-            *[rendered_form(request, x.wordform, level, line) + " " for x in f.formslices]
+            *[
+                rendered_form(request, x.wordform, level, line) + " "
+                for x in f.formslices
+            ]
         )
     form_components = []
     representation = form_representation(request, f, level, line)

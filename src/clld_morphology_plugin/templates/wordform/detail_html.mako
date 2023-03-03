@@ -12,7 +12,6 @@
 <%! active_menu_item = "wordforms" %>
 
 
-
 <h3>${_('Wordform')} <i>${ctx.name}</i> ‘${ctx.description}’</h3>
 
 <table class="table table-nonfluid">

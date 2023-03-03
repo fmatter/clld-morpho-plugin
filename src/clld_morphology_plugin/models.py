@@ -78,7 +78,6 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
                 formlist.append(fslice.form)
         return list(set(formlist))
 
-
     @property
     def formslices(self):
         """A list of positions in wordforms in which morphs belonging to this morpheme occur."""
@@ -95,7 +94,8 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
         for m in self.allomorphs:
             for val in m.inflectionalvalues:
                 vallist.append(val)
-        return list(set(vallist))        
+        return list(set(vallist))
+
 
 @implementer(interfaces.IMorph)
 class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
