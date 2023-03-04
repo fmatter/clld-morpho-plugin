@@ -142,7 +142,8 @@ def form_representation(request, f, level="morphs", line="obj"):
                         if formstem.index[0] in parts:
                             del parts[formstem.index[0]]
                 else:
-                    raise ValueError(formstem.index)
+                    # print(f"{formstem.stem.name} '{formstem.stem.description}', positions {formstem.index} in the wordform {f.name} '{f.description}'")
+                    pass
         else:  # filling in links from stem
             for formstem in f.formstems:
                 for idx in formstem.index:
