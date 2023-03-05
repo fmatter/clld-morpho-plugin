@@ -129,9 +129,13 @@
 % endif 
 
 % if hasattr(ctx, "sentence_assocs"):
+<% gloss_sentences = {} %>
     <ol class="example">
         % for assoc in ctx.sentence_assocs:
-            ${rendered_sentence(request, assoc.sentence, sentence_link=True)}
+            <%gloss_sentences[assoc.sentence.id] = rendered_sentence(request, assoc.sentence, sentence_link=True)%>
+        % endfor
+        % for sentence in gloss_sentences.values():
+            ${sentence}
         % endfor
     </ol>
 % endif
