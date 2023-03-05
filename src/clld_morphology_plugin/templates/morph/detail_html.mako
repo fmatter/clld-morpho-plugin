@@ -2,7 +2,7 @@
 <%namespace name="util" file="../util.mako"/>
 <% from clld_morphology_plugin.util import rendered_form %>
 <% from clld_morphology_plugin.util import render_derived_stems %>
-<% from clld_morphology_plugin.models import Wordform %>
+<% from clld_morphology_plugin import models %>
 <link rel="stylesheet" href="${req.static_url('clld_morphology_plugin:static/clld-morphology.css')}"/>
 
 % try:
@@ -140,15 +140,11 @@ ${h.link(request, contributor)}
 
     <div class="tab-content" style="overflow: visible;">
         <div id="forms" class="tab-pane ${'' if gloss_sentences else 'active'}">
-            ${request.get_datatable('wordforms', Wordform, morph=ctx).render()}
+            ${request.get_datatable('wordforms', models.Wordform, morph=ctx).render()}
         </div>
 
         <div id="stems" class="tab-pane ${'' if gloss_sentences or ctx.formslices else 'active'}">
-            <ul>
-                % for sslice in ctx.stemslices:
-                    <li> ${h.link(request, sslice.stem)} </li>
-                % endfor
-            </ul>
+            ${request.get_datatable('stems', models.Stem, morph=ctx).render()}
         </div>
 
 

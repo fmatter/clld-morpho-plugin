@@ -9,7 +9,7 @@
 % endtry 
 <%! active_menu_item = "glosses" %>
 
-<h3>${_('Gloss')} <i>${ctx.name}</i></h3>
+<h3>${_('Gloss')} ‘${ctx.name}’</h3>
 
 <table class="table table-nonfluid">
     <tbody>
