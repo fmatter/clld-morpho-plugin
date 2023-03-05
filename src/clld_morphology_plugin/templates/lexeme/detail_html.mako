@@ -70,7 +70,7 @@
                 % for cell in cells:
                 <td>
                     % for form in cell:
-                        <i>${rendered_form(request, form, level="morphs") | n}</i> <br>
+                        <i>${h.link(request, form) | n}</i> <br>
                     % endfor
                     </td>
                 % endfor

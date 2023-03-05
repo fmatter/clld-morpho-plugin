@@ -13,7 +13,7 @@
 <div class="tabbable">
     <ul class="nav nav-tabs">
         % if ctx.wordforms:
-            <li class='active'><a href="#forms" data-toggle="tab"> Wordforms tokens </a></li>
+            <li class='active'><a href="#forms" data-toggle="tab"> Wordforms </a></li>
         % endif
         % if ctx.lexemes:
             <li class=${'' if ctx.wordforms else 'active'}><a href="#lexemes" data-toggle="tab"> Lexemes </a></li>
