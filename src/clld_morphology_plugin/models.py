@@ -192,11 +192,11 @@ class Wordform(
     @property
     def lexeme(self):
         """The lexeme to which this wordform belongs."""
-        for formstem in self.formstems:
-            return formstem.stem.lexeme
         for infl in self.inflections:
             if infl.stem:
                 return infl.stem.lexeme
+        for formstem in self.formstems:
+            return formstem.stem.lexeme
         return None
 
     @property
@@ -217,11 +217,11 @@ class Wordform(
     @property
     def stem(self):
         """The stem of this wordform."""
-        if self.formstems:
-            return self.formstems[0].stem
         for infl in self.inflections:
             if infl.stem:
                 return infl.stem
+        if self.formstems:
+            return self.formstems[0].stem
         return None
 
     @property
