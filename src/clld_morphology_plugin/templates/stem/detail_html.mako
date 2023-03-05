@@ -20,12 +20,6 @@
                 <td> ${h.link(request, ctx.lexeme)}</td>
             </tr>        
         % endif
-        % if ctx.glosses:
-            <tr>
-                <td> Gloss: </td>
-                <td> ${h.text2html(", ".join([h.link(request, g) for g in ctx.glosses]))}</td>
-            </tr>        
-        % endif
         % if ctx.parts:
             <tr>
                 <td> Structure: </td>
