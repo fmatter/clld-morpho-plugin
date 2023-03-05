@@ -50,6 +50,7 @@ class Wordforms(DataTable):
     __constraints__ = [
         Language,
         models.Lexeme,
+        models.Morph,
         models.POS,
         models.Inflection,
         models.Stem,
@@ -57,6 +58,7 @@ class Wordforms(DataTable):
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Wordform.language))
+        query = query.join(models.WordformPart).options(joinedload(models.Wordform.slices))
 
         query = query.outerjoin(
             models.Wordform_files,
@@ -68,6 +70,10 @@ class Wordforms(DataTable):
             joinedload(models.Wordform._files)  # pylint: disable=protected-access
         )
 
+        if self.morph:
+            return query.filter(
+                models.Wordform.slices.any(models.WordformPart.morph == self.morph)
+            )
         if self.language:
             return query.filter(models.Wordform.language == self.language)
         if self.stem:
@@ -149,6 +155,7 @@ class Forms(DataTable):
 class Morphs(DataTable):
 
     __constraints__ = [Language]
+
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Morph.language))

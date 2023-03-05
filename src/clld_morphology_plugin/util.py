@@ -44,11 +44,11 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                     morphs.append(HTML.span(*morph_list, class_="morpheme"))
                     glosses.append(HTML.span(gloss))
                     posses.append(
-                            HTML.span(
-                                "",
-                                **{"class": "pos"},
-                            )
+                        HTML.span(
+                            " ",
+                            **{"class": "pos"},
                         )
+                    )
                 else:
                     g_words.append(
                         HTML.span(
@@ -92,17 +92,15 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
             g_shift += gwc
             gloss_divs = []
             if slices:
-                gloss_divs.append(HTML.div(*g_words))
+                gloss_divs.append(HTML.div(*g_words, class_="wordform"))
             gloss_divs.extend(
                 [
                     HTML.div(*morphs, class_="morpheme"),
-                    HTML.div(*glosses, **{"class": "gloss"}),
+                    HTML.div(*glosses, class_="gloss"),
                 ],
             )
             if posses[0] != HTML.span("*"):
-                gloss_divs.append(
-                    HTML.div(*posses),
-                )
+                gloss_divs.append(HTML.div(*posses, class_="pos"))
             interlinear_div = HTML.div(
                 *gloss_divs,
                 class_="gloss-unit",
