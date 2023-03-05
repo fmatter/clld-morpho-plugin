@@ -5,7 +5,7 @@
 <% from clld_morphology_plugin.util import rendered_form %>
 <%! active_menu_item = "lexemes" %>
 
-<h3>${_('Lexeme')} <i>${ctx.name}</i> ‘${ctx.description}’</h3>
+<h3>${_('Lexeme')} <i style="font-variant: small-caps;">${ctx.name}</i> ‘${ctx.description}’</h3>
 
 <table class="table table-nonfluid">
     <tbody>
