@@ -35,12 +35,12 @@
             </td>
         </tr>
         % endif
-        % if ctx.stem:
+        % if list(ctx.inflections):
             <tr>
                 <td>Inflection:</td>
                 <td>
                     stem: ${h.link(request, ctx.stem)}
-                    <br>values:
+                        <br>values:
                     <ul>
                     % for formpart in ctx.slices:
                         % if formpart.inflections:

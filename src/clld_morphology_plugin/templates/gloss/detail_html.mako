@@ -60,7 +60,7 @@
         ## % endif
         % if ctx.formglosses:
             <tr>
-                <td> Forms:</td>
+                <td> Wordforms:</td>
                 <td>
                     <ul>
                        % for fslice in ctx.formglosses:
