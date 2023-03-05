@@ -129,9 +129,11 @@
 % endif 
 
 % if hasattr(ctx, "sentence_assocs"):
-    % for assoc in ctx.sentence_assocs:
-        ${rendered_sentence(request, assoc.sentence, sentence_link=True)}
-    % endfor
+    <ol class="example">
+        % for assoc in ctx.sentence_assocs:
+            ${rendered_sentence(request, assoc.sentence, sentence_link=True)}
+        % endfor
+    </ol>
 % endif
 ## <h4>${_('Longer forms')}:</h4>
 ## ${request.get_datatable('forms', Form, wordform=ctx).render()}
