@@ -39,8 +39,11 @@
             <tr>
                 <td>Inflection:</td>
                 <td>
-                    stem: ${h.link(request, ctx.stem)}
-                        <br>values:
+                        % if ctx.lexeme:
+                            ${h.link(request, ctx.lexeme)}
+                        % else:
+                            ${h.link(request, ctx.stem)}
+                        % endif
                     <ul>
                     % for formpart in ctx.slices:
                         % if formpart.inflections:
@@ -69,6 +72,14 @@
                 </td>
             </tr>
         % elif len(ctx.formstems) == 1:
+            % if ctx.lexeme:
+                <tr>
+                    <td>Lexeme:</td>
+                    <td>
+                    ${h.link(request, ctx.lexeme)}
+                    </td>
+                </tr>
+            % endif
             <tr>
                 <td>Stem:</td>
                 <td>
@@ -85,14 +96,6 @@
                         <li> ‘${h.link(request, meaning.meaning)}’ </li>
                     % endfor
                 </ol>
-            </td>
-        </tr>
-        % endif
-        % if ctx.lexeme:
-        <tr>
-            <td>Lexeme:</td>
-            <td>
-            ${h.link(request, ctx.lexeme)}
             </td>
         </tr>
         % endif
