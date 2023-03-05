@@ -139,9 +139,12 @@ ${h.link(request, contributor)}
     </ul>
 
     <div class="tab-content" style="overflow: visible;">
-        <div id="forms" class="tab-pane ${'' if gloss_sentences else 'active'}">
-            ${request.get_datatable('wordforms', models.Wordform, morph=ctx).render()}
-        </div>
+
+        % if ctx.formslices:
+            <div id="forms" class="tab-pane ${'' if gloss_sentences else 'active'}">
+                ${request.get_datatable('wordforms', models.Wordform, morph=ctx).render()}
+            </div>
+        % endif
 
         <div id="stems" class="tab-pane ${'' if gloss_sentences or ctx.formslices else 'active'}">
             ${request.get_datatable('stems', models.Stem, morph=ctx).render()}
