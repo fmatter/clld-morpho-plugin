@@ -7,22 +7,28 @@
 <h3>${ctx.name.capitalize()} (Part of speech, ${ctx.id})</h3>
 
 % if ctx.description:
-    ${ctx.description}
+    <p>${ctx.description}</p>
 % endif
 
-% if ctx.wordforms:
-    <h4>Wordforms:</h4>
-    <div>
-        ${request.get_datatable('wordforms', models.Wordform, pos=ctx).render()}
-    </div>
-% endif
+<div class="tabbable">
+    <ul class="nav nav-tabs">
+        % if ctx.wordforms:
+            <li class='active'><a href="#forms" data-toggle="tab"> Wordforms tokens </a></li>
+        % endif
+        % if ctx.lexemes:
+            <li class=${'' if ctx.wordforms else 'active'}><a href="#lexemes" data-toggle="tab"> Lexemes </a></li>
+        % endif
+    </ul>
 
+    <div class="tab-content" style="overflow: visible;">
 
-% if ctx.lexemes:
-    <h4>Lexemes:</h4>
-    <div>
-        ${request.get_datatable('lexemes',models.Lexeme, pos=ctx).render()}
-    </div>
-% endif
+        <div id="forms" class="tab-pane active">
+            ${request.get_datatable('wordforms', models.Wordform, pos=ctx).render()}
+        </div>
 
+        <div id="lexemes" class="tab-pane ${'' if ctx.wordforms else 'active'}">
+            ${request.get_datatable('lexemes',models.Lexeme, pos=ctx).render()}
+        </div>
 
+    </div>  
+</div>
