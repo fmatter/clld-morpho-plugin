@@ -194,6 +194,9 @@ class Wordform(
         """The lexeme to which this wordform belongs."""
         for formstem in self.formstems:
             return formstem.stem.lexeme
+        for infl in self.inflections:
+            if infl.stem:
+                return infl.stem.lexeme
         return None
 
     @property
