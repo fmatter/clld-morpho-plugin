@@ -131,19 +131,44 @@
     <audio controls="controls"><source src="/audio/${ctx.audio}" type="audio/x-wav"></source></audio>
 % endif 
 
+
 % if hasattr(ctx, "sentence_assocs"):
-<% gloss_sentences = {} %>
-    <ol class="example">
-        % for assoc in ctx.sentence_assocs:
-            <%gloss_sentences[assoc.sentence.id] = rendered_sentence(request, assoc.sentence, sentence_link=True)%>
-        % endfor
-        % for sentence in gloss_sentences.values():
-            ${sentence}
-        % endfor
-    </ol>
+    <% gloss_sentences = {} %>
+    % for assoc in ctx.sentence_assocs:
+        <%gloss_sentences[assoc.sentence.id] = rendered_sentence(request, assoc.sentence, sentence_link=True)%>
+    % endfor
 % endif
-## <h4>${_('Longer forms')}:</h4>
-## ${request.get_datatable('forms', Form, wordform=ctx).render()}
+
+
+<div class="tabbable">
+    <ul class="nav nav-tabs">
+        % if gloss_sentences:
+            <li class=${'active' if gloss_sentences else ''}><a href="#corpus" data-toggle="tab"> Corpus tokens </a></li>
+        % endif
+        % if ctx.multiforms:
+            <li class=${'' if gloss_sentences else 'active'}><a href="#multiforms" data-toggle="tab"> Longer forms </a></li>
+        % endif
+    </ul>
+
+    <div class="tab-content" style="overflow: visible;">
+
+        <div id="multiforms" class="tab-pane ${'' if gloss_sentences or ctx.formslices else 'active'}">
+            % if ctx.multiforms:
+                ${request.get_datatable('forms', Form, wordform=ctx).render()}
+            % endif
+        </div>
+
+
+        <div id="corpus" class="tab-pane ${'active' if gloss_sentences else ''}">
+            <ol class="example">
+                % for sentence in gloss_sentences.values():
+                    ${sentence}
+                % endfor
+            </ol>
+        </div>
+    </div>  
+</div>
+
 
 
 <script>

@@ -356,6 +356,22 @@ def render_derived_from(request, stem):
     return HTML.ul(*dict_to_list(res))
 
 
+def rendered_form_units(request, forms):
+    units = []
+    keys = ["wordforms", "morphs", "glosses"]
+    for form in forms:
+        units.append(
+            {
+                "wordforms": link(request, form),
+                "morphs": rendered_form(request, form),
+                "glosses": rendered_form(request, form, line="gloss"),
+            }
+        )
+        if form.stem:
+            units[-1]["stems"] = rendered_form(request, form.stem)
+            keys.append("stems")
+    return units, keys
+
 def render_wordforms(request, formlist):
-    units, keys = rendered_gloss_units1(request, formlist)
+    units, keys = rendered_form_units(request, formlist)
     return units, keys
