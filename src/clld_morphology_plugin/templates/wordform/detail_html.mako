@@ -152,7 +152,7 @@
 
     <div class="tab-content" style="overflow: visible;">
 
-        <div id="multiforms" class="tab-pane ${'' if gloss_sentences or ctx.formslices else 'active'}">
+        <div id="multiforms" class="tab-pane ${'' if gloss_sentences or ctx.multiforms else 'active'}">
             % if ctx.multiforms:
                 ${request.get_datatable('forms', Form, wordform=ctx).render()}
             % endif
