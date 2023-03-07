@@ -28,6 +28,7 @@
     </tbody>
 </table>
 
+<p>${h.text2html(h.Markup(ctx.markup_description or ""))}</p>
 
 <%def name="print_cell(entity)">
     % if isinstance(entity, str):

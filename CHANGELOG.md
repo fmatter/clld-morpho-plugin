@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * flexible wordform rendering
 * morphophonological changes
 * optionally hide POS in wordform datatable
+* `markup_description` where present
 
 ### Changed
 * if clitics have `=` in their name, don't show in interlinearization

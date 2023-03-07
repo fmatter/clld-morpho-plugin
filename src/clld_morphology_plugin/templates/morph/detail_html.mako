@@ -99,6 +99,8 @@ ${h.link(request, contributor)}
     </tbody>
 </table>
 
+<p>${h.text2html(h.Markup(ctx.markup_description or ""))}</p>
+
 <% gloss_sentences = {} %>
 
 % for fslice in ctx.formslices:

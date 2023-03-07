@@ -7,6 +7,8 @@
 <h3>${_('Inflectional category')} ${ctx.name}</h3>
 ${ctx.description}<br>
 
+<p>${h.text2html(h.Markup(ctx.markup_description or ""))}</p>
+
 Values:
 <ul>
 % for val in ctx.values:

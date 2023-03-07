@@ -15,6 +15,8 @@
     </ol>
 %endif
 
+<p>${h.text2html(h.Markup(ctx.markup_description or ""))}</p>
+
 % if ctx.morphemes:
     <h3>${_('Morphemes')}</h3>
     <ol>

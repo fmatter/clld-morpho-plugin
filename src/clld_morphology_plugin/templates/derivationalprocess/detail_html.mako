@@ -16,6 +16,8 @@
     ${ctx.description}
 % endif
 
+<p>${h.text2html(h.Markup(ctx.markup_description or ""))}</p>
+
 % if ctx.derivations:
     Derivations:
     <ul>

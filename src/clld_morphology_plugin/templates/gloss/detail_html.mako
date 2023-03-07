@@ -73,5 +73,6 @@
     </tbody>
 </table>
 
+<p>${h.text2html(h.Markup(ctx.markup_description or ""))}</p>
 
 <script src="${req.static_url('clld_morphology_plugin:static/clld-morphology.js')}"></script>

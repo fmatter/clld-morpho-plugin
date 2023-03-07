@@ -52,4 +52,4 @@
     </tbody>
 </table>
 
-
+<p>${h.text2html(h.Markup(ctx.markup_description or ""))}</p>

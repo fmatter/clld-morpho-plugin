@@ -14,6 +14,8 @@
     </tbody>
 </table>
 
+<p>${h.text2html(h.Markup(ctx.markup_description or ""))}</p>
+
 <ul>
     % for token in ctx.tokens:
         <li>${h.link(request, token.formpart.form)}</li>

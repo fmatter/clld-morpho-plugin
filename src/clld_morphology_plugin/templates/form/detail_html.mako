@@ -10,38 +10,7 @@
 % endtry
 <%! active_menu_item = "wordforms" %>
 
-
-   ## sentence_content = HTML.div(
-   ##      HTML.div(
-   ##          HTML.a(id=example_id or sentence.id),
-   ##          HTML.div(
-   ##              title,
-   ##              HTML.div(sentence.original_script, class_="original-script")
-   ##              if sentence.original_script
-   ##              else "",
-   ##              surface,
-   ##              HTML.div(*units, **{"class": "gloss-box"}) if units else "",
-   ##              HTML.div(
-   ##                  HTML.span(sentence.description, class_="translation")
-   ##                  if sentence.description
-   ##                  else "",
-   ##                  " / " + HTML.span(sentence.markup_description, class_="translation")
-   ##                  if sentence.markup_description
-   ##                  else "",
-   ##                  text_ref,
-   ##              ),
-   ##              class_="body",
-   ##          ),
-   ##          class_="sentence",
-   ##      ),
-   ##      audio_content,
-   ##      class_="sentence-wrapper",
-   ##  )
-
 <h3>${_('Form')} <i>${ctx.name}</i> ‘${ctx.description}’</h3>
-
-
-
 
 % if ctx.formslices:
 % endif
@@ -119,7 +88,7 @@
     </tbody>
 </table>
 
-
+<p>${h.text2html(h.Markup(ctx.markup_description or ""))}</p>
 
 % if ctx.audio:
     <audio controls="controls"><source src="/audio/${ctx.audio}" type="audio/x-wav"></source></audio>
