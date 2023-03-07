@@ -225,14 +225,27 @@ class Meanings(DataTable):
         return [LinkCol(self, "name")]
 
 
-class POS(DataTable):
+class DerivationalProcesses(DataTable):
     def col_defs(self):
         return [LinkCol(self, "name")]
 
+class POS(DataTable):
+    def col_defs(self):
+        return [LinkCol(self, "name"), Col(self, "description")]
+
+
+class InflectionalCategories(DataTable):
+    def col_defs(self):
+        return [LinkCol(self, "name"), Col(self, "description")]
+
+
+class InflectionalValues(DataTable):
+    def col_defs(self):
+        return [LinkCol(self, "name")]
 
 class Glosses(DataTable):
     def col_defs(self):
-        return [LinkCol(self, "name"), Col(self, "description")]
+        return [LinkCol(self, "name")]
 
 
 class Lexemes(DataTable):

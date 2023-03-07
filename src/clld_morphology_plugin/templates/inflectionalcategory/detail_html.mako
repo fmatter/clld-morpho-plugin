@@ -5,6 +5,8 @@
 <%! active_menu_item = "inflectionalcategories" %>
 
 <h3>${_('Inflectional category')} ${ctx.name}</h3>
+${ctx.description}<br>
+
 Values:
 <ul>
 % for val in ctx.values:
