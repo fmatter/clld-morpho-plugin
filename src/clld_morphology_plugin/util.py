@@ -9,6 +9,10 @@ GLOSS_ABBR_PATTERN = re.compile(
     "(?P<personprefix>1|2|3)?(?P<abbr>[A-Z]+)(?P<personsuffix>1|2|3)?(?=([^a-z]|$))"
 )
 
+empty_pos = HTML.span(
+                            " ",
+                            **{"class": "pos"},
+                        )
 
 def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
     """This method takes a sentence and returns the interlinear gloss lines as nested divs for displaying.
@@ -44,10 +48,7 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                     morphs.append(HTML.span(*morph_list, class_="morpheme"))
                     glosses.append(HTML.span(gloss))
                     posses.append(
-                        HTML.span(
-                            " ",
-                            **{"class": "pos"},
-                        )
+                        empty_pos
                     )
                 else:
                     g_words.append(
@@ -99,7 +100,7 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                     HTML.div(*glosses, class_="gloss"),
                 ],
             )
-            if posses[0] != HTML.span("*"):
+            if posses[0] != empty_pos:
                 gloss_divs.append(HTML.div(*posses, class_="pos"))
             interlinear_div = HTML.div(
                 *gloss_divs,
