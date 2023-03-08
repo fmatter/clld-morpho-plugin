@@ -58,7 +58,6 @@ class Wordforms(DataTable):
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Wordform.language))
-        query = query.join(models.WordformPart).options(joinedload(models.Wordform.slices))
 
         query = query.outerjoin(
             models.Wordform_files,
@@ -71,6 +70,7 @@ class Wordforms(DataTable):
         )
 
         if self.morph:
+            query = query.join(models.WordformPart).options(joinedload(models.Wordform.slices))
             return query.filter(
                 models.Wordform.slices.any(models.WordformPart.morph == self.morph)
             )
@@ -132,11 +132,11 @@ class Forms(DataTable):
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Form.language))
-        query = query.join(models.FormPart).options(joinedload(models.Form.formslices))
 
         if self.language:
             return query.filter(models.Form.language == self.language)
         if self.wordform:
+            query = query.join(models.FormPart).options(joinedload(models.Form.formslices))
             return query.filter(
                 models.Form.formslices.any(models.FormPart.wordform == self.wordform)
             )
