@@ -5,7 +5,9 @@
 <%! active_menu_item = "inflectionalcategories" %>
 
 <h3>${_('Inflectional category')} ${ctx.name}</h3>
-${ctx.description}<br>
+% if ctx.description:
+    ${ctx.description}<br>
+% endif
 
 <p>${h.text2html(h.Markup(ctx.markup_description or ""))}</p>
 
