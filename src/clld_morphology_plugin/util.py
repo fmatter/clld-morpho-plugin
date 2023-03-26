@@ -37,7 +37,7 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                 if gwc > 0:
                     for glosslist in [morphs, glosses]:
                         glosslist.append("=")
-                    posses.append(" ")
+                    posses.append("=")
                     in_clitic_str = True
                 if idx not in slices:
                     g_words.append(HTML.span(word.replace("-", "")))
