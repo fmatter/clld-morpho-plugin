@@ -81,5 +81,7 @@ def includeme(config):
     config.register_datatable("stems", datatables.Stems)
     config.register_datatable("forms", datatables.Forms)
     config.register_datatable("derivationalprocesses", datatables.DerivationalProcesses)
-    config.register_datatable("inflectionalcategorys", datatables.InflectionalCategories)
+    config.register_datatable(
+        "inflectionalcategorys", datatables.InflectionalCategories
+    )
     config.register_datatable("inflectionalvalues", datatables.InflectionalValues)

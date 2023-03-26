@@ -70,7 +70,9 @@ class Wordforms(DataTable):
         )
 
         if self.morph:
-            query = query.join(models.WordformPart).options(joinedload(models.Wordform.slices))
+            query = query.join(models.WordformPart).options(
+                joinedload(models.Wordform.slices)
+            )
             return query.filter(
                 models.Wordform.slices.any(models.WordformPart.morph == self.morph)
             )
@@ -136,7 +138,9 @@ class Forms(DataTable):
         if self.language:
             return query.filter(models.Form.language == self.language)
         if self.wordform:
-            query = query.join(models.FormPart).options(joinedload(models.Form.formslices))
+            query = query.join(models.FormPart).options(
+                joinedload(models.Form.formslices)
+            )
             return query.filter(
                 models.Form.formslices.any(models.FormPart.wordform == self.wordform)
             )
@@ -155,7 +159,6 @@ class Forms(DataTable):
 class Morphs(DataTable):
 
     __constraints__ = [Language]
-
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Morph.language))
@@ -229,6 +232,7 @@ class DerivationalProcesses(DataTable):
     def col_defs(self):
         return [LinkCol(self, "name")]
 
+
 class POS(DataTable):
     def col_defs(self):
         return [LinkCol(self, "name"), Col(self, "description")]
@@ -242,6 +246,7 @@ class InflectionalCategories(DataTable):
 class InflectionalValues(DataTable):
     def col_defs(self):
         return [LinkCol(self, "name")]
+
 
 class Glosses(DataTable):
     def col_defs(self):

@@ -26,7 +26,11 @@
             % for part in deriv.stemparts:
                 <% parts.append(h.link(request, part.stempart.morph)) %>
             % endfor
-            <li><i>${h.link(request, deriv.source)}</i> ‘${deriv.source.description}’ → <i>${h.link(request, deriv.target)}</i> ‘${deriv.   target.description}’ (<i>${", ".join(parts) | n }</i>)</li>
+            <li><i>
+            % if deriv.source:
+                ${h.link(request, deriv.source)}</i> ‘${deriv.source.description}’ →
+            %endif
+            <i>${h.link(request, deriv.target)}</i> ‘${deriv.   target.description}’ (<i>${", ".join(parts) | n }</i>)</li>
         % endfor
     </ul>
 % endif

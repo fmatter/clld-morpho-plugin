@@ -10,9 +10,10 @@ GLOSS_ABBR_PATTERN = re.compile(
 )
 
 empty_pos = HTML.span(
-                            " ",
-                            **{"class": "pos"},
-                        )
+    " ",
+    **{"class": "pos"},
+)
+
 
 def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
     """This method takes a sentence and returns the interlinear gloss lines as nested divs for displaying.
@@ -47,9 +48,7 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                     morph_list.append(word)
                     morphs.append(HTML.span(*morph_list, class_="morpheme"))
                     glosses.append(HTML.span(gloss))
-                    posses.append(
-                        empty_pos
-                    )
+                    posses.append(empty_pos)
                 else:
                     g_words.append(
                         HTML.span(
@@ -336,11 +335,14 @@ def build_etymology_source(request, stem, tree=None):
         return tree or {}
     derivation = stem.derived_from[0]
     parent = derivation.source
+    if not parent:
+        source_string = ""
+    else:
+        source_string = link(request, parent) + f" ‘{derivation.source.description}’ + "
     if not tree:
         tree = link(request, stem)
     tree = {
-        link(request, parent)
-        + f" ‘{derivation.source.description}’ + "
+        source_string
         + link(request, derivation.process)
         + ":": tree
     }
@@ -372,6 +374,7 @@ def rendered_form_units(request, forms):
             units[-1]["stems"] = rendered_form(request, form.stem)
             keys.append("stems")
     return units, keys
+
 
 def render_wordforms(request, formlist):
     units, keys = rendered_form_units(request, formlist)

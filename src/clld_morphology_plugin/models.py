@@ -227,7 +227,10 @@ class Wordform(
     @property
     def gloss(self):
         """Parts of this wordform represented as a gloss (string)"""
-        return "-".join([".".join([y.gloss.name for y in x.glosses]) for x in self.slices])
+        return "-".join(
+            [".".join([y.gloss.name for y in x.glosses]) for x in self.slices]
+        )
+
 
 class WordformPart(Base):
     """The association table between wordforms and morphs. ``index`` corresponds to the ``parts`` of the wordform."""
@@ -376,6 +379,7 @@ class Stem(Base, IdNameDescriptionMixin):
     def wordforms(self):
         """A list of inflected wordforms of this stem."""
         return [x.form for x in self.stemforms]
+
 
 class StemPart(Base):
     """The association table between stems and morphs. ``index`` corresponds to the ``parts`` of the stem."""
