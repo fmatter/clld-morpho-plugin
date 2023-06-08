@@ -10,7 +10,7 @@ GLOSS_ABBR_PATTERN = re.compile(
 )
 
 empty_pos = HTML.span(
-    " ",
+    "empty pos ?",
     **{"class": "pos"},
 )
 
@@ -23,6 +23,7 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
         # g-words associated with this sentence
         slices = {sl.index: sl for sl in sentence.forms}
         g_shift = 0  # to keep up to date with how many g-words there are in total
+        pos = False
         for pwc, (pword, pgloss) in enumerate(
             zip(sentence.analyzed.split("\t"), sentence.gloss.split("\t"))
         ):  # iterate p-words
@@ -48,7 +49,7 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                     morph_list.append(word)
                     morphs.append(HTML.span(*morph_list, class_="morpheme"))
                     glosses.append(HTML.span(gloss))
-                    posses.append(empty_pos)
+                    posses.append(" ")
                 else:
                     g_words.append(
                         HTML.span(
@@ -82,6 +83,7 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                                 **{"class": "pos"},
                             )
                         )
+                        pos = True
                     else:
                         posses.append(
                             HTML.span(
@@ -99,7 +101,7 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                     HTML.div(*glosses, class_="gloss"),
                 ],
             )
-            if posses[0] != empty_pos:
+            if pos:
                 gloss_divs.append(HTML.div(*posses, class_="pos"))
             interlinear_div = HTML.div(
                 *gloss_divs,
