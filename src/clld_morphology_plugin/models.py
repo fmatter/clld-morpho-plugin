@@ -115,6 +115,9 @@ class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
         UniqueConstraint("morpheme_pk", "id"),
     )
 
+    contribution_pk = Column(Integer, ForeignKey("contribution.pk"))
+    contribution = relationship(Contribution, backref="morphs")
+
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
     language = relationship(Language, innerjoin=True)
     morpheme_pk = Column(Integer, ForeignKey("morpheme.pk"), nullable=True)
@@ -314,6 +317,9 @@ class Lexeme(Base, IdNameDescriptionMixin):
 
     __table_args__ = (UniqueConstraint("language_pk", "id"),)
 
+    contribution_pk = Column(Integer, ForeignKey("contribution.pk"))
+    contribution = relationship(Contribution, backref="lexemes")
+
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
     language = relationship(Language, innerjoin=True)
 
@@ -352,6 +358,9 @@ class Stem(Base, IdNameDescriptionMixin):
 
     language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
     language = relationship(Language, innerjoin=True)
+
+    contribution_pk = Column(Integer, ForeignKey("contribution.pk"))
+    contribution = relationship(Contribution, backref="stems")
 
     lexeme_pk = Column(Integer, ForeignKey("lexeme.pk"))
     lexeme = relationship(Lexeme, innerjoin=True, backref="stems")

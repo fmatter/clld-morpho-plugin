@@ -1,4 +1,4 @@
-from clld.db.models.common import Language
+from clld.db.models.common import Language, Contribution
 from clld.web.datatables.base import Col
 from clld.web.datatables.base import DataTable
 from clld.web.datatables.base import LinkCol
@@ -49,6 +49,7 @@ class Wordforms(DataTable):
 
     __constraints__ = [
         Language,
+        Contribution,
         models.Lexeme,
         models.Morph,
         models.POS,
@@ -78,6 +79,8 @@ class Wordforms(DataTable):
             )
         if self.language:
             return query.filter(models.Wordform.language == self.language)
+        if self.contribution:
+            return query.filter(models.Wordform.contribution_pk == self.contribution.pk)
         if self.stem:
             return query.filter(
                 models.Wordform.formstems.any(models.WordformStem.stem == self.stem)
@@ -130,13 +133,15 @@ class Wordforms_noPOS(Wordforms):
 
 class Forms(DataTable):
 
-    __constraints__ = [Language, models.Wordform]
+    __constraints__ = [Language, models.Wordform, Contribution]
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Form.language))
 
         if self.language:
             return query.filter(models.Form.language == self.language)
+        if self.contribution:
+            return query.filter(models.Form.contribution_pk == self.contribution.pk)
         if self.wordform:
             query = query.join(models.FormPart).options(
                 joinedload(models.Form.formslices)
@@ -158,13 +163,16 @@ class Forms(DataTable):
 
 class Morphs(DataTable):
 
-    __constraints__ = [Language]
+    __constraints__ = [Language, Contribution]
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Morph.language))
 
         if self.language:
             return query.filter(models.Morph.language == self.language)
+        if self.contribution:
+            return query.filter(models.Morph.contribution_pk == self.contribution.pk)
+
         return query
 
     def col_defs(self):
@@ -179,13 +187,15 @@ class Morphs(DataTable):
 
 
 class Morphemes(DataTable):
-    __constraints__ = [Language]
+    __constraints__ = [Language, Contribution]
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Morpheme.language))
 
         if self.language:
             return query.filter(models.Morpheme.language == self.language)
+        if self.contribution:
+            return query.filter(models.Morpheme.contribution_pk == self.contribution.pk)
         return query
 
     def col_defs(self):
@@ -199,7 +209,7 @@ class Morphemes(DataTable):
 
 
 class Stems(DataTable):
-    __constraints__ = [Language, models.Morph]
+    __constraints__ = [Language, Contribution, models.Morph]
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Stem.language))
@@ -207,6 +217,8 @@ class Stems(DataTable):
 
         if self.language:
             return query.filter(models.Stem.language == self.language)
+        if self.contribution:
+            return query.filter(models.Stem.contribution_pk == self.contribution.pk)
         if self.morph:
             return query.filter(
                 models.Stem.slices.any(models.StemPart.morph == self.morph)
@@ -254,11 +266,15 @@ class Glosses(DataTable):
 
 
 class Lexemes(DataTable):
-    __constraints__ = [Language, models.POS]
+    __constraints__ = [Language, models.POS, Contribution]
 
     def base_query(self, query):
         if self.pos:
             return query.filter(models.Lexeme.pos == self.pos)
+        if self.contribution:
+            return query.filter(models.Lexeme.contribution_pk == self.contribution.pk)
+        if self.contribution:
+            return query.filter(models.Lexeme.language == self.language)
         return query
 
     def col_defs(self):
