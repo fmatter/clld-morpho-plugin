@@ -18,6 +18,9 @@
         % if ctx.lexemes:
             <li class=${'' if ctx.wordforms else 'active'}><a href="#lexemes" data-toggle="tab"> Lexemes </a></li>
         % endif
+        % if ctx.morphs:
+            <li class=${'' if ctx.morphs else 'active'}><a href="#morphs" data-toggle="tab"> Morphs </a></li>
+        % endif
     </ul>
 
     <div class="tab-content" style="overflow: visible;">
@@ -28,6 +31,10 @@
 
         <div id="lexemes" class="tab-pane ${'' if ctx.wordforms else 'active'}">
             ${request.get_datatable('lexemes',models.Lexeme, pos=ctx).render()}
+        </div>
+
+        <div id="morphs" class="tab-pane ${'' if ctx.morphs else 'active'}">
+            ${request.get_datatable('morphs',models.Morph, pos=ctx).render()}
         </div>
 
     </div>  

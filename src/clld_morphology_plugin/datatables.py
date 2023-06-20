@@ -163,20 +163,22 @@ class Forms(DataTable):
 
 class Morphs(DataTable):
 
-    __constraints__ = [Language, Contribution]
+    __constraints__ = [Language, models.POS, Contribution]
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Morph.language))
 
         if self.language:
             return query.filter(models.Morph.language == self.language)
+        if self.pos:
+            return query.filter(models.Morph.pos == self.pos)
         if self.contribution:
             return query.filter(models.Morph.contribution_pk == self.contribution.pk)
 
         return query
 
     def col_defs(self):
-        return [
+        cols = [
             LinkCol(self, "name"),
             Col(self, "description"),
             LinkCol(
@@ -184,6 +186,17 @@ class Morphs(DataTable):
             ),
             Col(self, "morph_type", choices=["prefix", "suffix", "root", "infix"]),
         ]
+        if not self.pos:
+            cols.append(
+                LinkCol(
+                    self,
+                    "part of speech",
+                    # model_col=models.POS.name,
+                    get_obj=lambda i: i.pos,
+                )
+            )
+        return cols
+
 
 
 class Morphemes(DataTable):

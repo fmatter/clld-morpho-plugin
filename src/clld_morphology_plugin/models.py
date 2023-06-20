@@ -105,6 +105,13 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
                 vallist.append(val)
         return list(set(vallist))
 
+@implementer(interfaces.IPOS)
+class POS(Base, IdNameDescriptionMixin):
+    """A part of speech is a language-specific open or closed set of wordforms (or lexemes)"""
+
+    language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
+    language = relationship(Language, innerjoin=True)
+
 
 @implementer(interfaces.IMorph)
 class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
@@ -128,6 +135,9 @@ class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
     lsep = Column(String, nullable=True)
     """The morph type (e.g.: ``root`` or ``prefix``)"""
     morph_type = Column(String, nullable=True)
+
+    pos_pk = Column(Integer, ForeignKey("pos.pk"), nullable=True)
+    pos = relationship(POS, backref="morphs", innerjoin=True)
 
     @property
     def glosses(self):
@@ -158,14 +168,6 @@ class Morph(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixin):
                 if form not in formlist:
                     formlist.append(form)
         return formlist
-
-
-@implementer(interfaces.IPOS)
-class POS(Base, IdNameDescriptionMixin):
-    """A part of speech is a language-specific open or closed set of wordforms (or lexemes)"""
-
-    language_pk = Column(Integer, ForeignKey("language.pk"), nullable=False)
-    language = relationship(Language, innerjoin=True)
 
 
 @implementer(interfaces.IWordform)
@@ -365,6 +367,10 @@ class Stem(Base, IdNameDescriptionMixin):
     lexeme_pk = Column(Integer, ForeignKey("lexeme.pk"))
     lexeme = relationship(Lexeme, innerjoin=True, backref="stems")
     comment = Column(Unicode)
+
+    @property
+    def pos(self):
+        return self.lexeme.pos
 
     """The parts into which this stem can be segmented. Note that these are not necessarily morphs, as 1) there may be segments that have no meaning attached to them, 2) parts may be other stems which could be further segmentable, and 3) morphs split by infixation appear as two separate parts."""
     parts = Column(MutableList.as_mutable(PickleType), default=[])

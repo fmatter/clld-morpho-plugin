@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 * contributions for various models
+* parts of speech for morphs
 
 ### Fixed
 * lexeme view now filters by language
