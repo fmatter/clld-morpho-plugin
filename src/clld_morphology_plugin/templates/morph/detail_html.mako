@@ -96,6 +96,12 @@ ${h.link(request, contributor)}
             </td>
         </tr>
         % endif
+        % if ctx.source:
+            <tr>
+                <td>Source:</td>
+                <td>${h.link(request, ctx.source)}</td>
+            </tr>
+        % endif
     </tbody>
 </table>
 
