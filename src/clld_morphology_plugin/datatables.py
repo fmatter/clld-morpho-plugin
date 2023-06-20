@@ -273,7 +273,7 @@ class Lexemes(DataTable):
             return query.filter(models.Lexeme.pos == self.pos)
         if self.contribution:
             return query.filter(models.Lexeme.contribution_pk == self.contribution.pk)
-        if self.contribution:
+        if self.language:
             return query.filter(models.Lexeme.language == self.language)
         return query
 
