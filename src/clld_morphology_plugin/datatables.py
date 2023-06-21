@@ -1,4 +1,5 @@
-from clld.db.models.common import Language, Contribution
+from clld.db.models.common import Contribution
+from clld.db.models.common import Language
 from clld.web.datatables.base import Col
 from clld.web.datatables.base import DataTable
 from clld.web.datatables.base import LinkCol
@@ -196,7 +197,6 @@ class Morphs(DataTable):
                 )
             )
         return cols
-
 
 
 class Morphemes(DataTable):

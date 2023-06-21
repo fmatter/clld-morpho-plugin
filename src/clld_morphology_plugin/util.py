@@ -343,11 +343,7 @@ def build_etymology_source(request, stem, tree=None):
         source_string = link(request, parent) + f" ‘{derivation.source.description}’ + "
     if not tree:
         tree = link(request, stem)
-    tree = {
-        source_string
-        + link(request, derivation.process)
-        + ":": tree
-    }
+    tree = {source_string + link(request, derivation.process) + ":": tree}
     return build_etymology_source(request, parent, tree)
 
 

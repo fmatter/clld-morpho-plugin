@@ -105,6 +105,7 @@ class Morpheme(Base, PolymorphicBaseMixin, IdNameDescriptionMixin, HasSourceMixi
                 vallist.append(val)
         return list(set(vallist))
 
+
 @implementer(interfaces.IPOS)
 class POS(Base, IdNameDescriptionMixin):
     """A part of speech is a language-specific open or closed set of wordforms (or lexemes)"""
