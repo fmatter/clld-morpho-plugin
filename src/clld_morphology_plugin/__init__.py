@@ -5,7 +5,7 @@ from clld_morphology_plugin import models
 
 __author__ = "Florian Matter"
 __email__ = "florianmatter@gmail.com"
-__version__ = "0.0.9"
+__version__ = "0.0.10.dev"
 
 
 def includeme(config):
