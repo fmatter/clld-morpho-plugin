@@ -6,9 +6,9 @@ authors:
   - family-names: Matter
     given-names: Florian
     orcid: "https://orcid.org/0000-0002-2545-5154"
-version: "0.0.9"
+version: "0.0.10"
 date-released: 2023-06-21
-url: "https://github.com/fmatter/clld-morphology-plugin/releases/tag/0.0.9"
+url: "https://github.com/fmatter/clld-morphology-plugin/releases/tag/0.0.10"
 keywords:
   - clld
   - morphology
