@@ -226,7 +226,6 @@ class Stems(DataTable):
 
     def base_query(self, query):
         query = query.join(Language).options(joinedload(models.Stem.language))
-        query = query.join(models.StemPart).options(joinedload(models.Stem.slices))
 
         if self.language:
             return query.filter(models.Stem.language == self.language)
