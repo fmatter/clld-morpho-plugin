@@ -52,14 +52,6 @@
 
 <p>${h.text2html(h.Markup(ctx.markup_description or ""))}</p>
 
-<%def name="print_cell(entity)">
-    % if isinstance(entity, str):
-        ${entity}
-    % else:
-        ${h.link(request, entity)}
-    % endif
-</%def>
-
 % if ctx.stemforms:
     <h4>${_('Wordforms')}:</h4>
     ${request.get_datatable('wordforms', Wordform, stem=ctx).render()}
