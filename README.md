@@ -4,7 +4,7 @@ A plugin for modelling morphology in CLLD apps.
 
 [![Versions](https://img.shields.io/pypi/pyversions/clld_morphology_plugin)](https://www.python.org/)
 [![PyPI](https://img.shields.io/pypi/v/clld_morphology_plugin.svg)](https://pypi.org/project/clld_morphology_plugin)
-[![License](https://img.shields.io/github/license/fmatter/clld_morphology_plugin)](https://www.apache.org/licenses/LICENSE-2.0)
+[![License](https://img.shields.io/github/license/fmatter/clld-morphology-plugin)](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## Models
 The [models](/src/clld_morphology_plugin/models.py) largely reflect the structure of the morphological components of the [cldf-ldd](https://github.com/fmatter/cldf-ldd) collection.
