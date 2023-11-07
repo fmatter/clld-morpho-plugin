@@ -38,9 +38,8 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                 idx = pwc + gwc + g_shift
                 in_clitic_str = False
                 if gwc > 0:
-                    for glosslist in [morphs, glosses]:
+                    for glosslist in [morphs, glosses, posses]:
                         glosslist.append("=")
-                    posses.append("=")
                     in_clitic_str = True
                 if idx not in slices:
                     g_words.append(HTML.span(word.replace("-", "")))
@@ -58,7 +57,7 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                             name=slices[idx].form.id,
                         )
                     )
-                    r_form = rendered_form(request, slices[idx].form)
+                    r_form = rendered_form(request, slices[idx].form, strip_clitics=True)
                     if r_form:
                         morphs.append(HTML.span(r_form, class_="morpheme"))
                     else:
@@ -116,7 +115,7 @@ morph_separators = ["-", "~", "<", ">"]
 sep_pattern = f"([{''.join(morph_separators)}])"
 
 
-def form_representation(request, f, level="morphs", line="obj"):
+def form_representation(request, f, level="morphs", line="obj", strip_clitics=False):
     """Returns a dict of indices and links that make up a given form."""
     parts = dict(enumerate(f.parts))
     slices = {fslice.index: fslice for fslice in f.slices}
@@ -168,6 +167,8 @@ def form_representation(request, f, level="morphs", line="obj"):
                     if idx in slices:
                         del slices[idx]
     for index, part in parts.items():
+        if strip_clitics and "=" in part:
+            part = part.strip("=")
         if index in slices:
             if line == "obj" and slices[index].morph:
                 components[index] = (
@@ -204,7 +205,7 @@ def form_representation(request, f, level="morphs", line="obj"):
     return dict(sorted(components.items()))
 
 
-def rendered_form(request, f, level="morphs", line="obj"):
+def rendered_form(request, f, level="morphs", line="obj", strip_clitics=False):
     """Displays a rendered version of a form or wordform or stem."""
     if hasattr(f, "formslices"):
         if level == "wordforms":
@@ -218,7 +219,7 @@ def rendered_form(request, f, level="morphs", line="obj"):
             ]
         )
     form_components = []
-    representation = form_representation(request, f, level, line)
+    representation = form_representation(request, f, level, line, strip_clitics)
     for index, (part, partlink) in enumerate(representation.values()):
         if index >= 1:
             if form_components[-1] not in morph_separators:
@@ -358,14 +359,14 @@ def render_derived_from(request, stem):
     return HTML.ul(*dict_to_list(res))
 
 
-def rendered_form_units(request, forms):
+def rendered_form_units(request, forms, strip_clitics=False):
     units = []
     keys = ["wordforms", "morphs", "glosses"]
     for form in forms:
         units.append(
             {
                 "wordforms": link(request, form),
-                "morphs": rendered_form(request, form),
+                "morphs": rendered_form(request, form, strip_clitics),
                 "glosses": rendered_form(request, form, line="gloss"),
             }
         )
