@@ -30,6 +30,8 @@ clld_morphology_plugin = 'clld_morphology_plugin.cli:main'
 [tool.poetry.dependencies]
 python = "^3.8.1"
 pytest = "^7.4.2"
+clld = "^11.0.1"
+waitress = "^2.1.2"
 
 [tool.poetry.group.dev.dependencies]
 keepachangelog = "^1.0.0"
