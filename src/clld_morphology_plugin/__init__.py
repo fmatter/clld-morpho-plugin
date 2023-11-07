@@ -1,7 +1,4 @@
-from clld_morphology_plugin import datatables
-from clld_morphology_plugin import interfaces
-from clld_morphology_plugin import models
-
+from clld_morphology_plugin import datatables, interfaces, models
 
 __author__ = "Florian Matter"
 __email__ = "florianmatter@gmail.com"

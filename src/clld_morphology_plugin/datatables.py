@@ -1,11 +1,9 @@
-from clld.db.models.common import Contribution
-from clld.db.models.common import Language
-from clld.web.datatables.base import Col
-from clld.web.datatables.base import DataTable
-from clld.web.datatables.base import LinkCol
+from clld.db.models.common import Contribution, Language
+from clld.web.datatables.base import Col, DataTable, LinkCol
 from clld.web.util.helpers import icon
 from sqlalchemy import and_
 from sqlalchemy.orm import joinedload
+
 from clld_morphology_plugin import models
 
 
@@ -47,7 +45,6 @@ class AudioCol(Col):
 
 
 class Wordforms(DataTable):
-
     __constraints__ = [
         Language,
         Contribution,
@@ -133,7 +130,6 @@ class Wordforms_noPOS(Wordforms):
 
 
 class Forms(DataTable):
-
     __constraints__ = [Language, models.Wordform, Contribution]
 
     def base_query(self, query):
@@ -163,7 +159,6 @@ class Forms(DataTable):
 
 
 class Morphs(DataTable):
-
     __constraints__ = [Language, models.POS, Contribution]
 
     def base_query(self, query):
@@ -308,7 +303,6 @@ class Lexemes(DataTable):
 
 
 class MorphoPhonoChanges(DataTable):
-
     __constraints__ = [Language]
 
     def base_query(self, query):

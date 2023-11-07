@@ -1,9 +1,9 @@
 import re
 from math import floor
+
 import pandas as pd
 from clld.web.util.helpers import link
 from clld.web.util.htmllib import HTML
-
 
 GLOSS_ABBR_PATTERN = re.compile(
     "(?P<personprefix>1|2|3)?(?P<abbr>[A-Z]+)(?P<personsuffix>1|2|3)?(?=([^a-z]|$))"
@@ -17,7 +17,8 @@ empty_pos = HTML.span(
 
 def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
     """This method takes a sentence and returns the interlinear gloss lines as nested divs for displaying.
-    If there are ExampleParts present, the associated wordforms will be rendered accordingly."""
+    If there are ExampleParts present, the associated wordforms will be rendered accordingly.
+    """
     units = []
     if sentence.analyzed and sentence.gloss:
         # g-words associated with this sentence
