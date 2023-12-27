@@ -57,7 +57,9 @@ def rendered_gloss_units(request, sentence):  # pylint: disable=too-many-locals
                             name=slices[idx].form.id,
                         )
                     )
-                    r_form = rendered_form(request, slices[idx].form, strip_clitics=True)
+                    r_form = rendered_form(
+                        request, slices[idx].form, strip_clitics=True
+                    )
                     if r_form:
                         morphs.append(HTML.span(r_form, class_="morpheme"))
                     else:
