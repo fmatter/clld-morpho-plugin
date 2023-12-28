@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "clld-morphology-plugin"
-version = "0.1.1.dev"
+version = "0.1.2.dev"
 license = "Apache-2.0"
 homepage = "https://github.com/fmatter/clld-morphology-plugin"
 repository = "https://github.com/fmatter/clld-morphology-plugin"
