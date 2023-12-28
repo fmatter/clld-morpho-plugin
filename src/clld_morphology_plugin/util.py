@@ -278,7 +278,6 @@ def render_paradigm(self, html=False):
     def listify(stuff):
         return list(stuff)
 
-    print(df)
     paradigm = pd.pivot_table(df, values="Form", columns=x, index=y, aggfunc=listify)
     paradigm = paradigm.fillna("")
     sort_orders = {cat: cat.ordered_values for cat in self.inflectionalcategories}
